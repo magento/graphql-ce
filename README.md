@@ -2,8 +2,43 @@
 [![Open Source Helpers](https://www.codetriage.com/magento/magento2/badges/users.svg)](https://www.codetriage.com/magento/magento2)
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/magento/magento2?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![Crowdin](https://d322cqt584bo4o.cloudfront.net/magento-2/localized.png)](https://crowdin.com/project/magento-2)
-<h2>Welcome</h2>
-Welcome to Magento 2 installation! We're glad you chose to install Magento 2, a cutting-edge, feature-rich eCommerce solution that gets results.
+
+## Overview
+
+Welcome to the Magento 2 GraphQL Community Project! 
+
+Here is our [ZenHub board](https://github.com/magento/graphql-ce/wiki/Home/_edit#zenhub), best viewed with the [Chrome ZenHub extension](https://chrome.google.com/webstore/detail/zenhub-for-github/ogcgkffhplmphkaahpmffcafajaocjbd). Otherwise, our backlog is organized as a [list of issues](https://github.com/magento/graphql-ce/issues). 
+
+For the last few months, the internal team has been hard at work on the initial implementation for GraphQL in Magento. GraphQL is a flexible and performant API for building custom front-end experiences, including headless storefronts and PWAs. To learn more about GraphQL, please visit [graphql.org](https://graphql.org/). To get a head start on the GraphQL implementation in Magento, our DevDocs are [here](https://devdocs.magento.com/guides/v2.3/graphql).
+
+To join the project, attend a regular meeting or join [#graphql](https://magentocommeng.slack.com/messages/C8076E0KS) slack channel.
+
+## Status
+Here is our [CURRENT ROADMAP](https://github.com/magento/graphql-ce/wiki/Roadmap). 
+Roughly speaking, our status is the following: 
+
+### Completed items: 
+* Products 
+* Categories
+* Customer
+* URL resolution for products, categories, CMS pages
+
+### Future items: 
+* Mutations to support checkout, payments, shipping, My Account, etc
+* Increased coverage for entities like products and categories
+* Increased coverage for experiences like Checkout and My Account
+* Improvements in GraphQL framework
+* Performance related improvements
+
+## Contact Information
+
+**Status meetings**: Every Thursday at 15:00 UTC, https://magento.zoom.us/j/760857552
+
+**Slack channel**: [#graphql](https://magentocommeng.slack.com/messages/C8076E0KS). Send an email to engcom@magento.com to join
+
+## Approach to Implementation
+
+See [Approach to Implementation](Approach-to-Implementation) for the requirements and restrictions of the implementation process.
 
 ## Magento system requirements
 [Magento system requirements](http://devdocs.magento.com/guides/v2.3/install-gde/system-requirements2.html)
