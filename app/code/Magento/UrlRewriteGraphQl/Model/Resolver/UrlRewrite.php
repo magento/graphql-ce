@@ -74,17 +74,20 @@ class UrlRewrite implements ResolverInterface
         };
         
         if (isset($args['url'])) {
-            $url = $args['url'];
-            if (substr($url, 0, 1) === '/' && $url !== '/') {
-                $url = ltrim($url, '/');
+            $parsedUrl = parse_url($args['url']);
+            $url = $parsedUrl['path'];
+            if ($parsedUrl['path'][0] === '/' && $parsedUrl['path'] !== '/') {
+                $url = ltrim($parsedUrl['path'], '/');
             }
             $customUrl = $this->customUrlLocator->locateUrl($url);
             $url = $customUrl ?: $url;
             $urlRewrite = $this->findCanonicalUrl($url);
+            $baseUrl = $this->storeManager->getStore()->getBaseUrl();
             if ($urlRewrite) {
                 $urlRewriteReturnArray = [
                     'id' => $urlRewrite->getEntityId(),
                     'canonical_url' => $urlRewrite->getTargetPath(),
+                    'absolute_url' => $baseUrl . $urlRewrite->getTargetPath(),
                     'type' => $this->sanitizeType($urlRewrite->getEntityType())
                 ];
                 $result = function () use ($urlRewriteReturnArray) {
