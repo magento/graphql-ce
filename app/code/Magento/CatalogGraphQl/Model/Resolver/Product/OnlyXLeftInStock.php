@@ -18,7 +18,7 @@ use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 /**
  * Resolve data for product stock count
  */
-class StockCount implements ResolverInterface
+class OnlyXLeftInStock implements ResolverInterface
 {
     /**
      * @var ValueFactory
