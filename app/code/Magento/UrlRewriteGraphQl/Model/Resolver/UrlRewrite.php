@@ -84,7 +84,7 @@ class UrlRewrite implements ResolverInterface
             if ($urlRewrite) {
                 $urlRewriteReturnArray = [
                     'id' => $urlRewrite->getEntityId(),
-                    'canonical_url' => $urlRewrite->getTargetPath(),
+                    'relative_url' => $urlRewrite->getTargetPath(),
                     'type' => $this->sanitizeType($urlRewrite->getEntityType())
                 ];
                 $result = function () use ($urlRewriteReturnArray) {
