@@ -90,4 +90,31 @@ QUERY;
         );
         $this->assertEquals($storeConfig->getSecureBaseMediaUrl(), $response['storeConfig']['secure_base_media_url']);
     }
+
+    /**
+     * @magentoConfigFixture default_store web/default/front 'test_page'
+     * @magentoConfigFixture default_store design/head/default_title 'Test Title'
+     * @magentoConfigFixture default_store design/footer/copyright 'Test Copyright'
+     */
+    public function testExtendedStoreConfig()
+    {
+        $front = 'test_page';
+        $default_title = 'Test Title';
+        $copyright = 'Test Copyright';
+
+        $query = <<<QUERY
+{
+  storeConfig{
+    front,
+    default_title,
+    copyright
+  }
+}
+QUERY;
+        $response = $this->graphQlQuery($query);
+        $this->assertArrayHasKey('storeConfig', $response);
+        $this->assertEquals($front, $response['storeConfig']['front']);
+        $this->assertEquals($default_title, $response['storeConfig']['default_title']);
+        $this->assertEquals($copyright, $response['storeConfig']['copyright']);
+    }
 }
