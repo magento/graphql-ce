@@ -12,6 +12,7 @@ use Magento\Framework\GraphQl\Query\Resolver\Value;
 use Magento\Framework\GraphQl\Query\Resolver\ValueFactory;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
+use Magento\StoreGraphQl\Model\Resolver\Store\ExtendedStoreConfigDataProvider;
 use Magento\StoreGraphQl\Model\Resolver\Store\StoreConfigDataProvider;
 
 /**
@@ -25,20 +26,28 @@ class StoreConfigResolver implements ResolverInterface
     private $storeConfigDataProvider;
 
     /**
+     * @var ExtendedStoreConfigDataProvider
+     */
+    private $extendedStoreConfigsDataProvider;
+
+    /**
      * @var ValueFactory
      */
     private $valueFactory;
 
     /**
      * @param StoreConfigDataProvider $storeConfigsDataProvider
+     * @param ExtendedStoreConfigDataProvider $extendedStoreConfigsDataProvider
      * @param ValueFactory $valueFactory
      */
     public function __construct(
         StoreConfigDataProvider $storeConfigsDataProvider,
+        ExtendedStoreConfigDataProvider $extendedStoreConfigsDataProvider,
         ValueFactory $valueFactory
     ) {
         $this->valueFactory = $valueFactory;
         $this->storeConfigDataProvider = $storeConfigsDataProvider;
+        $this->extendedStoreConfigsDataProvider = $extendedStoreConfigsDataProvider;
     }
 
     /**
@@ -52,7 +61,10 @@ class StoreConfigResolver implements ResolverInterface
         array $args = null
     ) : Value {
 
-        $storeConfigData = $this->storeConfigDataProvider->getStoreConfig();
+        $storeConfigData = array_merge(
+            $this->storeConfigDataProvider->getStoreConfig(),
+            $this->extendedStoreConfigsDataProvider->getExtendedConfigs()
+        );
 
         $result = function () use ($storeConfigData) {
             return !empty($storeConfigData) ? $storeConfigData : [];
