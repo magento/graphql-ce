@@ -4,5 +4,5 @@ type Query {
 }
 
 type Subscription @doc(description: "Customer Subscription object") {
-    is_subscribed: String @doc(description: "Return if logged-in customer subscribed to Newsletter")
+    is_subscribed: Boolean @doc(description: "Return if logged-in customer subscribed to Newsletter")
 }
