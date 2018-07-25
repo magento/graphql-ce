@@ -1,0 +1,8 @@
+type Query {
+    subscription : Subscription
+     @resolver(class: "Magento\\NewsletterGraphQl\\Model\\Resolver\\SubscriptionResolver") @doc(description: "The newsletter subscriptions query searches for customer subscription")
+}
+
+type Subscription @doc(description: "Customer Subscription object") {
+    is_subscribed: String @doc(description: "Return if logged-in customer subscribed to Newsletter")
+}
