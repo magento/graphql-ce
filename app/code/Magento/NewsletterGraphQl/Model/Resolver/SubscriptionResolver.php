@@ -16,7 +16,7 @@ use Magento\Newsletter\Model\Subscriber;
 use Magento\Authorization\Model\UserContextInterface;
 
 /**
- * UrlRewrite field resolver, used for GraphQL request processing.
+ * Customer Newsletter Subscription field resolver, used for GraphQL request processing.
  */
 class SubscriptionResolver implements ResolverInterface
 {
@@ -36,9 +36,9 @@ class SubscriptionResolver implements ResolverInterface
     private $userContext;
 
     /**
-     * @param UrlFinderInterface $urlFinder
      * @param ValueFactory $valueFactory
-     * @param CustomUrlLocatorInterface $customUrlLocator
+     * @param Subscriber $subscriber
+     * @param UserContextInterface $userContext
      */
     public function __construct(
         ValueFactory $valueFactory,
