@@ -9,8 +9,7 @@ namespace Magento\StoreGraphQl\Model\Resolver\Store;
 
 use Magento\Store\Api\Data\StoreConfigInterface;
 use Magento\Store\Api\StoreConfigManagerInterface;
-use Magento\Store\Api\StoreRepositoryInterface;
-use Magento\Store\Api\StoreResolverInterface;
+use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * StoreConfig field data provider, used for GraphQL request processing.
@@ -23,28 +22,20 @@ class StoreConfigDataProvider
     private $storeConfigManager;
 
     /**
-     * @var StoreResolverInterface
+     * @var StoreManagerInterface
      */
-    private $storeResolver;
-
-    /**
-     * @var StoreRepositoryInterface
-     */
-    private $storeRepository;
+    private $storeManager;
 
     /**
      * @param StoreConfigManagerInterface $storeConfigManager
-     * @param StoreResolverInterface $storeResolver
-     * @param StoreRepositoryInterface $storeRepository
+     * @param StoreManagerInterface $storeManager
      */
     public function __construct(
         StoreConfigManagerInterface $storeConfigManager,
-        StoreResolverInterface $storeResolver,
-        StoreRepositoryInterface $storeRepository
+        StoreManagerInterface $storeManager
     ) {
         $this->storeConfigManager = $storeConfigManager;
-        $this->storeResolver = $storeResolver;
-        $this->storeRepository = $storeRepository;
+        $this->storeManager = $storeManager;
     }
 
     /**
@@ -54,8 +45,7 @@ class StoreConfigDataProvider
      */
     public function getStoreConfig() : array
     {
-        $storeId = $this->storeResolver->getCurrentStoreId();
-        $store = $this->storeRepository->getById($storeId);
+        $store = $this->storeManager->getStore();
         $storeConfig = current($this->storeConfigManager->getStoreConfigs([$store->getCode()]));
 
         return $this->hidrateStoreConfig($storeConfig);
