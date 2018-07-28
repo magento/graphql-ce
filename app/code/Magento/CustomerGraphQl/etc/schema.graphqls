@@ -10,7 +10,7 @@ type Customer @doc(description: "Defines the customer name and address and other
     group_id: Int @doc(description: "The group assigned to the user. Default values are 0 (Not logged in), 1 (General), 2 (Wholesale), and 3 (Retailer)")
     prefix: String @doc(description: "An honorific, such as Dr., Mr., or Mrs.")
     firstname: String @doc(description: "The customer's first name")
-    middlename: String @doc(description: "Thec customer's middle name")
+    middlename: String @doc(description: "The customer's middle name")
     lastname: String @doc(description: "The customer's family name")
     suffix: String @doc(description: "A value such as Sr., Jr., or III")
     email: String @doc(description: "The customer's email address. Required")
