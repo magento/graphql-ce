@@ -6,17 +6,9 @@
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <type name="Magento\StoreGraphQl\Model\Resolver\Store\ExtendedStoreConfigDataProvider">
+    <type name="Magento\ThemeGraphQlhQl\Model\Resolver\Store\ExtendedStoreConfigDataProvider">
         <arguments>
             <argument name="extendedConfigs" xsi:type="array">
-                <!-- Begin Store Configuration Web Default Pages -->
-                <item name="front" xsi:type="string">web/default/front</item>
-                <item name="cms_home_page" xsi:type="string">web/default/cms_home_page</item>
-                <item name="no_route" xsi:type="string">web/default/no_route</item>
-                <item name="cms_no_route" xsi:type="string">web/default/cms_no_route</item>
-                <item name="cms_no_cookies" xsi:type="string">web/default/cms_no_cookies</item>
-                <item name="show_cms_breadcrumbs" xsi:type="string">web/default/show_cms_breadcrumbs</item>
-                <!-- End Store Configuration Web Default Pages -->
                 <!-- Begin Design Configuration HTML Head Section-->
                 <item name="head_shortcut_icon" xsi:type="string">design/head/head_shortcut_icon</item>
                 <item name="default_title" xsi:type="string">design/head/default_title</item>

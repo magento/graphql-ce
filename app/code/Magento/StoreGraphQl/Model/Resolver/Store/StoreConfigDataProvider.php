@@ -48,7 +48,7 @@ class StoreConfigDataProvider
         $store = $this->storeManager->getStore();
         $storeConfig = current($this->storeConfigManager->getStoreConfigs([$store->getCode()]));
 
-        return $this->hidrateStoreConfig($storeConfig);
+        return $this->hydrateStoreConfig($storeConfig);
     }
 
     /**
@@ -57,7 +57,7 @@ class StoreConfigDataProvider
      * @param StoreConfigInterface $storeConfig
      * @return array
      */
-    private function hidrateStoreConfig($storeConfig): array
+    private function hydrateStoreConfig($storeConfig): array
     {
         /** @var StoreConfigInterface $storeConfig */
         $storeConfigData = [
