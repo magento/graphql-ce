@@ -6,7 +6,7 @@
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <type name="Magento\ThemeGraphQlhQl\Model\Resolver\Store\ExtendedStoreConfigDataProvider">
+    <type name="Magento\StoreGraphQl\Model\Resolver\Store\ExtendedStoreConfigDataProvider">
         <arguments>
             <argument name="extendedConfigs" xsi:type="array">
                 <!-- Begin Design Configuration HTML Head Section-->
