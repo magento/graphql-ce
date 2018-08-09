@@ -14,6 +14,13 @@ type Query {
         id: Int @doc(description: "Id of the category")
     ): CategoryTree
     @resolver(class: "Magento\\CatalogGraphQl\\Model\\Resolver\\CategoryTree")
+    categories (
+        search: String @doc(description: "Performs a full-text search using the specified key words."),
+        filter: CategoryFilterInput @doc(description: "Identifies which category attributes to search for and return."),
+        pageSize: Int = 20 @doc(description: "Specifies the maximum number of results to return at once. This attribute is optional."),
+        currentPage: Int = 1 @doc(description: "Specifies which page of results to return. The default value is 1.")
+     ): Categories
+    @resolver(class: "Magento\\CatalogGraphQl\\Model\\Resolver\\CategoryTrees") @doc(description: "The categories query searches for categories that match the criteria specified in the search and filter attributes")
 }
 
 enum CurrencyEnum @doc(description: "The list of available currency codes") {
@@ -302,6 +309,13 @@ type CategoryTree implements CategoryInterface @doc(description: "Category Tree 
     children: [CategoryTree] @doc(description: "Child categories tree") @resolve(class: "Magento\\CatalogGraphQl\\Model\\Resolver\\CategoryTree")
 }
 
+type Categories @doc(description: "The Categories object is the top-level object returned in a category search") {
+    items: [CategoryInterface] @doc(description: "An array of categories that match the specified search criteria")
+    page_info: SearchResultPageInfo @doc(description: "An object that includes the page_info and currentPage values specified in the query")
+    total_count: Int @doc(description: "The number of categories returned")
+    filters: [LayerFilter] @doc(description: "Layered navigation filters array")
+}
+
 type CustomizableDateOption implements CustomizableOptionInterface @doc(description: "CustomizableDateOption contains information about a date picker that is defined as part of a customizable option") {
     value: CustomizableDateValue @doc(description: "An object that defines a date field in a customizable option.")
     product_sku: String @doc(description: "The Stock Keeping Unit of the base product")
@@ -503,6 +517,16 @@ input ProductSortInput  @doc(description: "ProductSortInput specifies the attrib
     country_of_manufacture: SortEnum @doc(description: "The product's country of origin")
     custom_layout: SortEnum @doc(description: "The name of a custom layout")
     gift_message_available: SortEnum @doc(description: "Indicates whether a gift message is available")
+}
+
+input CategoryFilterInput @doc(description: "CategoryFilterInput defines the filters to be used in the search. A filter contains at least one attribute, a comparison operator, and the value that is being searched for.") {
+    name: FilterTypeInput @doc(description: "The category name. Customers use this name to identify the category.")
+    description: FilterTypeInput @doc(description: "Detailed information about the category. The value can include simple HTML tags.")
+    created_at: FilterTypeInput @doc(description: "Timestamp indicating when the category was created")
+    updated_at: FilterTypeInput @doc(description: "Timestamp indicating when the category was updated")
+    is_anchor: FilterTypeInput @doc(description: "The value can be true or false")
+    level: FilterTypeInput @doc(description: "The integer which define level of category")
+    or: CategoryFilterInput @doc(description: "The keyword required to perform a logical OR comparison")
 }
 
 type MediaGalleryEntry  @doc(description: "MediaGalleryEntry defines characteristics about images and videos associated with a specific product") {
