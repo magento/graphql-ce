@@ -25,7 +25,7 @@ class Filter
     private $searchResultFactory;
 
     /**
-     * @var \Magento\CatalogGraphQl\Model\Resolver\Categories\DataProvider\Category
+     * @var \Magento\Catalog\Api\CategoryListInterface
      */
     private $categoryDataProvider;
 
@@ -40,14 +40,15 @@ class Filter
     private $layerResolver;
 
     /**
+     * Filter constructor.
      * @param SearchResultFactory $searchResultFactory
-     * @param Category $categoryDataProvider
+     * @param \Magento\Catalog\Api\CategoryListInterface $categoryDataProvider
      * @param \Magento\Catalog\Model\Layer\Resolver $layerResolver
      * @param FieldTranslator $fieldTranslator
      */
     public function __construct(
         SearchResultFactory $searchResultFactory,
-        Category $categoryDataProvider,
+        \Magento\Catalog\Api\CategoryListInterface $categoryDataProvider,
         \Magento\Catalog\Model\Layer\Resolver $layerResolver,
         FieldTranslator $fieldTranslator
     ) {

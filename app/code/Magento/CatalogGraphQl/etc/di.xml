@@ -7,7 +7,6 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\Product\CollectionProcessorInterface" type="Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\Product\CompositeCollectionProcessor"/>
-    <preference for="Magento\CatalogGraphQl\Model\Resolver\Categories\DataProvider\Category\CollectionProcessorInterface" type="Magento\CatalogGraphQl\Model\Resolver\Categories\DataProvider\Category\CompositeCollectionProcessor"/>
     <type name="Magento\EavGraphQl\Model\Resolver\Query\Type">
         <arguments>
             <argument name="customTypes" xsi:type="array">
@@ -51,22 +50,9 @@
             </argument>
         </arguments>
     </type>
-    <type name="Magento\CatalogGraphQl\Model\Resolver\Categories\DataProvider\Category\CompositeCollectionProcessor">
-        <arguments>
-            <argument name="collectionProcessors" xsi:type="array">
-                <item name="attributes" xsi:type="object">Magento\CatalogGraphQl\Model\Resolver\Categories\DataProvider\Category\CollectionProcessor\AttributeProcessor</item>
-                <item name="search" xsi:type="object">Magento\CatalogGraphQl\Model\Resolver\Categories\DataProvider\Category\CollectionProcessor\SearchCriteriaProcessor</item>
-              </argument>
-        </arguments>
-    </type>
     <type name="Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\Product\CollectionProcessor\SearchCriteriaProcessor">
         <arguments>
             <argument name="searchCriteriaApplier" xsi:type="object">Magento\Catalog\Model\Api\SearchCriteria\ProductCollectionProcessor</argument>
-        </arguments>
-    </type>
-    <type name="Magento\CatalogGraphQl\Model\Resolver\Categories\DataProvider\Category\CollectionProcessor\SearchCriteriaProcessor">
-        <arguments>
-            <argument name="searchCriteriaApplier" xsi:type="object">Magento\Catalog\Model\Api\SearchCriteria\CategoryCollectionProcessor</argument>
         </arguments>
     </type>
 </config>
