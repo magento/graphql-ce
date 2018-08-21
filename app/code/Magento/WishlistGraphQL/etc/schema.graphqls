@@ -1,2 +1,25 @@
 # Copyright © Magento, Inc. All rights reserved.
 # See COPYING.txt for license details.
+
+type Query {
+    wishlist: Wishlist @resolver(class: "Magento\\WishlistGraphQL\\Model\\Resolver\\Wishlist") @doc(description: "The query returns information about the wish list items")
+}
+
+type Wishlist @doc(description: "Wishlist defines the items in the collection and other details") {
+    updated_at: String @doc(description: "Timestamp indicating when the account was created and updated")
+    wishlist_id: Int @doc(description: "The wish list Id")
+    customer_id: Int @doc(description: "The Customer Id")
+    shared: Int @doc(description: "Is this Wish List shared (0) or (1)")
+    sharing_code: String @doc(description: "Code for sharing this wishlist")
+    items: [WishlistItem] @doc(description: "An array containing the item in the Wish List")
+}
+
+type WishlistItem @doc(description: "WishlistItem contains detailed information about a wishlist item added"){
+    wishlist_item_id: Int @doc(description: "The unique Id for the new item")
+    wishlist_id: Int @doc(description: "The ID assigned to the WishList object")
+    product_id: Int @doc(description: "The actual Product ID")
+    store_id: Int @doc(description: "Store ID")
+    added_at: String @doc(description: "Timestamp indicating when the product was added")
+    description: String @doc(description: "Description of the product")
+    qty: Int @doc(description: "Quantity of the same product was added")
+}
