@@ -13,7 +13,6 @@ use Magento\Catalog\Model\Product;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\Resolver\Value;
-use Magento\Framework\GraphQl\Query\Resolver\ValueFactory;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 
 /**
@@ -35,12 +34,10 @@ class EntityIdToId implements ResolverInterface
 
     /**
      * @param MetadataPool $metadataPool
-     * @param ValueFactory $valueFactory
      */
-    public function __construct(MetadataPool $metadataPool, ValueFactory $valueFactory)
+    public function __construct(MetadataPool $metadataPool)
     {
         $this->metadataPool = $metadataPool;
-        $this->valueFactory = $valueFactory;
     }
 
     /**
@@ -52,12 +49,10 @@ class EntityIdToId implements ResolverInterface
         ResolveInfo $info,
         array $value = null,
         array $args = null
-    ): Value {
+    ) {
         if (!isset($value['model'])) {
-            $result = function () {
-                return null;
-            };
-            return $this->valueFactory->create($result);
+            
+            return null;
         }
 
         /** @var Product $product */
@@ -67,10 +62,6 @@ class EntityIdToId implements ResolverInterface
             $this->metadataPool->getMetadata(ProductInterface::class)->getLinkField()
         );
 
-        $result = function () use ($productId) {
-            return $productId;
-        };
-
-        return $this->valueFactory->create($result);
+        return $productId;
     }
 }

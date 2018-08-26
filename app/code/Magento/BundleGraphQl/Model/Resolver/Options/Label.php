@@ -49,7 +49,7 @@ class Label implements ResolverInterface
         ResolveInfo $info,
         array $value = null,
         array $args = null
-    ): Value {
+    ) {
         if (!isset($value['sku'])) {
             $result = function () {
                 return null;

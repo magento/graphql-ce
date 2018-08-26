@@ -44,7 +44,7 @@ class BundleItemLinks implements ResolverInterface
     /**
      * {@inheritDoc}
      */
-    public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null) : Value
+    public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
     {
         if (!isset($value['option_id']) || !isset($value['parent_id'])) {
             $result = function () {

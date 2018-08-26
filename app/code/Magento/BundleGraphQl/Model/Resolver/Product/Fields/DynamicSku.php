@@ -12,7 +12,6 @@ use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Bundle\Model\Product\Type as Bundle;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\Resolver\Value;
-use Magento\Framework\GraphQl\Query\Resolver\ValueFactory;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 
 /**
@@ -20,29 +19,17 @@ use Magento\Framework\GraphQl\Query\ResolverInterface;
  */
 class DynamicSku implements ResolverInterface
 {
-    /**
-     * @var ValueFactory
-     */
-    private $valueFactory;
-
-    /**
-     * @param ValueFactory $valueFactory
-     */
-    public function __construct(ValueFactory $valueFactory)
-    {
-        $this->valueFactory = $valueFactory;
-    }
 
     /**
      * {@inheritdoc}
      */
-    public function resolve(
+public function resolve(
         Field $field,
         $context,
         ResolveInfo $info,
         array $value = null,
         array $args = null
-    ): Value {
+    ){
         $result = function () {
             return null;
         };
@@ -50,10 +37,6 @@ class DynamicSku implements ResolverInterface
             $result = isset($value['sku_type']) ? !$value['sku_type'] : null;
         }
 
-        return $this->valueFactory->create(
-            function () use ($result) {
-                return $result;
-            }
-        );
+        return $result;
     }
 }

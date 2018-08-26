@@ -13,7 +13,6 @@ use Magento\Bundle\Model\Product\Type as Bundle;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\EnumLookup;
 use Magento\Framework\GraphQl\Query\Resolver\Value;
-use Magento\Framework\GraphQl\Query\Resolver\ValueFactory;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 
 /**
@@ -27,18 +26,11 @@ class ShipBundleItems implements ResolverInterface
     private $enumLookup;
 
     /**
-     * @var ValueFactory
-     */
-    private $valueFactory;
-
-    /**
      * @param EnumLookup $enumLookup
-     * @param ValueFactory $valueFactory
      */
-    public function __construct(EnumLookup $enumLookup, ValueFactory $valueFactory)
+    public function __construct(EnumLookup $enumLookup)
     {
         $this->enumLookup = $enumLookup;
-        $this->valueFactory = $valueFactory;
     }
 
     /**
@@ -50,7 +42,7 @@ class ShipBundleItems implements ResolverInterface
         ResolveInfo $info,
         array $value = null,
         array $args = null
-    ): Value {
+    ) {
         $result = function () {
             return null;
         };
@@ -59,10 +51,6 @@ class ShipBundleItems implements ResolverInterface
                 ? $this->enumLookup->getEnumValueFromField('ShipBundleItemsEnum', $value['shipment_type']) : null;
         }
 
-        return $this->valueFactory->create(
-            function () use ($result) {
-                return $result;
-            }
-        );
+        return $result;
     }
 }

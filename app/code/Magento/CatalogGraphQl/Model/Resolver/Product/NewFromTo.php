@@ -11,7 +11,6 @@ use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\Resolver\Value;
-use Magento\Framework\GraphQl\Query\Resolver\ValueFactory;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 
 /**
@@ -19,19 +18,6 @@ use Magento\Framework\GraphQl\Query\ResolverInterface;
  */
 class NewFromTo implements ResolverInterface
 {
-    /**
-     * @var ValueFactory
-     */
-    private $valueFactory;
-
-    /**
-     * @param ValueFactory $valueFactory
-     */
-    public function __construct(ValueFactory $valueFactory)
-    {
-        $this->valueFactory = $valueFactory;
-    }
-
     /**
      * Transfer data from legacy news_from_date and news_to_date to new names corespondent fields
      *
@@ -43,12 +29,9 @@ class NewFromTo implements ResolverInterface
         ResolveInfo $info,
         array $value = null,
         array $args = null
-    ): Value {
+    ) {
         if (!isset($value['model'])) {
-            $result = function () {
-                return null;
-            };
-            return $this->valueFactory->create($result);
+            return null;
         }
 
         /** @var Product $product */
@@ -60,10 +43,6 @@ class NewFromTo implements ResolverInterface
             $data = $product->getData($attributeName);
         }
 
-        $result = function () use ($data) {
-            return $data;
-        };
-
-        return $this->valueFactory->create($result);
+        return $data;
     }
 }

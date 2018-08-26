@@ -55,7 +55,7 @@ class Customer implements ResolverInterface
         ResolveInfo $info,
         array $value = null,
         array $args = null
-    ) : Value {
+    ) {
         /** @var ContextInterface $context */
         if ((!$context->getUserId()) || $context->getUserType() == UserContextInterface::USER_TYPE_GUEST) {
             throw new GraphQlAuthorizationException(
