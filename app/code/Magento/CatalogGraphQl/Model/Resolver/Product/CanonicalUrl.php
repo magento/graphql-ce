@@ -27,7 +27,7 @@ class CanonicalUrl implements ResolverInterface
         ResolveInfo $info,
         array $value = null,
         array $args = null
-    ): Value {
+    ) {
         if (!isset($value['model'])) {
             
             return null;

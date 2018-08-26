@@ -91,6 +91,6 @@ class Products implements ResolverInterface
             ]
         ];
 
-        return $result;
+        return $data;
     }
 }
