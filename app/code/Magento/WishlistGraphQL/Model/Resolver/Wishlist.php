@@ -64,7 +64,7 @@ class Wishlist implements ResolverInterface
         }
 
         try {
-            $data = $this->customerResolver->getCustomerById($context->getUserId());
+            $data = $this->wishlistResolver->getWishListByCustomerId($context->getUserId());
             $result = function () use ($data) {
                 return !empty($data) ? $data : [];
             };
