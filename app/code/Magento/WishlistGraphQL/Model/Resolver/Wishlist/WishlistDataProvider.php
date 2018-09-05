@@ -7,15 +7,13 @@ declare(strict_types=1);
 
 namespace Magento\WishlistGraphQL\Model\Resolver\Wishlist;
 
-use Magento\Customer\Api\CustomerRepositoryInterface;
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\Webapi\ServiceOutputProcessor;
 use Magento\Wishlist\Model\Wishlist as WishlistModel;
 
 /**
- * Customer field data provider, used for GraphQL request processing.
+ * Wishlist field data provider, used for GraphQL request processing.
  */
 class WishlistDataProvider
 {
@@ -23,11 +21,6 @@ class WishlistDataProvider
      * @var WishlistModel
      */
     private $wishListModel;
-
-    /**
-     * @var CustomerRepositoryInterface
-     */
-    private $customerRepository;
 
     /**
      * @var ServiceOutputProcessor
@@ -40,28 +33,27 @@ class WishlistDataProvider
     private $jsonSerializer;
 
     /**
-     * @param CustomerRepositoryInterface $customerRepository
      * @param WishlistModel $wishlistModel
      * @param ServiceOutputProcessor $serviceOutputProcessor
      * @param SerializerInterface $jsonSerializer
      */
     public function __construct(
-        CustomerRepositoryInterface $customerRepository,
         WishlistModel $wishlistModel,
         ServiceOutputProcessor $serviceOutputProcessor,
         SerializerInterface $jsonSerializer
     ) {
-        $this->customerRepository = $customerRepository;
         $this->wishListModel = $wishlistModel;
         $this->serviceOutputProcessor = $serviceOutputProcessor;
         $this->jsonSerializer = $jsonSerializer;
     }
 
-
     public function getWishListByCustomerId($id)
     {
         try {
             $wishList = $this->wishListModel->loadByCustomerId($id);
+            if ($this->wishListModel->getItemsCount()) {
+                $wishList->setItems($this->wishListModel->getItemCollection());
+            }
         } catch (NoSuchEntityException $e) {
             // No error should be thrown, null result should be returned
             return [];
@@ -70,32 +62,12 @@ class WishlistDataProvider
     }
 
     /**
-     * @param int $customerId
-     * @return array
-     * @throws LocalizedException
-     */
-    public function getCustomerById(int $customerId) : array
-    {
-        try {
-            $customerObject = $this->customerRepository->getById($customerId);
-        } catch (NoSuchEntityException $e) {
-            // No error should be thrown, null result should be returned
-            return [];
-        }
-        return $this->processCustomer($customerObject);
-    }
-
-    /**
      * @param WishlistModel $wishlistObject
      * @return array
      */
     private function processWishList(WishlistModel $wishlistObject) : array
     {
-        $wishList = $this->serviceOutputProcessor->process(
-            $wishlistObject,
-            CustomerRepositoryInterface::class,
-            'get'
-        );
+        $wishList = $wishlistObject->getData();
         if (isset($wishList['extension_attributes'])) {
             $wishList = array_merge($wishList, $wishList['extension_attributes']);
         }
