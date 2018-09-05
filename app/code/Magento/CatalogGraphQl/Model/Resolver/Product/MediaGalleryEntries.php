@@ -29,7 +29,7 @@ class MediaGalleryEntries implements ResolverInterface
         ResolveInfo $info,
         array $value = null,
         array $args = null
-    ){
+    ) {
         if (!isset($value['model'])) {
             throw new GraphQlInputException(__('"model" value should be specified'));
         }

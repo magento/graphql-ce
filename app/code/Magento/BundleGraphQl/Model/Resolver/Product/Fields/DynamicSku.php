@@ -26,7 +26,7 @@ class DynamicSku implements ResolverInterface
         ResolveInfo $info,
         array $value = null,
         array $args = null
-    ){
+    ) {
         $result = null;
         if ($value['type_id'] === Bundle::TYPE_CODE) {
             $result = isset($value['sku_type']) ? !$value['sku_type'] : null;
