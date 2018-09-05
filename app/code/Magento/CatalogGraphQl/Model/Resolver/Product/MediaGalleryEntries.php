@@ -7,10 +7,10 @@ declare(strict_types=1);
 
 namespace Magento\CatalogGraphQl\Model\Resolver\Product;
 
+use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\GraphQl\Config\Element\Field;
-use Magento\Framework\GraphQl\Query\Resolver\Value;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 
 /**
@@ -31,8 +31,7 @@ class MediaGalleryEntries implements ResolverInterface
         array $args = null
     ){
         if (!isset($value['model'])) {
-            
-            return null;
+            throw new GraphQlInputException(__('"model" value should be specified'));
         }
 
         /** @var Product $product */
@@ -48,7 +47,6 @@ class MediaGalleryEntries implements ResolverInterface
                 }
             }
         }
-
         return $mediaGalleryEntries;
     }
 }

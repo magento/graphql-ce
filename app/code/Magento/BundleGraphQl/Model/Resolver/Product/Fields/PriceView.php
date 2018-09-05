@@ -5,18 +5,16 @@
  */
 declare(strict_types=1);
 
-
 namespace Magento\BundleGraphQl\Model\Resolver\Product\Fields;
 
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Bundle\Model\Product\Type as Bundle;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\EnumLookup;
-use Magento\Framework\GraphQl\Query\Resolver\Value;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 
 /**
- * {@inheritdoc}
+ * @inheritdoc
  */
 class PriceView implements ResolverInterface
 {
@@ -34,7 +32,7 @@ class PriceView implements ResolverInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function resolve(
         Field $field,
@@ -43,9 +41,7 @@ class PriceView implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
-        $result = function () {
-            return null;
-        };
+        $result = null;
         if ($value['type_id'] === Bundle::TYPE_CODE) {
             $result = isset($value['price_view'])
                 ? $this->enumLookup->getEnumValueFromField('PriceViewEnum', $value['price_view']) : null;

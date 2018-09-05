@@ -17,7 +17,7 @@ use Magento\Framework\GraphQl\Query\Resolver\ValueFactory;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 
 /**
- * {@inheritdoc}
+ * @inheritdoc
  */
 class Product implements ResolverInterface
 {
@@ -52,7 +52,7 @@ class Product implements ResolverInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
     {

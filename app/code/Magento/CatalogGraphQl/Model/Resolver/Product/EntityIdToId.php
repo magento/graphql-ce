@@ -7,12 +7,12 @@ declare(strict_types=1);
 
 namespace Magento\CatalogGraphQl\Model\Resolver\Product;
 
+use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\GraphQl\Config\Element\Field;
-use Magento\Framework\GraphQl\Query\Resolver\Value;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 
 /**
@@ -28,11 +28,6 @@ class EntityIdToId implements ResolverInterface
     private $metadataPool;
 
     /**
-     * @var ValueFactory
-     */
-    private $valueFactory;
-
-    /**
      * @param MetadataPool $metadataPool
      */
     public function __construct(MetadataPool $metadataPool)
@@ -41,7 +36,7 @@ class EntityIdToId implements ResolverInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function resolve(
         Field $field,
@@ -51,8 +46,7 @@ class EntityIdToId implements ResolverInterface
         array $args = null
     ) {
         if (!isset($value['model'])) {
-            
-            return null;
+            throw new GraphQlInputException(__('"model" value should be specified'));
         }
 
         /** @var Product $product */

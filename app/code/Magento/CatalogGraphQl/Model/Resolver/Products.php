@@ -14,7 +14,6 @@ use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\Resolver\Argument\SearchCriteria\Builder;
 use Magento\Framework\GraphQl\Query\Resolver\Argument\SearchCriteria\SearchFilter;
-use Magento\Framework\GraphQl\Query\Resolver\Value;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Catalog\Model\Layer\Resolver;
 
@@ -68,7 +67,7 @@ class Products implements ResolverInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function resolve(
         Field $field,

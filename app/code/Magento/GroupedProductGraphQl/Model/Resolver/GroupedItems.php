@@ -7,15 +7,15 @@ declare(strict_types=1);
 
 namespace Magento\GroupedProductGraphQl\Model\Resolver;
 
+use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\Deferred\Product;
 use Magento\Framework\GraphQl\Config\Element\Field;
-use Magento\Framework\GraphQl\Query\Resolver\Value;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\GroupedProduct\Model\Product\Initialization\Helper\ProductLinks\Plugin\Grouped;
 
 /**
- * {@inheritdoc}
+ * @inheritdoc
  */
 class GroupedItems implements ResolverInterface
 {
@@ -34,7 +34,7 @@ class GroupedItems implements ResolverInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function resolve(
         Field $field,
@@ -44,10 +44,10 @@ class GroupedItems implements ResolverInterface
         array $args = null
     ) {
         if (!isset($value['model'])) {
-            
-            return null;
+            throw new GraphQlInputException(__('"model" value should be specified'));
         }
 
+        $data = [];
         $productModel = $value['model'];
         $links = $productModel->getProductLinks();
         foreach ($links as $link) {

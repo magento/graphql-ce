@@ -14,7 +14,6 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
-use Magento\Framework\GraphQl\Query\Resolver\Value;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 
 /**
@@ -36,7 +35,7 @@ class CustomAttributeMetadata implements ResolverInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritdoc
      */
     public function resolve(
         Field $field,

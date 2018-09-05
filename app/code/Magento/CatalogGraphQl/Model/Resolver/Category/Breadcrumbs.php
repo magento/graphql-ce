@@ -7,12 +7,11 @@ declare(strict_types=1);
 
 namespace Magento\CatalogGraphQl\Model\Resolver\Category;
 
-use \Magento\CatalogGraphQl\Model\Resolver\Category\DataProvider\Breadcrumbs as BreadcrumbsDataProvider;
+use Magento\CatalogGraphQl\Model\Resolver\Category\DataProvider\Breadcrumbs as BreadcrumbsDataProvider;
+use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
-use Magento\Framework\GraphQl\Query\Resolver\Value;
-use Magento\Framework\GraphQl\Query\Resolver\ValueFactory;
 
 /**
  * Retrieves breadcrumbs
@@ -25,20 +24,12 @@ class Breadcrumbs implements ResolverInterface
     private $breadcrumbsDataProvider;
 
     /**
-     * @var ValueFactory
-     */
-    private $valueFactory;
-
-    /**
      * @param BreadcrumbsDataProvider $breadcrumbsDataProvider
-     * @param ValueFactory $valueFactory
      */
     public function __construct(
-        BreadcrumbsDataProvider $breadcrumbsDataProvider,
-        ValueFactory $valueFactory
+        BreadcrumbsDataProvider $breadcrumbsDataProvider
     ) {
         $this->breadcrumbsDataProvider = $breadcrumbsDataProvider;
-        $this->valueFactory = $valueFactory;
     }
 
     /**
@@ -47,13 +38,10 @@ class Breadcrumbs implements ResolverInterface
     public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
     {
         if (!isset($value['path'])) {
-            return null;
+            throw new GraphQlInputException(__('"path" value should be specified'));
         }
 
-        $result = function () use ($value) {
-            $breadcrumbsData = $this->breadcrumbsDataProvider->getData($value['path']);
-            return count($breadcrumbsData) ? $breadcrumbsData : null;
-        };
-        return $this->valueFactory->create($result);
+        $breadcrumbsData = $this->breadcrumbsDataProvider->getData($value['path']);
+        return count($breadcrumbsData) ? $breadcrumbsData : null;
     }
 }

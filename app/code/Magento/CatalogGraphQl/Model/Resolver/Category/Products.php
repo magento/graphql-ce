@@ -9,7 +9,6 @@ namespace Magento\CatalogGraphQl\Model\Resolver\Category;
 
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Framework\GraphQl\Config\Element\Field;
-use Magento\Framework\GraphQl\Query\Resolver\Value;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\GraphQl\Query\Resolver\Argument\SearchCriteria\Builder;
@@ -21,13 +20,19 @@ use Magento\Framework\GraphQl\Exception\GraphQlInputException;
  */
 class Products implements ResolverInterface
 {
-    /** @var \Magento\Catalog\Api\ProductRepositoryInterface */
+    /**
+     * @var \Magento\Catalog\Api\ProductRepositoryInterface
+     */
     private $productRepository;
 
-    /** @var Builder */
+    /**
+     * @var Builder
+     */
     private $searchCriteriaBuilder;
 
-    /** @var Filter */
+    /**
+     * @var Filter
+     */
     private $filterQuery;
 
     /**
@@ -46,7 +51,7 @@ class Products implements ResolverInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function resolve(
         Field $field,
@@ -90,7 +95,6 @@ class Products implements ResolverInterface
                 'current_page' => $currentPage
             ]
         ];
-
         return $data;
     }
 }
