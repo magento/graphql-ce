@@ -55,7 +55,11 @@ class ExtendedStoreConfigDataProvider
         $store = $this->storeManager->getStore();
         $extendedConfigsData = [];
         foreach ($this->extendedConfigs as $key => $path) {
-            $extendedConfigsData[$key] = $this->scopeConfig->getValue($path, ScopeInterface::SCOPE_STORE, $store->getId());
+            $extendedConfigsData[$key] = $this->scopeConfig->getValue(
+                $path,
+                ScopeInterface::SCOPE_STORE,
+                $store->getId()
+            );
         }
 
         return $extendedConfigsData;
