@@ -11,7 +11,6 @@ use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\BundleGraphQl\Model\Resolver\Links\Collection;
 use Magento\Framework\GraphQl\Config\Element\Field;
-use Magento\Framework\GraphQl\Query\Resolver\ValueFactory;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 
 /**
@@ -25,17 +24,10 @@ class BundleItemLinks implements ResolverInterface
     private $linkCollection;
 
     /**
-     * @var ValueFactory
-     */
-    private $valueFactory;
-
-    /**
      * @param Collection $linkCollection
-     * @param ValueFactory $valueFactory
      */
     public function __construct(
-        Collection $linkCollection,
-        ValueFactory $valueFactory
+        Collection $linkCollection
     ) {
         $this->linkCollection = $linkCollection;
     }
