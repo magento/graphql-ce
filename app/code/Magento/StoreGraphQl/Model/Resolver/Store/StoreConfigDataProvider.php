@@ -78,7 +78,6 @@ class StoreConfigDataProvider
             'secure_base_static_url' => $storeConfig->getSecureBaseStaticUrl(),
             'secure_base_media_url' => $storeConfig->getSecureBaseMediaUrl()
         ];
-
         return $storeConfigData;
     }
 }
