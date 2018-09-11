@@ -12,7 +12,6 @@ use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\TierPrice;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\Resolver\Value;
-use Magento\Framework\GraphQl\Query\Resolver\ValueFactory;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 
 /**
@@ -22,19 +21,6 @@ use Magento\Framework\GraphQl\Query\ResolverInterface;
  */
 class TierPrices implements ResolverInterface
 {
-    /**
-     * @var ValueFactory
-     */
-    private $valueFactory;
-
-    /**
-     * @param ValueFactory $valueFactory
-     */
-    public function __construct(ValueFactory $valueFactory)
-    {
-        $this->valueFactory = $valueFactory;
-    }
-
     /**
      * Format product's tier price data to conform to GraphQL schema
      *
@@ -46,12 +32,10 @@ class TierPrices implements ResolverInterface
         ResolveInfo $info,
         array $value = null,
         array $args = null
-    ): Value {
+    ){
         if (!isset($value['model'])) {
-            $result = function () {
-                return null;
-            };
-            return $this->valueFactory->create($result);
+            
+            return null;
         }
 
         /** @var Product $product */
@@ -66,10 +50,6 @@ class TierPrices implements ResolverInterface
             }
         }
 
-        $result = function () use ($tierPrices) {
-            return $tierPrices;
-        };
-
-        return $this->valueFactory->create($result);
+        return $tierPrices;
     }
 }

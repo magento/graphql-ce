@@ -42,7 +42,7 @@ class Attributes implements ResolverInterface
         ResolveInfo $info,
         array $value = null,
         array $args = null
-    ): Value {
+    ) {
         if (!isset($value['options']) || !isset($value['product'])) {
             $result = function () {
                 return null;

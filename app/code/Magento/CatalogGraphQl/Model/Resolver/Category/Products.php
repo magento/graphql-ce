@@ -10,7 +10,6 @@ namespace Magento\CatalogGraphQl\Model\Resolver\Category;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\Resolver\Value;
-use Magento\Framework\GraphQl\Query\Resolver\ValueFactory;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\GraphQl\Query\Resolver\Argument\SearchCriteria\Builder;
@@ -31,25 +30,19 @@ class Products implements ResolverInterface
     /** @var Filter */
     private $filterQuery;
 
-    /** @var ValueFactory */
-    private $valueFactory;
-
     /**
      * @param ProductRepositoryInterface $productRepository
      * @param Builder $searchCriteriaBuilder
      * @param Filter $filterQuery
-     * @param ValueFactory $valueFactory
      */
     public function __construct(
         ProductRepositoryInterface $productRepository,
         Builder $searchCriteriaBuilder,
-        Filter $filterQuery,
-        ValueFactory $valueFactory
+        Filter $filterQuery
     ) {
         $this->productRepository = $productRepository;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->filterQuery = $filterQuery;
-        $this->valueFactory = $valueFactory;
     }
 
     /**
@@ -61,7 +54,7 @@ class Products implements ResolverInterface
         ResolveInfo $info,
         array $value = null,
         array $args = null
-    ): Value {
+    ) {
         $args['filter'] = [
             'category_id' => [
                 'eq' => $value['id']
@@ -98,10 +91,6 @@ class Products implements ResolverInterface
             ]
         ];
 
-        $result = function () use ($data) {
-            return $data;
-        };
-
-        return $this->valueFactory->create($result);
+        return $data;
     }
 }

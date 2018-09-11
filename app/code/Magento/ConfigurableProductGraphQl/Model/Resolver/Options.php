@@ -57,7 +57,7 @@ class Options implements ResolverInterface
      *
      * {@inheritDoc}
      */
-    public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null) : Value
+    public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
     {
         $linkField = $this->metadataPool->getMetadata(ProductInterface::class)->getLinkField();
         if ($value['type_id'] !== Type::TYPE_CODE || !isset($value[$linkField])) {

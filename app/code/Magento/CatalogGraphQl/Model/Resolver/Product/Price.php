@@ -13,7 +13,6 @@ use Magento\Catalog\Pricing\Price\FinalPrice;
 use Magento\Catalog\Pricing\Price\RegularPrice;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\Resolver\Value;
-use Magento\Framework\GraphQl\Query\Resolver\ValueFactory;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\Pricing\Adjustment\AdjustmentInterface;
 use Magento\Framework\Pricing\Amount\AmountInterface;
@@ -43,16 +42,13 @@ class Price implements ResolverInterface
     /**
      * @param StoreManagerInterface $storeManager
      * @param PriceInfoFactory $priceInfoFactory
-     * @param ValueFactory $valueFactory
      */
     public function __construct(
         StoreManagerInterface $storeManager,
-        PriceInfoFactory $priceInfoFactory,
-        ValueFactory $valueFactory
+        PriceInfoFactory $priceInfoFactory
     ) {
         $this->storeManager = $storeManager;
         $this->priceInfoFactory = $priceInfoFactory;
-        $this->valueFactory = $valueFactory;
     }
 
     /**
@@ -66,12 +62,10 @@ class Price implements ResolverInterface
         ResolveInfo $info,
         array $value = null,
         array $args = null
-    ): Value {
+    ) {
         if (!isset($value['model'])) {
-            $result = function () {
-                return null;
-            };
-            return $this->valueFactory->create($result);
+            
+            return null;
         }
 
         /** @var Product $product */
@@ -90,11 +84,7 @@ class Price implements ResolverInterface
             'maximalPrice' => $this->createAdjustmentsArray($priceInfo->getAdjustments(), $maximalPriceAmount)
         ];
 
-        $result = function () use ($prices) {
-            return $prices;
-        };
-
-        return $this->valueFactory->create($result);
+        return $prices;
     }
 
     /**

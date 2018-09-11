@@ -15,7 +15,6 @@ use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
 use Magento\Framework\GraphQl\Query\Resolver\Value;
-use Magento\Framework\GraphQl\Query\Resolver\ValueFactory;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 
 /**
@@ -28,16 +27,12 @@ class CustomAttributeMetadata implements ResolverInterface
      */
     private $type;
 
-    private $valueFactory;
-
     /**
      * @param Type $type
-     * @param ValueFactory $valueFactory
      */
-    public function __construct(Type $type, ValueFactory $valueFactory)
+    public function __construct(Type $type)
     {
         $this->type = $type;
-        $this->valueFactory = $valueFactory;
     }
 
     /**
@@ -49,7 +44,7 @@ class CustomAttributeMetadata implements ResolverInterface
         ResolveInfo $info,
         array $value = null,
         array $args = null
-    ) : Value {
+    ) {
         $attributes['items'] = null;
         $attributeInputs = $args['attributes'];
         foreach ($attributeInputs as $attribute) {
@@ -88,11 +83,7 @@ class CustomAttributeMetadata implements ResolverInterface
             ];
         }
 
-        $result = function () use ($attributes) {
-            return $attributes;
-        };
-
-        return $this->valueFactory->create($result);
+        return $attributes;
     }
 
     /**

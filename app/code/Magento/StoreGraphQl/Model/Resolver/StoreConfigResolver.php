@@ -50,7 +50,7 @@ class StoreConfigResolver implements ResolverInterface
         ResolveInfo $info,
         array $value = null,
         array $args = null
-    ) : Value {
+    ) {
 
         $storeConfigData = $this->storeConfigDataProvider->getStoreConfig();
 

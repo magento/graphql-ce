@@ -44,13 +44,10 @@ class Breadcrumbs implements ResolverInterface
     /**
      * @inheritdoc
      */
-    public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null): Value
+    public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
     {
         if (!isset($value['path'])) {
-            $result = function () {
-                return null;
-            };
-            return $this->valueFactory->create($result);
+            return null;
         }
 
         $result = function () use ($value) {

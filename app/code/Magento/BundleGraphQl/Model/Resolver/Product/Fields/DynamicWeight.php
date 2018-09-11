@@ -12,7 +12,6 @@ use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Bundle\Model\Product\Type as Bundle;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\Resolver\Value;
-use Magento\Framework\GraphQl\Query\Resolver\ValueFactory;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 
 /**
@@ -20,19 +19,6 @@ use Magento\Framework\GraphQl\Query\ResolverInterface;
  */
 class DynamicWeight implements ResolverInterface
 {
-    /**
-     * @var ValueFactory
-     */
-    private $valueFactory;
-
-    /**
-     * @param ValueFactory $valueFactory
-     */
-    public function __construct(ValueFactory $valueFactory)
-    {
-        $this->valueFactory = $valueFactory;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -42,7 +28,7 @@ class DynamicWeight implements ResolverInterface
         ResolveInfo $info,
         array $value = null,
         array $args = null
-    ): Value {
+    ) {
         $result = function () {
             return null;
         };
@@ -50,10 +36,6 @@ class DynamicWeight implements ResolverInterface
             $result = isset($value['weight_type']) ? !$value['weight_type'] : null;
         }
 
-        return $this->valueFactory->create(
-            function () use ($result) {
-                return $result;
-            }
-        );
+        return $result;
     }
 }

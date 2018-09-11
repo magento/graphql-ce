@@ -11,7 +11,6 @@ use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\Deferred\Product;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\Resolver\Value;
-use Magento\Framework\GraphQl\Query\Resolver\ValueFactory;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\GroupedProduct\Model\Product\Initialization\Helper\ProductLinks\Plugin\Grouped;
 
@@ -21,24 +20,16 @@ use Magento\GroupedProduct\Model\Product\Initialization\Helper\ProductLinks\Plug
 class GroupedItems implements ResolverInterface
 {
     /**
-     * @var ValueFactory
-     */
-    private $valueFactory;
-
-    /**
      * @var Product
      */
     private $productResolver;
 
     /**
-     * @param ValueFactory $valueFactory
      * @param Product $productResolver
      */
     public function __construct(
-        ValueFactory $valueFactory,
         Product $productResolver
     ) {
-        $this->valueFactory = $valueFactory;
         $this->productResolver = $productResolver;
     }
 
@@ -51,12 +42,10 @@ class GroupedItems implements ResolverInterface
         ResolveInfo $info,
         array $value = null,
         array $args = null
-    ): Value {
+    ) {
         if (!isset($value['model'])) {
-            $result = function () {
-                return null;
-            };
-            return $this->valueFactory->create($result);
+            
+            return null;
         }
 
         $productModel = $value['model'];
@@ -73,10 +62,6 @@ class GroupedItems implements ResolverInterface
             ];
         }
 
-        $result = function () use ($data) {
-            return $data;
-        };
-
-        return $this->valueFactory->create($result);
+        return $data;
     }
 }
