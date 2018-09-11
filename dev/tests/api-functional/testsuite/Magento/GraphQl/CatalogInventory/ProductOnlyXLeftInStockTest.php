@@ -39,11 +39,10 @@ QUERY;
 
     /**
      * @magentoApiDataFixture Magento/Catalog/_files/product_simple_with_all_fields.php
-     * @magentoConfigFixture default_store cataloginventory/options/stock_threshold_qty 120
+     * @magentoApiConfigFixture default_store cataloginventory/options/stock_threshold_qty 120
      */
     public function testQueryProductOnlyXLeftInStockEnabled()
     {
-        $this->markTestIncomplete('https://github.com/magento/graphql-ce/issues/167');
         $productSku = 'simple';
 
         $query = <<<QUERY
