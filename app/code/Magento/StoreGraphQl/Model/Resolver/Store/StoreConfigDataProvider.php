@@ -7,9 +7,9 @@ declare(strict_types=1);
 
 namespace Magento\StoreGraphQl\Model\Resolver\Store;
 
-use Magento\Store\Api\Data\StoreConfigInterface;
 use Magento\Store\Api\StoreConfigManagerInterface;
-use Magento\Store\Model\StoreManagerInterface;
+use Magento\Store\Api\StoreRepositoryInterface;
+use Magento\Store\Api\StoreResolverInterface;
 
 /**
  * StoreConfig field data provider, used for GraphQL request processing.
@@ -22,20 +22,28 @@ class StoreConfigDataProvider
     private $storeConfigManager;
 
     /**
-     * @var StoreManagerInterface
+     * @var StoreResolverInterface
      */
-    private $storeManager;
+    private $storeResolver;
+
+    /**
+     * @var StoreRepositoryInterface
+     */
+    private $storeRepository;
 
     /**
      * @param StoreConfigManagerInterface $storeConfigManager
-     * @param StoreManagerInterface $storeManager
+     * @param StoreResolverInterface $storeResolver
+     * @param StoreRepositoryInterface $storeRepository
      */
     public function __construct(
         StoreConfigManagerInterface $storeConfigManager,
-        StoreManagerInterface $storeManager
+        StoreResolverInterface $storeResolver,
+        StoreRepositoryInterface $storeRepository
     ) {
         $this->storeConfigManager = $storeConfigManager;
-        $this->storeManager = $storeManager;
+        $this->storeResolver = $storeResolver;
+        $this->storeRepository = $storeRepository;
     }
 
     /**
@@ -45,21 +53,10 @@ class StoreConfigDataProvider
      */
     public function getStoreConfig() : array
     {
-        $store = $this->storeManager->getStore();
+        $storeId = $this->storeResolver->getCurrentStoreId();
+        $store = $this->storeRepository->getById($storeId);
         $storeConfig = current($this->storeConfigManager->getStoreConfigs([$store->getCode()]));
 
-        return $this->hydrateStoreConfig($storeConfig);
-    }
-
-    /**
-     * Transform StoreConfig object to in array format
-     *
-     * @param StoreConfigInterface $storeConfig
-     * @return array
-     */
-    private function hydrateStoreConfig($storeConfig): array
-    {
-        /** @var StoreConfigInterface $storeConfig */
         $storeConfigData = [
             'id' => $storeConfig->getId(),
             'code' => $storeConfig->getCode(),

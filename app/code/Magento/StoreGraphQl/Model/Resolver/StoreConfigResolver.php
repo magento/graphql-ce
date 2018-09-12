@@ -8,8 +8,6 @@ declare(strict_types=1);
 namespace Magento\StoreGraphQl\Model\Resolver;
 
 use Magento\Framework\GraphQl\Config\Element\Field;
-use Magento\Framework\GraphQl\Query\Resolver\Value;
-use Magento\Framework\GraphQl\Query\Resolver\ValueFactory;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\StoreGraphQl\Model\Resolver\Store\ExtendedStoreConfigDataProvider;
@@ -31,27 +29,19 @@ class StoreConfigResolver implements ResolverInterface
     private $extendedStoreConfigsDataProvider;
 
     /**
-     * @var ValueFactory
-     */
-    private $valueFactory;
-
-    /**
      * @param StoreConfigDataProvider $storeConfigsDataProvider
      * @param ExtendedStoreConfigDataProvider $extendedStoreConfigsDataProvider
-     * @param ValueFactory $valueFactory
      */
     public function __construct(
         StoreConfigDataProvider $storeConfigsDataProvider,
-        ExtendedStoreConfigDataProvider $extendedStoreConfigsDataProvider,
-        ValueFactory $valueFactory
+        ExtendedStoreConfigDataProvider $extendedStoreConfigsDataProvider
     ) {
-        $this->valueFactory = $valueFactory;
         $this->storeConfigDataProvider = $storeConfigsDataProvider;
         $this->extendedStoreConfigsDataProvider = $extendedStoreConfigsDataProvider;
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function resolve(
         Field $field,
@@ -59,17 +49,12 @@ class StoreConfigResolver implements ResolverInterface
         ResolveInfo $info,
         array $value = null,
         array $args = null
-    ) : Value {
+    ) {
 
         $storeConfigData = array_merge(
             $this->storeConfigDataProvider->getStoreConfig(),
             $this->extendedStoreConfigsDataProvider->getExtendedConfigs()
         );
-
-        $result = function () use ($storeConfigData) {
-            return !empty($storeConfigData) ? $storeConfigData : [];
-        };
-
-        return $this->valueFactory->create($result);
+        return $storeConfigData;
     }
 }
