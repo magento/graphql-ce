@@ -10,7 +10,6 @@ namespace Magento\StoreGraphQl\Model\Resolver;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
-use Magento\StoreGraphQl\Model\Resolver\Store\ExtendedStoreConfigDataProvider;
 use Magento\StoreGraphQl\Model\Resolver\Store\StoreConfigDataProvider;
 
 /**
@@ -24,20 +23,12 @@ class StoreConfigResolver implements ResolverInterface
     private $storeConfigDataProvider;
 
     /**
-     * @var ExtendedStoreConfigDataProvider
-     */
-    private $extendedStoreConfigsDataProvider;
-
-    /**
      * @param StoreConfigDataProvider $storeConfigsDataProvider
-     * @param ExtendedStoreConfigDataProvider $extendedStoreConfigsDataProvider
      */
     public function __construct(
-        StoreConfigDataProvider $storeConfigsDataProvider,
-        ExtendedStoreConfigDataProvider $extendedStoreConfigsDataProvider
+        StoreConfigDataProvider $storeConfigsDataProvider
     ) {
         $this->storeConfigDataProvider = $storeConfigsDataProvider;
-        $this->extendedStoreConfigsDataProvider = $extendedStoreConfigsDataProvider;
     }
 
     /**
@@ -50,11 +41,6 @@ class StoreConfigResolver implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
-
-        $storeConfigData = array_merge(
-            $this->storeConfigDataProvider->getStoreConfig(),
-            $this->extendedStoreConfigsDataProvider->getExtendedConfigs()
-        );
-        return $storeConfigData;
+        return $this->storeConfigDataProvider->getStoreConfigData();
     }
 }

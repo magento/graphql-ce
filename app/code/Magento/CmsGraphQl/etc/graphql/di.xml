@@ -6,9 +6,9 @@
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <type name="Magento\StoreGraphQl\Model\Resolver\Store\ExtendedStoreConfigDataProvider">
+    <type name="Magento\StoreGraphQl\Model\Resolver\Store\StoreConfigDataProvider">
         <arguments>
-            <argument name="extendedConfigs" xsi:type="array">
+            <argument name="extendedConfigData" xsi:type="array">
                 <item name="front" xsi:type="string">web/default/front</item>
                 <item name="cms_home_page" xsi:type="string">web/default/cms_home_page</item>
                 <item name="no_route" xsi:type="string">web/default/no_route</item>
