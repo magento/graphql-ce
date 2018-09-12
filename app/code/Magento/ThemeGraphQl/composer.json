@@ -7,7 +7,6 @@
         "magento/framework": "*"
     },
     "suggest": {
-        "magento/module-graph-ql": "*",
         "magento/module-store-graph-ql": "*"
     },
     "license": [
