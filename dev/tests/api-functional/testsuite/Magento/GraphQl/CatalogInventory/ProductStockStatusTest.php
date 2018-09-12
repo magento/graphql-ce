@@ -51,11 +51,10 @@ QUERY;
 
     /**
      * @magentoApiDataFixture Magento/Catalog/_files/product_simple_with_all_fields.php
-     * @magentoConfigFixture default_store cataloginventory/options/show_out_of_stock 1
+     * @magentoApiConfigFixture default_store cataloginventory/options/show_out_of_stock 1
      */
     public function testQueryProductStockStatusOutOfStock()
     {
-        $this->markTestIncomplete('https://github.com/magento/graphql-ce/issues/167');
         $productSku = 'simple';
 
         $query = <<<QUERY

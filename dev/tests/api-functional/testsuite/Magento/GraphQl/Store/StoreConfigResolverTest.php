@@ -28,9 +28,6 @@ class StoreConfigResolverTest extends GraphQlAbstract
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
     }
 
-    /**
-     * @magentoApiDataFixture Magento/Store/_files/store.php
-     */
     public function testGetStoreConfig()
     {
         /** @var  StoreConfigManagerInterface $storeConfigsManager */
