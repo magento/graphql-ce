@@ -125,7 +125,6 @@
         "magento/module-checkout": "*",
         "magento/module-checkout-agreements": "*",
         "magento/module-cms": "*",
-        "magento/module-cms-graph-ql": "*",
         "magento/module-cms-url-rewrite": "*",
         "magento/module-config": "*",
         "magento/module-configurable-import-export": "*",

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ecd17c9b3713554b75fa656e0aecd96c",
+    "content-hash": "dd4e124e9aeb0765049ab4ab9629274d",
     "packages": [
         {
             "name": "braintree/braintree_php",
