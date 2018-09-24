@@ -48,6 +48,10 @@ class Block
     {
         $block = $this->blockRepository->getById($blockIdentifier);
 
+        if (!$block->getId()) {
+            throw new NoSuchEntityException();
+        }
+
         $renderedContent = $this->widgetFilter->filter($block->getContent());
 
         $blockData = [
