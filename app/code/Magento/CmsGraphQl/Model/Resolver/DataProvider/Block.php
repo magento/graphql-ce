@@ -40,7 +40,7 @@ class Block
     }
 
     /**
-     * get block data
+     * Get block data
      *
      * @param string $blockIdentifier
      * @return array
