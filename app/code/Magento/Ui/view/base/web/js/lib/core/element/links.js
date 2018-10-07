@@ -187,12 +187,12 @@ define([
      */
     function setLink(target, owner, data, property, immediate) {
         var direction = data.direction,
-            formated = form(target, owner, data.property, property, direction),
+            formatted = form(target, owner, data.property, property, direction),
             callback,
             value;
 
-        owner = formated.owner;
-        target = formated.target;
+        owner = formatted.owner;
+        target = formatted.target;
 
         callback = updateValue.bind(null, data, owner, target);
 
