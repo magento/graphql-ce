@@ -29,7 +29,7 @@ class Block
 
     /**
      * @param BlockRepositoryInterface $blockRepository
-     * @param FilterEmulate $widgetFilterget
+     * @param FilterEmulate $widgetFilter
      */
     public function __construct(
         BlockRepositoryInterface $blockRepository,
