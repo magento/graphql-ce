@@ -29,7 +29,7 @@ class Block
 
     /**
      * @param BlockRepositoryInterface $blockRepository
-     * @param FilterEmulate $widgetFilter
+     * @param FilterEmulate $widgetFilterget
      */
     public function __construct(
         BlockRepositoryInterface $blockRepository,
@@ -53,7 +53,7 @@ class Block
         if (false === $block->isActive()) {
             return array();
         }
-        
+
         $renderedContent = $this->widgetFilter->filter($block->getContent());
 
         $blockData = [
