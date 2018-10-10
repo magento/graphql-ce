@@ -50,6 +50,10 @@ class Block
     {
         $block = $this->blockRepository->getById($blockIdentifier);
 
+        if (false === $block->isActive()) {
+            return array();
+        }
+        
         $renderedContent = $this->widgetFilter->filter($block->getContent());
 
         $blockData = [
