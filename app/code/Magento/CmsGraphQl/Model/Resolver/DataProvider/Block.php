@@ -51,7 +51,7 @@ class Block
         $block = $this->blockRepository->getById($blockIdentifier);
 
         if (false === $block->isActive()) {
-            return array();
+            return [];
         }
 
         $renderedContent = $this->widgetFilter->filter($block->getContent());
