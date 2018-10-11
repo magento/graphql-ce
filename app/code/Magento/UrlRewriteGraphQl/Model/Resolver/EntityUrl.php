@@ -71,11 +71,13 @@ class EntityUrl implements ResolverInterface
         }
         $customUrl = $this->customUrlLocator->locateUrl($url);
         $url = $customUrl ?: $url;
-        $urlRewrite = $this->findCanonicalUrl($url);
+        $urlRewrite = $this->findRelativelUrl($url);
+        $baseUrl = $this->storeManager->getStore()->getBaseUrl();
         if ($urlRewrite) {
             $result = [
                 'id' => $urlRewrite->getEntityId(),
-                'canonical_url' => $urlRewrite->getTargetPath(),
+                'relative_url' => $urlRewrite->getTargetPath(),
+                'absolute_url' => $baseUrl . $urlRewrite->getTargetPath(),
                 'type' => $this->sanitizeType($urlRewrite->getEntityType())
             ];
         }
@@ -83,12 +85,12 @@ class EntityUrl implements ResolverInterface
     }
 
     /**
-     * Find the canonical url passing through all redirects if any
+     * Find the relative url passing through all redirects if any
      *
      * @param string $requestPath
      * @return \Magento\UrlRewrite\Service\V1\Data\UrlRewrite|null
      */
-    private function findCanonicalUrl(string $requestPath) : ?\Magento\UrlRewrite\Service\V1\Data\UrlRewrite
+    private function findRelativelUrl(string $requestPath) : ?\Magento\UrlRewrite\Service\V1\Data\UrlRewrite
     {
         $urlRewrite = $this->findUrlFromRequestPath($requestPath);
         if ($urlRewrite && $urlRewrite->getRedirectType() > 0) {

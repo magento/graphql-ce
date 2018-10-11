@@ -51,25 +51,6 @@ class UrlRewrite implements ResolverInterface
         /** @var AbstractModel $entity */
         $entity = $value['model'];
         $entityId = $entity->getEntityId();
-        $result = null;
-        $url = $args['url'];
-        if (substr($url, 0, 1) === '/' && $url !== '/') {
-            $url = ltrim($url, '/');
-        }
-        $customUrl = $this->customUrlLocator->locateUrl($url);
-        $url = $customUrl ?: $url;
-        $urlRewrite = $this->findCanonicalUrl($url);
-        $baseUrl = $this->storeManager->getStore()->getBaseUrl();
-        if ($urlRewrite) {
-            $result = [
-                'id' => $urlRewrite->getEntityId(),
-                'relative_url' => $urlRewrite->getTargetPath(),
-                'absolute_url' => $baseUrl . $urlRewrite->getTargetPath(),
-                'type' => $this->sanitizeType($urlRewrite->getEntityType())
-            ];
-        }
-        return $result;
-    }
 
         $urlRewriteCollection = $this->urlFinder->findAllByData([UrlRewriteDTO::ENTITY_ID => $entityId]);
         $urlRewrites = [];
