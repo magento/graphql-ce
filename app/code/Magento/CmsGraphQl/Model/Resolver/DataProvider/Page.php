@@ -26,6 +26,11 @@ class Page
      * @var PageRepositoryInterface
      */
     private $pageRepository;
+    
+    /**
+     * Page Url Key
+     */
+    const URL_KEY = 'url_key';
 
     /**
      * @param PageRepositoryInterface $pageRepository
@@ -55,7 +60,7 @@ class Page
         $renderedContent = $this->widgetFilter->filter($page->getContent());
 
         $pageData = [
-            'url_key' => $page->getIdentifier(),
+            self:URL_KEY => $page->getIdentifier(),
             PageInterface::TITLE => $page->getTitle(),
             PageInterface::CONTENT => $renderedContent,
             PageInterface::CONTENT_HEADING => $page->getContentHeading(),
