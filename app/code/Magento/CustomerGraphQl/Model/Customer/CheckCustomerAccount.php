@@ -19,7 +19,7 @@ use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
 /**
  * Check customer account
  */
-class CheckCustomerAccount
+class CheckCustomerAccount implements CheckCustomerAccountInterface
 {
     /**
      * @var AuthenticationInterface
@@ -52,14 +52,7 @@ class CheckCustomerAccount
     }
 
     /**
-     * Check customer account
-     *
-     * @param int|null $customerId
-     * @param int|null $customerType
-     * @return void
-     * @throws GraphQlAuthorizationException
-     * @throws GraphQlNoSuchEntityException
-     * @throws GraphQlAuthenticationException
+     * {@inheritdoc}
      */
     public function execute(?int $customerId, ?int $customerType): void
     {
