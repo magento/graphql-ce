@@ -1,0 +1,23 @@
+# Copyright © Magento, Inc. All rights reserved.
+# See COPYING.txt for license details.
+
+type Query {
+    productReviews: Reviews @resolver(class: "Magento\\ReviewGraphQl\\Model\\Resolver\\Product\\Reviews") @doc(description: "The product review query returns information about a product reviews given by a customer")
+}
+
+type Reviews {
+    items: [Review] @doc(description: "And array of customer product reviews")
+}
+
+type Review @doc(description: "Review defines the customer product review details") {
+    review_id: Int @doc(description: "The ID assigned to the review")
+    entity_id: Int @doc(description: "The entity ID assigned to the review")
+    store_id: Int @doc(description: "The store ID assigned to the review")
+    entity_name: String @doc(description: "The entity name assigned to the review")
+    title: String @doc(description: "The review title")
+    detail: String @doc(description: "The review detail")
+    sum: Int @doc(description: "The review rating")
+    count: Int @doc(description: "The review count for current entity")
+    nickname: String @doc(description: "The customer's nickname")
+    created_at: String @doc(description: "Timestamp indicating when the account was created")
+}
