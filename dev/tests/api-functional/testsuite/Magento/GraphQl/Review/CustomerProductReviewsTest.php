@@ -53,6 +53,7 @@ query {
             sum
             count
             nickname
+            status_id
             created_at
         }
     }
@@ -71,6 +72,7 @@ QUERY;
             $this->assertEquals($data['entity_name'], $response['productReviews']['items'][$key]['entity_name']);
             $this->assertEquals($data['title'], $response['productReviews']['items'][$key]['title']);
             $this->assertEquals($data['detail'], $response['productReviews']['items'][$key]['detail']);
+            $this->assertEquals($data['status_id'], $response['productReviews']['items'][$key]['status_id']);
             $this->assertEquals($data['nickname'], $response['productReviews']['items'][$key]['nickname']);
         }
     }
@@ -101,6 +103,7 @@ QUERY;
                 'entity_name' => 'Simple Product',
                 'title' => 'Not Approved Review Summary',
                 'detail' => 'Review text',
+                'status_id' => \Magento\Review\Model\Review::STATUS_NOT_APPROVED,
                 'nickname' => 'Nickname',
             ],
             [
@@ -109,6 +112,7 @@ QUERY;
                 'entity_name' => 'Simple Product',
                 'title' => 'Approved Review Summary',
                 'detail' => 'Review text',
+                'status_id' => \Magento\Review\Model\Review::STATUS_APPROVED,
                 'nickname' => 'Nickname',
             ],
             [
@@ -117,6 +121,7 @@ QUERY;
                 'entity_name' => 'Simple Product',
                 'title' => 'Secondary Approved Review Summary',
                 'detail' => 'Review text',
+                'status_id' => \Magento\Review\Model\Review::STATUS_APPROVED,
                 'nickname' => 'Nickname',
             ],
             [
@@ -125,6 +130,7 @@ QUERY;
                 'entity_name' => 'Simple Product',
                 'title' => 'Pending Review Summary',
                 'detail' => 'Review text',
+                'status_id' => \Magento\Review\Model\Review::STATUS_PENDING,
                 'nickname' => 'Nickname',
             ],
         ];

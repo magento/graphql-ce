@@ -70,6 +70,7 @@ class Review
                 'sum' => $review->getSum(),
                 'count' => $review->getCount(),
                 'nickname' => $review->getNickname(),
+                'status_id' => $review->getStatusId(),
                 'created_at' => $review->getCreatedAt(),
             ];
         }
