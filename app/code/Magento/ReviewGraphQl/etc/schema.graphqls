@@ -19,5 +19,6 @@ type Review @doc(description: "Review defines the customer product review detail
     sum: Int @doc(description: "The review rating")
     count: Int @doc(description: "The review count for current entity")
     nickname: String @doc(description: "The customer's nickname")
+    status_id: Int @doc(description: "The review status. Default values are 1 (Approved), 2 (Pending), and 3 (Not Approved)")
     created_at: String @doc(description: "Timestamp indicating when the account was created")
 }
