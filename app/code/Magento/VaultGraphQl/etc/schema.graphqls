@@ -1,0 +1,40 @@
+# Copyright © Magento, Inc. All rights reserved.
+# See COPYING.txt for license details.
+
+type Query {
+    storePaymentTokenList: [PaymentToken] @resolver(class: "Magento\\VaultGraphQl\\Model\\Resolver\\StorePaymentTokenList") @doc(description: "The storePaymentTokenList query returns a list of stored payment methods for a logged-in customer")
+}
+
+type Mutation {
+    storePaymentTokenDelete(id: Int!): Boolean @resolver(class: "Magento\\VaultGraphQl\\Model\\Resolver\\StorePaymentTokenDelete") @doc(description: "Remove the stored payment tokens")
+}
+
+type PaymentToken @doc(description: "PaymentToken defines the stored payment details") {
+    entity_id: Int @doc(description: "The ID assigned to the payment token")
+    customer_id: Int @doc(description: "The customer ID")
+    payment_method_code: String @doc(description: "The payment method code")
+    type: String @doc(description: "The payment token type")
+    created_at: String @doc(description: "Timestamp indicating when the payment token was created")
+    expires_at: String @doc(description: "Timestamp indicating when the payment token was updated")
+
+    expiration_date: String @doc(description: "The Card expiration date")
+    card_number: String @doc(description: "The last numbers for card number")
+    card_type: CreditCardType @doc(description: "The Card type")
+
+    is_active: Boolean @doc(description: "Indicating is active")
+    is_visible: Boolean @doc(description: "Indicating is visible")
+}
+
+enum CreditCardType @doc(description: "The list of available credit cards codes") {
+    AE @doc(description: "American Express")
+    DI @doc(description: "Discover")
+    DN @doc(description: "Diners Club")
+    JCB @doc(description: "Japan Credit Bureau")
+    MC @doc(description: "Mastercard Credit")
+    MD @doc(description: "Maestro")
+    MI @doc(description: "Maestro")
+    SM @doc(description: "Smart")
+    SO @doc(description: "Solo")
+    UN @doc(description: "Union Pay")
+    VI @doc(description: "Visa")
+}
