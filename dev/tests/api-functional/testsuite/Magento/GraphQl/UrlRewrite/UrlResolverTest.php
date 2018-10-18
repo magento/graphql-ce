@@ -17,7 +17,7 @@ use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 
 /**
- * Test the GraphQL endpoint's URLResolver query to verify canonical URL's are correctly returned.
+ * Test the GraphQL endpoint's URLResolver query to verify relative URL's are correctly returned.
  */
 class UrlResolverTest extends GraphQlAbstract
 {
@@ -31,7 +31,7 @@ class UrlResolverTest extends GraphQlAbstract
     }
 
     /**
-     * Tests if target_path(canonical_url) is resolved for Product entity
+     * Tests if target_path(relative_url) is resolved for Product entity
      *
      * @magentoApiDataFixture Magento/CatalogUrlRewrite/_files/product_with_category.php
      */
@@ -60,7 +60,7 @@ class UrlResolverTest extends GraphQlAbstract
   urlResolver(url:"{$urlPath}")
   {
    id
-   canonical_url
+   relative_url
    type
   }
 }
@@ -68,16 +68,16 @@ QUERY;
         $response = $this->graphQlQuery($query);
         $this->assertArrayHasKey('urlResolver', $response);
         $this->assertEquals($product->getEntityId(), $response['urlResolver']['id']);
-        $this->assertEquals($targetPath, $response['urlResolver']['canonical_url']);
+        $this->assertEquals($targetPath, $response['urlResolver']['relative_url']);
         $this->assertEquals(strtoupper($expectedType), $response['urlResolver']['type']);
     }
 
     /**
-     * Tests the use case where canonical_url is provided as resolver input in the Query
+     * Tests the use case where relative_url is provided as resolver input in the Query
      *
      * @magentoApiDataFixture Magento/CatalogUrlRewrite/_files/product_with_category.php
      */
-    public function testProductUrlWithCanonicalUrlInput()
+    public function testProductUrlWithRelativeUrlInput()
     {
         $productSku = 'p002';
         $urlPath = 'p002.html';
@@ -97,14 +97,13 @@ QUERY;
         );
         $targetPath = $actualUrls->getTargetPath();
         $expectedType = $actualUrls->getEntityType();
-        $canonicalPath = $actualUrls->getTargetPath();
         $query
             = <<<QUERY
 {
-  urlResolver(url:"{$canonicalPath}")
+  urlResolver(url:"{$targetPath}")
   {
    id
-   canonical_url
+   relative_url
    type
   }
 }
@@ -112,7 +111,7 @@ QUERY;
         $response = $this->graphQlQuery($query);
         $this->assertArrayHasKey('urlResolver', $response);
         $this->assertEquals($product->getEntityId(), $response['urlResolver']['id']);
-        $this->assertEquals($targetPath, $response['urlResolver']['canonical_url']);
+        $this->assertEquals($targetPath, $response['urlResolver']['relative_url']);
         $this->assertEquals(strtoupper($expectedType), $response['urlResolver']['type']);
     }
 
@@ -147,7 +146,7 @@ QUERY;
   urlResolver(url:"{$urlPath2}")
   {
    id
-   canonical_url
+   relative_url
    type
   }
 }
@@ -155,7 +154,7 @@ QUERY;
         $response = $this->graphQlQuery($query);
         $this->assertArrayHasKey('urlResolver', $response);
         $this->assertEquals($categoryId, $response['urlResolver']['id']);
-        $this->assertEquals($targetPath, $response['urlResolver']['canonical_url']);
+        $this->assertEquals($targetPath, $response['urlResolver']['relative_url']);
         $this->assertEquals(strtoupper($expectedType), $response['urlResolver']['type']);
     }
 
@@ -183,14 +182,14 @@ QUERY;
   urlResolver(url:"{$requestPath}")
   {
    id
-   canonical_url
+   relative_url
    type
   }
 }
 QUERY;
         $response = $this->graphQlQuery($query);
         $this->assertEquals($cmsPageId, $response['urlResolver']['id']);
-        $this->assertEquals($targetPath, $response['urlResolver']['canonical_url']);
+        $this->assertEquals($targetPath, $response['urlResolver']['relative_url']);
         $this->assertEquals(strtoupper(str_replace('-', '_', $expectedEntityType)), $response['urlResolver']['type']);
     }
 
@@ -226,7 +225,7 @@ QUERY;
   urlResolver(url:"{$urlPath}")
   {
    id
-   canonical_url
+   relative_url
    type
   }
 }
@@ -234,7 +233,7 @@ QUERY;
         $response = $this->graphQlQuery($query);
         $this->assertArrayHasKey('urlResolver', $response);
         $this->assertEquals($product->getEntityId(), $response['urlResolver']['id']);
-        $this->assertEquals($targetPath, $response['urlResolver']['canonical_url']);
+        $this->assertEquals($targetPath, $response['urlResolver']['relative_url']);
         $this->assertEquals(strtoupper($expectedType), $response['urlResolver']['type']);
     }
 
@@ -266,7 +265,7 @@ QUERY;
   urlResolver(url:"{$urlPath}")
   {
    id
-   canonical_url
+   relative_url
    type
   }
 }
@@ -307,7 +306,7 @@ QUERY;
   urlResolver(url:"/{$urlPath}")
   {
    id
-   canonical_url
+   relative_url
    type
   }
 }
@@ -315,7 +314,7 @@ QUERY;
         $response = $this->graphQlQuery($query);
         $this->assertArrayHasKey('urlResolver', $response);
         $this->assertEquals($categoryId, $response['urlResolver']['id']);
-        $this->assertEquals($targetPath, $response['urlResolver']['canonical_url']);
+        $this->assertEquals($targetPath, $response['urlResolver']['relative_url']);
         $this->assertEquals(strtoupper($expectedType), $response['urlResolver']['type']);
     }
 
@@ -344,7 +343,7 @@ QUERY;
   urlResolver(url:"/")
   {
    id
-   canonical_url
+   relative_url
    type
   }
 }
@@ -352,7 +351,7 @@ QUERY;
         $response = $this->graphQlQuery($query);
         $this->assertArrayHasKey('urlResolver', $response);
         $this->assertEquals($homePageId, $response['urlResolver']['id']);
-        $this->assertEquals($targetPath, $response['urlResolver']['canonical_url']);
+        $this->assertEquals($targetPath, $response['urlResolver']['relative_url']);
         $this->assertEquals('CMS_PAGE', $response['urlResolver']['type']);
     }
 }

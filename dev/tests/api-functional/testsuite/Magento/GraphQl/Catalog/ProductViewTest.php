@@ -228,7 +228,7 @@ class ProductViewTest extends GraphQlAbstract
             updated_at
             url_key
             url_path
-            canonical_url
+            relative_url
             websites { id name code sort_order default_group_id is_default }
             ... on PhysicalProductInterface {
                 weight
@@ -277,7 +277,7 @@ QUERY;
         $storeManager = ObjectManager::getInstance()->get(\Magento\Store\Model\StoreManagerInterface::class);
         self::assertEquals(
             $storeManager->getStore()->getBaseUrl() . 'simple-product.html',
-            $responseObject->getData('products/items/0/canonical_url')
+            $responseObject->getData('products/items/0/relative_url')
         );
     }
 
