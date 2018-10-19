@@ -40,6 +40,8 @@ class Block
     }
 
     /**
+     * Get block data
+     *
      * @param string $blockIdentifier
      * @return array
      * @throws NoSuchEntityException
@@ -49,7 +51,7 @@ class Block
         $block = $this->blockRepository->getById($blockIdentifier);
 
         if (false === $block->isActive()) {
-            throw new NoSuchEntityException();
+            return [];
         }
 
         $renderedContent = $this->widgetFilter->filter($block->getContent());
