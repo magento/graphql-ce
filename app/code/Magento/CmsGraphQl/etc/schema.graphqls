@@ -32,15 +32,10 @@ type CmsPage @doc(description: "CMS page defines all CMS page information") {
 
 type CmsBlocks @doc(description: "CMS blocks information") {
     items: [CmsBlock] @doc(description: "An array of CMS blocks")
-    errors: [ErrorMessage] @doc(description: "An array of errors message")
 }
 
 type CmsBlock @doc(description: "CMS block defines all CMS block information") {
     identifier: String @doc(description: "CMS block identifier")
     title: String @doc(description: "CMS block title")
     content: String @doc(description: "CMS block content")
-}
-
-type ErrorMessage @doc(description: "Error message define all error information") {
-    message: String @doc(description: "Error message")
 }
