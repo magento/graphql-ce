@@ -1,5 +1,14 @@
 # Copyright © Magento, Inc. All rights reserved.
 # See COPYING.txt for license details.
+type StoreConfig @doc(description: "The type contains information about a store config") {
+    front : String @doc(description: "Default Web URL")
+    cms_home_page : String @doc(description: "CMS Home Page")
+    no_route : String @doc(description: "Default No-route URL")
+    cms_no_route : String @doc(description: "CMS No Route Page")
+    cms_no_cookies : String @doc(description: "CMS No Cookies Page")
+    show_cms_breadcrumbs : Int @doc(description: "Show Breadcrumbs for CMS Pages")
+}
+
 
 type Query {
     cmsPage (
@@ -23,10 +32,15 @@ type CmsPage @doc(description: "CMS page defines all CMS page information") {
 
 type CmsBlocks @doc(description: "CMS blocks information") {
     items: [CmsBlock] @doc(description: "An array of CMS blocks")
+    errors: [ErrorMessage] @doc(description: "An array of errors message")
 }
 
 type CmsBlock @doc(description: "CMS block defines all CMS block information") {
     identifier: String @doc(description: "CMS block identifier")
     title: String @doc(description: "CMS block title")
     content: String @doc(description: "CMS block content")
+}
+
+type ErrorMessage @doc(description: "Error message define all error information") {
+    message: String @doc(description: "Error message")
 }
