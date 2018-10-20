@@ -16,11 +16,11 @@ $reviewResource = $objectManager->get(\Magento\Review\Model\ResourceModel\Review
 $collectionFactory = $objectManager->get(\Magento\Review\Model\ResourceModel\Review\CollectionFactory::class);
 
 $reviewTitles = [
-    'Empty Customer Review Summary',
-    'Not Approved Review Summary',
-    'Approved Review Summary',
-    'Secondary Approved Review Summary',
-    'Pending Review Summary'
+    'GraphQl: Empty Customer Review Summary',
+    'GraphQl: Not Approved Review Summary',
+    'GraphQl: Approved Review Summary',
+    'GraphQl: Secondary Approved Review Summary',
+    'GraphQl: Pending Review Summary'
 ];
 
 $collection = $collectionFactory->create()
