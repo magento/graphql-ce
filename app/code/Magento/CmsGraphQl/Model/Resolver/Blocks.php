@@ -26,6 +26,13 @@ class Blocks implements ResolverInterface
     private $blockDataProvider;
 
     /**
+     * Error message
+     *
+     * @var array
+     */
+    private $errorMessage = [];
+
+    /**
      * @param BlockDataProvider $blockDataProvider
      */
     public function __construct(
@@ -50,6 +57,7 @@ class Blocks implements ResolverInterface
 
         $resultData = [
             'items' => $blocksData,
+            'errors' => $this->errorMessage
         ];
         return $resultData;
     }
@@ -82,11 +90,29 @@ class Blocks implements ResolverInterface
         $blocksData = [];
         try {
             foreach ($blockIdentifiers as $blockIdentifier) {
-                $blocksData[$blockIdentifier] = $this->blockDataProvider->getData($blockIdentifier);
+                $blockData = $this->blockDataProvider->getData($blockIdentifier);
+                if (!empty($blockData)) {
+                    $blocksData[$blockIdentifier] = $blockData;
+                } else {
+                    $this->setErrorMessage(sprintf('The CMS block with the "%s" ID is disabled.', $blockIdentifier));
+                }
             }
         } catch (NoSuchEntityException $e) {
-            throw new GraphQlNoSuchEntityException(__($e->getMessage()), $e);
+            $this->setErrorMessage($e->getMessage());
         }
         return $blocksData;
     }
+
+    /**
+     * Set error message
+     *
+     * @param string $error
+     * @return array
+     */
+    private function setErrorMessage(string $error): array
+    {
+        $this->errorMessage[]['message'] = $error;
+        return $this->errorMessage;
+    }
+
 }
