@@ -2,14 +2,14 @@
 # See COPYING.txt for license details.
 
 type Query {
-    productReviews: Reviews @resolver(class: "Magento\\ReviewGraphQl\\Model\\Resolver\\Product\\Reviews") @doc(description: "The product review query returns information about a product reviews given by a customer")
+    customerProductReviews: CustomerProductReviews @resolver(class: "Magento\\ReviewGraphQl\\Model\\Resolver\\Customer\\Product\\Reviews") @doc(description: "The customer product review query returns information about a product reviews given by a customer")
 }
 
-type Reviews {
+type CustomerProductReviews {
     items: [Review] @doc(description: "And array of customer product reviews")
 }
 
-type Review @doc(description: "Review defines the customer product review details") {
+type Review @doc(description: "Review defines the review details") {
     review_id: Int @doc(description: "The ID assigned to the review")
     entity_id: Int @doc(description: "The entity ID assigned to the review")
     store_id: Int @doc(description: "The store ID assigned to the review")
@@ -20,5 +20,5 @@ type Review @doc(description: "Review defines the customer product review detail
     count: Int @doc(description: "The review count for current entity")
     nickname: String @doc(description: "The customer's nickname")
     status_id: Int @doc(description: "The review status. Default values are 1 (Approved), 2 (Pending), and 3 (Not Approved)")
-    created_at: String @doc(description: "Timestamp indicating when the account was created")
+    created_at: String @doc(description: "Timestamp indicating when the review was created")
 }

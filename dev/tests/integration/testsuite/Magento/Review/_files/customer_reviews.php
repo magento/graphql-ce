@@ -14,35 +14,35 @@ require __DIR__ . '/../../../Magento/Catalog/_files/product_simple.php';
 $reviewData = [
     [
         'customer_id' => null,
-        'title' => 'Empty Customer Review Summary',
+        'title' => 'GraphQl: Empty Customer Review Summary',
         'detail' => 'Review text',
         'nickname' => 'Nickname',
         'status_id' => \Magento\Review\Model\Review::STATUS_PENDING
     ],
     [
         'customer_id' => $customer->getId(),
-        'title' => 'Not Approved Review Summary',
+        'title' => 'GraphQl: Not Approved Review Summary',
         'detail' => 'Review text',
         'nickname' => 'Nickname',
         'status_id' => \Magento\Review\Model\Review::STATUS_NOT_APPROVED,
     ],
     [
         'customer_id' => $customer->getId(),
-        'title' => 'Approved Review Summary',
+        'title' => 'GraphQl: Approved Review Summary',
         'detail' => 'Review text',
         'nickname' => 'Nickname',
         'status_id' => \Magento\Review\Model\Review::STATUS_APPROVED
     ],
     [
         'customer_id' => $customer->getId(),
-        'title' => 'Secondary Approved Review Summary',
+        'title' => 'GraphQl: Secondary Approved Review Summary',
         'detail' => 'Review text',
         'nickname' => 'Nickname',
         'status_id' => \Magento\Review\Model\Review::STATUS_APPROVED
     ],
     [
         'customer_id' => $customer->getId(),
-        'title' => 'Pending Review Summary',
+        'title' => 'GraphQl: Pending Review Summary',
         'detail' => 'Review text',
         'nickname' => 'Nickname',
         'status_id' => \Magento\Review\Model\Review::STATUS_PENDING,
