@@ -65,38 +65,34 @@ class PaymentTokenDataProvider
             PaymentTokenRepositoryInterface::class,
             'getById'
         );
-        $detail = $this->jsonSerializer->unserialize($paymentTokenObject->getTokenDetails());
-        $paymentToken['expiration_date'] = $this->getExpirationDate($detail);
-        $paymentToken['card_number'] = $this->getCardNumber($detail);
-        $paymentToken['card_type'] = $this->getType($detail);
+
+        $detailsAttributes = [];
+        if (!empty($paymentTokenObject->getTokenDetails())) {
+            $details = $this->jsonSerializer->unserialize($paymentTokenObject->getTokenDetails());
+            foreach ($details as $key => $attribute) {
+                $isArray = false;
+                if (is_array($attribute)) {
+                    $isArray = true;
+                    foreach ($attribute as $attributeValue) {
+                        if (is_array($attributeValue)) {
+                            $detailsAttributes[] = [
+                                'attribute_code' => $key,
+                                'value' => $this->jsonSerializer->serialize($attribute)
+                            ];
+                            continue;
+                        }
+                        $detailsAttributes[] = ['attribute_code' => $key, 'value' => implode(',', $attribute)];
+                        continue;
+                    }
+                }
+                if ($isArray) {
+                    continue;
+                }
+                $detailsAttributes[] = ['attribute_code' => $key, 'value' => $attribute];
+            }
+        }
+
+        $paymentToken['details'] = $detailsAttributes;
         return $paymentToken;
     }
-
-    /**
-     * @param array $paymentDetailArray
-     * @return string
-     */
-    private function getExpirationDate(array $paymentDetailArray)
-    {
-        return $paymentDetailArray['expirationDate'];
-    }
-
-    /**
-     * @param array $paymentDetailArray
-     * @return string
-     */
-    private function getCardNumber(array $paymentDetailArray)
-    {
-        return $paymentDetailArray['maskedCC'];
-    }
-
-    /**
-     * @param array $paymentDetailArray
-     * @return string
-     */
-    private function getType(array $paymentDetailArray)
-    {
-        return $paymentDetailArray['type'];
-    }
-
 }

@@ -18,7 +18,7 @@ use Magento\Vault\Api\PaymentTokenManagementInterface;
 /**
  * Store Payment Method List, used for GraphQL request processing.
  */
-class StorePaymentTokenList implements ResolverInterface
+class PaymentTokenList implements ResolverInterface
 {
     /**
      * @var PaymentTokenDataProvider
