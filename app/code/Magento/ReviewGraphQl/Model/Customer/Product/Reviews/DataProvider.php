@@ -5,16 +5,16 @@
  */
 declare(strict_types=1);
 
-namespace Magento\ReviewGraphQl\Model\Resolver\Product\DataProvider;
+namespace Magento\ReviewGraphQl\Model\Customer\Product\Reviews;
 
 use Magento\Review\Model\ResourceModel\Review\Product\Collection;
 use Magento\Review\Model\ResourceModel\Review\Product\CollectionFactory;
 use Magento\Store\Model\StoreManagerInterface;
 
 /**
- * Product review data provider
+ * Customer product reviews data provider
  */
-class Review
+class DataProvider
 {
     /**
      * Product reviews collection
