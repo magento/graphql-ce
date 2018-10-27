@@ -35,7 +35,7 @@ class CustomerProductReviewsTest extends GraphQlAbstract
     }
 
     /**
-     * Customer product reivews test
+     * Customer product reviews test
      *
      * @magentoApiDataFixture Magento/Customer/_files/customer.php
      * @magentoApiDataFixture Magento/Review/_files/customer_reviews.php

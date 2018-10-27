@@ -13,7 +13,7 @@ use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
-use Magento\ReviewGraphQl\Model\Resolver\Product\DataProvider\Review as ReviewDataProvider;
+use Magento\ReviewGraphQl\Model\Customer\Product\Reviews\DataProvider as ReviewsDataProvider;
 
 /**
  * Customer Product Reviews
@@ -26,22 +26,22 @@ class Reviews implements ResolverInterface
     private $checkCustomerAccount;
 
     /**
-     * @var ReviewDataProvider
+     * @var ReviewsDataProvider
      */
-    private $reviewDataProvider;
+    private $reviewsDataProvider;
 
     /**
      * Reviews constructor
      *
      * @param CheckCustomerAccountInterface $checkCustomerAccount
-     * @param ReviewDataProvider $reviewDataProvider
+     * @param ReviewsDataProvider $reviewDataProvider
      */
     public function __construct(
         CheckCustomerAccountInterface $checkCustomerAccount,
-        ReviewDataProvider $reviewDataProvider
+        ReviewsDataProvider $reviewDataProvider
     ) {
         $this->checkCustomerAccount = $checkCustomerAccount;
-        $this->reviewDataProvider = $reviewDataProvider;
+        $this->reviewsDataProvider = $reviewDataProvider;
     }
 
     /**
@@ -74,7 +74,7 @@ class Reviews implements ResolverInterface
     private function getReviewsData(int $customerId): array
     {
         try {
-            $reviewData = $this->reviewDataProvider->getByCustomerId($customerId);
+            $reviewData = $this->reviewsDataProvider->getByCustomerId($customerId);
         } catch (NoSuchEntityException $e) {
             throw new GraphQlNoSuchEntityException(__($e->getMessage()), $e);
         }
