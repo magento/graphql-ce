@@ -9,7 +9,7 @@ namespace Magento\VaultGraphQl\Model\Resolver\PaymentToken;
 
 use Magento\Framework\Webapi\ServiceOutputProcessor;
 use Magento\Framework\Serialize\SerializerInterface;
-
+use Magento\Framework\Api\DataObjectHelper;
 use Magento\Vault\Api\Data\PaymentTokenInterface;
 use Magento\Vault\Api\PaymentTokenRepositoryInterface;
 
@@ -29,15 +29,23 @@ class PaymentTokenDataProvider
     private $jsonSerializer;
 
     /**
+     * @var DataObjectHelper
+     */
+    private $dataObjectHelper;
+
+    /**
      * @param ServiceOutputProcessor $serviceOutputProcessor
      * @param SerializerInterface $jsonSerializer
+     * @param DataObjectHelper $dataObjectHelper
      */
     public function __construct(
         ServiceOutputProcessor $serviceOutputProcessor,
-        SerializerInterface $jsonSerializer
+        SerializerInterface $jsonSerializer,
+        DataObjectHelper $dataObjectHelper
     ) {
         $this->serviceOutputProcessor = $serviceOutputProcessor;
         $this->jsonSerializer = $jsonSerializer;
+        $this->dataObjectHelper = $dataObjectHelper;
     }
 
     /**
@@ -58,7 +66,7 @@ class PaymentTokenDataProvider
      * @param \Magento\Vault\Api\Data\PaymentTokenInterface $paymentTokenObject
      * @return array
      */
-    private function processPaymentToken(PaymentTokenInterface $paymentTokenObject) : array
+    public function processPaymentToken(PaymentTokenInterface $paymentTokenObject) : array
     {
         $paymentToken = $this->serviceOutputProcessor->process(
             $paymentTokenObject,
@@ -94,5 +102,22 @@ class PaymentTokenDataProvider
 
         $paymentToken['details'] = $detailsAttributes;
         return $paymentToken;
+    }
+
+    /**
+     * Add $tokenInput array information to a $token object
+     *
+     * @param PaymentTokenInterface $token
+     * @param array $tokenInput
+     * @return PaymentTokenInterface
+     */
+    public function fillPaymentToken(PaymentTokenInterface $token, array $tokenInput) : PaymentTokenInterface
+    {
+        $this->dataObjectHelper->populateWithArray(
+            $token,
+            $tokenInput,
+            PaymentTokenInterface::class
+        );
+        return $token;
     }
 }

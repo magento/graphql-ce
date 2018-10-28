@@ -35,7 +35,7 @@ class PaymentTokenDeleteTest extends GraphQlAbstract
         $tokenRepository = ObjectManager::getInstance()->get(PaymentTokenManagementInterface::class);
         /** @var \Magento\Vault\Api\Data\PaymentTokenInterface[] $tokenList */
         $tokenList = $tokenRepository->getListByCustomerId($customer->getId());
-        /** @var \Magento\Vault\Api\Data\PaymentTokenSearchResultsInterface $token */
+        /** @var \Magento\Vault\Api\Data\PaymentTokenInterface $token */
         $token = current($tokenList);
         $tokenId = $token->getEntityId();
 
@@ -47,14 +47,13 @@ mutation {
 MUTATION;
 
         $response = $this->graphQlQuery($query, [], '', $headerMap);
-        $this->assertTrue($response);
+        $this->assertTrue(is_array($response));
+        $this->assertArrayHasKey('paymentTokenDelete', $response);
+        $this->assertTrue($response['paymentTokenDelete']);
     }
 
     /**
      * Verify delete payment token with valid credentials
-     *
-     * @magentoApiDataFixture Magento/Vault/_files/customer.php
-     * @magentoApiDataFixture Magento/Vault/_files/token.php
      */
     public function testDeletePaymentTokenWithoutCredentials()
     {

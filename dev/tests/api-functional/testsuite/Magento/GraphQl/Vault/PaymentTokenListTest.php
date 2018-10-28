@@ -11,6 +11,7 @@ use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\TestFramework\ObjectManager;
 use Magento\TestFramework\TestCase\GraphQlAbstract;
 use Magento\Integration\Api\CustomerTokenServiceInterface;
+use Magento\Vault\Api\PaymentTokenManagementInterface;
 
 class PaymentTokenListTest extends GraphQlAbstract
 {
@@ -55,7 +56,7 @@ QUERY;
 
         $response = $this->graphQlQuery($query, [], '', $headerMap);
         $this->assertTrue(is_array($response['paymentTokenList']), "paymentTokenList field must be of an array type.");
-        $this->assertEquals(3, count($response['paymentTokenList']));
+        $this->assertEquals($this->getPaymentTokenAmountFroCustomer($customer->getId()), count($response['paymentTokenList']));
         $list = $response['paymentTokenList'];
         $this->assertCustomerId($customer->getId(), $list);
         $this->assertIsActive($list);
@@ -67,7 +68,7 @@ QUERY;
 
         $this->assertEquals('first', $list[0]['payment_method_code']);
         $this->assertEquals('second', $list[1]['payment_method_code']);
-        $this->assertEquals('third', $list[1]['payment_method_code']);
+        $this->assertEquals('third', $list[2]['payment_method_code']);
 
         $this->assertEquals('simple', $list[0]['type']);
         $this->assertEquals('simple', $list[1]['type']);
@@ -141,6 +142,20 @@ QUERY;
         foreach ($response as $tokn) {
             $this->assertTrue(is_array($tokn['details']));
         }
+    }
+
+    /**
+     * Get amount of customer payment token
+     *
+     * @param int $customerId
+     * @return int
+     */
+    private function getPaymentTokenAmountFroCustomer($customerId)
+    {
+        /** @var \Magento\Vault\Model\PaymentTokenManagement $paymentTokenManagementInterface */
+        $paymentTokenManagementInterface = ObjectManager::getInstance()
+            ->get(PaymentTokenManagementInterface::class);
+        return count($paymentTokenManagementInterface->getVisibleAvailableTokens($customerId));
     }
 }
 
