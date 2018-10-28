@@ -7,6 +7,7 @@
     "magento/framework": "*",
     "magento/module-review": "*",
     "magento/module-customer": "*",
+    "magento/module-customer-graph-ql": "*",
     "magento/module-catalog": "*",
     "magento/module-store": "*"
   },
