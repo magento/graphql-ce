@@ -118,6 +118,11 @@ class PaymentTokenDataProvider
             $tokenInput,
             PaymentTokenInterface::class
         );
+        $tokenDetails = [];
+        foreach ($tokenInput['details'] as $attribute) {
+            $tokenDetails[$attribute['attribute_code']] = $attribute['value'];
+        }
+        $token->setTokenDetails($this->jsonSerializer->serialize($tokenDetails));
         return $token;
     }
 }

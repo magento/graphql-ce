@@ -15,7 +15,7 @@ type PaymentToken @doc(description: "PaymentToken defines the stored payment det
     customer_id: Int @doc(description: "The customer ID")
     public_hash: String @doc(description: "The public hash")
     payment_method_code: String @doc(description: "The payment method code")
-    type: String @doc(description: "The payment token type")
+    type: TokenType @doc(description: "The token type")
     created_at: String @doc(description: "Timestamp indicating when the payment token was created")
     expires_at: String @doc(description: "Timestamp indicating when the payment token was updated")
     gateway_token: String @doc(description: "The getaway payment token")
@@ -32,7 +32,7 @@ type DetailsAttribute {
 input PaymentTokenInput {
     public_hash: String! @doc(description: "The public hash")
     payment_method_code: String! @doc(description: "The payment method code")
-    type: String! @doc(description: "The payment token type")
+    type: TokenType! @doc(description: "The payment token type")
     expires_at: String @doc(description: "Timestamp indicating when the payment token was updated")
     gateway_token: String! @doc(description: "The getaway payment token")
     details: [DetailsAttributeInput] @doc(description: "Payment token details")
@@ -43,4 +43,9 @@ input PaymentTokenInput {
 input DetailsAttributeInput {
     attribute_code: String @doc(description: "Attribute code")
     value: String @doc(description: "Attribute value")
+}
+
+enum TokenType @doc(description: "Token types availables"){
+    card @doc(description: "Card token type")
+    account @doc(description: "Account token type")
 }
