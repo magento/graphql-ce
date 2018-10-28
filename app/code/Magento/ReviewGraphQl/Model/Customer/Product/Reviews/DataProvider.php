@@ -110,7 +110,7 @@ class DataProvider
                 'count' => $review->getCount(),
                 'nickname' => $review->getNickname(),
                 'status_id' => $review->getStatusId(),
-                'created_at' => $review->getCreatedAt(),
+                'created_at' => $review->getReviewCreatedAt(),
             ];
         }
         return $reviewData;

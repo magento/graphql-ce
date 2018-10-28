@@ -17,6 +17,7 @@ $collectionFactory = $objectManager->get(\Magento\Review\Model\ResourceModel\Rev
 
 $reviewTitles = [
     'GraphQl: Empty Customer Review Summary',
+    'GraphQl: Approved Empty Customer Review Summary',
     'GraphQl: Not Approved Review Summary',
     'GraphQl: Approved Review Summary',
     'GraphQl: Secondary Approved Review Summary',

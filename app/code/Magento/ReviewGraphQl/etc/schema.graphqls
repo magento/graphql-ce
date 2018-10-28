@@ -2,7 +2,30 @@
 # See COPYING.txt for license details.
 
 type Query {
+    productReviews (
+        entity_id: Int @doc(description: "The product id to get reviews for"),
+        pageSize: Int = 20 @doc(description: "Specifies the maximum number of results to return at once. This attribute is optional."),
+        currentPage: Int = 1 @doc(description: "Specifies which page of results to return. The default value is 1.")
+    ): Reviews @resolver(class: "Magento\\ReviewGraphQl\\Model\\Resolver\\Product\\Reviews") @doc(description: "The product review query returns information about approved product reviews")
     customerProductReviews: CustomerProductReviews @resolver(class: "Magento\\ReviewGraphQl\\Model\\Resolver\\Customer\\Product\\Reviews") @doc(description: "The customer product review query returns information about a product reviews given by a customer")
+}
+
+type Mutation {
+    createProductReview(input: CreateProductReviewInput): Review! @resolver(class: "\\Magento\\ReviewGraphQl\\Model\\Resolver\\CreateReview")
+}
+
+input CreateProductReviewInput {
+    entity_id: Int! @doc(description: "The ID of the entity that the review is assigned")
+    entity_type: String! @doc(description: "The code of the entity that the review is assigned")
+    nickname: String! @doc(description: "Customer nickname")
+    title: String! @doc(description: "Review title")
+    detail: String! @doc(description: "Review details")
+    ratings: [RatingsInput!]!
+}
+
+type RatingsInput @doc(description: "An array of ratings applied to the review") {
+    rating_id: Int!
+    option_id: Int!
 }
 
 type CustomerProductReviews {
@@ -21,4 +44,26 @@ type CustomerReview @doc(description: "Review defines the review details") {
     nickname: String @doc(description: "The customer's nickname")
     status_id: Int @doc(description: "The review status. Default values are 1 (Approved), 2 (Pending), and 3 (Not Approved)")
     created_at: String @doc(description: "Timestamp indicating when the review was created")
+}
+
+type Reviews {
+    items: [Review] @doc(description: "And array of reviews")
+}
+
+type Review @doc(description: "Review defines the review details") {
+    review_id: Int @doc(description: "The ID assigned to the review")
+    entity_id: Int @doc(description: "The entity ID assigned to the review")
+    customer_id: Int @doc(description: "The customer ID assigned to the review")
+    title: String @doc(description: "The review title")
+    detail: String @doc(description: "The review detail")
+    nickname: String @doc(description: "The customer's nickname")
+    created_at: String @doc(description: "Timestamp indicating when the review was created")
+    rating_votes: [Rating] @doc(description: "An array of review ratings")
+}
+
+type Rating {
+    rating_id: Int @doc(description: "The ID assigned to the review rating")
+    rating_code: String @doc(description: "The rating name")
+    percent: Float @doc(description: "The rating percent given by customer to the review")
+    value: Int @doc(description: "The rating value given by customer. Possible values: 1 to 5")
 }
