@@ -6,10 +6,10 @@ type Query {
 }
 
 type CustomerProductReviews {
-    items: [Review] @doc(description: "And array of customer product reviews")
+    items: [CustomerReview] @doc(description: "And array of customer product reviews")
 }
 
-type Review @doc(description: "Review defines the review details") {
+type CustomerReview @doc(description: "Review defines the review details") {
     review_id: Int @doc(description: "The ID assigned to the review")
     entity_id: Int @doc(description: "The entity ID assigned to the review")
     store_id: Int @doc(description: "The store ID assigned to the review")
