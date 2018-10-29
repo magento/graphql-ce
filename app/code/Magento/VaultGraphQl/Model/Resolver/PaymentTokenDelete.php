@@ -11,12 +11,14 @@ use Magento\Authorization\Model\UserContextInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
+use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
 use Magento\Vault\Api\PaymentTokenRepositoryInterface;
+use Magento\Vault\Api\Data\PaymentTokenInterface;
 
 /**
- * Store Payment Method List, used for GraphQL request processing.
+ * Store Payment Delete, used for GraphQL request processing.
  */
 class PaymentTokenDelete implements ResolverInterface
 {
@@ -44,7 +46,7 @@ class PaymentTokenDelete implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
-        /** @var \Magento\Framework\GraphQl\Query\Resolver\ContextInterface $context */
+        /** @var ContextInterface $context */
         if ((!$context->getUserId()) || $context->getUserType() == UserContextInterface::USER_TYPE_GUEST) {
             throw new GraphQlAuthorizationException(
                 __(
@@ -68,7 +70,7 @@ class PaymentTokenDelete implements ResolverInterface
      */
     private function deleteToken($customerId, $tokenId)
     {
-        /** @var \Magento\Vault\Api\Data\PaymentTokenInterface $token */
+        /** @var PaymentTokenInterface $token */
         $token = $this->paymentTokenRepositoryInterface->getById($tokenId);
         if (empty($token->getEntityId())) {
             throw new GraphQlNoSuchEntityException(

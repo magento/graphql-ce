@@ -8,19 +8,21 @@ declare(strict_types=1);
 namespace Magento\VaultGraphQl\Model\Resolver;
 
 use Magento\Authorization\Model\UserContextInterface;
+use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
+use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Exception\GraphQlAlreadyExistsException;
 use Magento\Vault\Api\PaymentTokenRepositoryInterface;
 use Magento\Vault\Api\Data\PaymentTokenFactoryInterface;
+use Magento\Vault\Api\Data\PaymentTokenInterface;
 use Magento\VaultGraphQl\Model\Resolver\PaymentToken\PaymentTokenDataProvider;
-use Magento\Framework\Exception\AlreadyExistsException;
 
 /**
- * Store Payment Method List, used for GraphQL request processing.
+ * Store Payment Add, used for GraphQL request processing.
  */
 class PaymentTokenAdd implements ResolverInterface
 {
@@ -74,7 +76,7 @@ class PaymentTokenAdd implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
-        /** @var \Magento\Framework\GraphQl\Query\Resolver\ContextInterface $context */
+        /** @var ContextInterface $context */
         if ((!$context->getUserId()) || $context->getUserType() == UserContextInterface::USER_TYPE_GUEST) {
             throw new GraphQlAuthorizationException(
                 __(
@@ -110,11 +112,11 @@ class PaymentTokenAdd implements ResolverInterface
      *
      * @param $customerId
      * @param array $tokenInfo
-     * @return \Magento\Vault\Api\Data\PaymentTokenInterface
+     * @return PaymentTokenInterface
      * @throws GraphQlInputException
      * @throws GraphQlAlreadyExistsException
      */
-    private function processPaymentTokenAdd($customerId, array $tokenInfo)
+    private function processPaymentTokenAdd($customerId, array $tokenInfo) : PaymentTokenInterface
     {
         $errorInput = $this->getInputError($tokenInfo);
         if ($errorInput) {
@@ -122,7 +124,7 @@ class PaymentTokenAdd implements ResolverInterface
                 __('Required parameter %1 is missing', [$errorInput])
             );
         }
-        /** @var \Magento\Vault\Api\Data\PaymentTokenInterface $token */
+        /** @var PaymentTokenInterface $token */
         $token = $this->paymentTokenDataProvider->fillPaymentToken(
             $this->paymentTokenFactoryInterface->create($tokenInfo['type']),
             $tokenInfo
@@ -133,6 +135,5 @@ class PaymentTokenAdd implements ResolverInterface
         }catch (AlreadyExistsException $e) {
             throw new GraphQlAlreadyExistsException(__($e->getMessage()), $e);
         }
-
     }
 }

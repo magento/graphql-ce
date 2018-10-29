@@ -11,6 +11,7 @@ use Magento\Authorization\Model\UserContextInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
+use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\VaultGraphQl\Model\Resolver\PaymentToken\PaymentTokenDataProvider;
 use Magento\Vault\Api\PaymentTokenManagementInterface;
@@ -52,7 +53,7 @@ class PaymentTokenList implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
-        /** @var \Magento\Framework\GraphQl\Query\Resolver\ContextInterface $context */
+        /** @var ContextInterface $context */
         if ((!$context->getUserId()) || $context->getUserType() == UserContextInterface::USER_TYPE_GUEST) {
             throw new GraphQlAuthorizationException(
                 __(

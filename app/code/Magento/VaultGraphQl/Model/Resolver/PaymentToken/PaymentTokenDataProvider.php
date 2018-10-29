@@ -51,13 +51,13 @@ class PaymentTokenDataProvider
     /**
      * Transform array of payment token data from object to in array format
      *
-     * @param \Magento\Vault\Api\Data\PaymentTokenInterface[] $paymentTokens
+     * @param PaymentTokenInterface[] $paymentTokens
      * @return array
      */
     public function processPaymentTokens(array $paymentTokens) : array
     {
         $result = [];
-        /** @var \Magento\Vault\Api\Data\PaymentTokenInterface $paymentToken */
+        /** @var PaymentTokenInterface $paymentToken */
         foreach ($paymentTokens as $paymentToken) {
             $result[] = $this->processPaymentToken($paymentToken);
         }
@@ -67,7 +67,7 @@ class PaymentTokenDataProvider
     /**
      * Transform single payment token data from object to in array format
      *
-     * @param \Magento\Vault\Api\Data\PaymentTokenInterface $paymentTokenObject
+     * @param PaymentTokenInterface $paymentTokenObject
      * @return array
      */
     public function processPaymentToken(PaymentTokenInterface $paymentTokenObject) : array

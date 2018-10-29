@@ -18,7 +18,7 @@ class PaymentTokenListTest extends GraphQlAbstract
     /**
      * Verify store payment token with valid credentials
      *
-     * @magentoApiDataFixture Magento/Vault/_files/payment_tokens.php
+     * @magentoApiDataFixture Magento/Vault/_files/payment_active_tokens.php
      */
     public function testPaymentTokenWithValidCredentials()
     {
@@ -31,7 +31,7 @@ class PaymentTokenListTest extends GraphQlAbstract
     public_hash
     payment_method_code
     type
-    created_at
+    gateway_token
     expires_at
     details {
       attribute_code
@@ -58,23 +58,27 @@ QUERY;
         $list = $response['paymentTokenList'];
         $this->assertCustomerId($customer->getId(), $list);
         $this->assertIsActive($list);
+
+        $this->assertEquals('H123456789', $list[0]['public_hash']);
+        $this->assertEquals('H987654321', $list[1]['public_hash']);
+        $this->assertEquals('H1122334455', $list[2]['public_hash']);
+
+        $this->assertEquals('code_first', $list[0]['payment_method_code']);
+        $this->assertEquals('code_second', $list[1]['payment_method_code']);
+        $this->assertEquals('code_third', $list[2]['payment_method_code']);
+
+        $this->assertEquals('card', $list[0]['type']);
+        $this->assertEquals('card', $list[1]['type']);
+        $this->assertEquals('account', $list[2]['type']);
+
+        $this->assertEquals('ABC1234', $list[0]['gateway_token']);
+        $this->assertEquals('ABC4567', $list[1]['gateway_token']);
+        $this->assertEquals('ABC7890', $list[2]['gateway_token']);
+
         $this->assertIsDetailsArray($list);
-
-        $this->assertEquals('1234', $list[0]['public_hash']);
-        $this->assertEquals('12345', $list[1]['public_hash']);
-        $this->assertEquals('23456', $list[2]['public_hash']);
-
-        $this->assertEquals('first', $list[0]['payment_method_code']);
-        $this->assertEquals('second', $list[1]['payment_method_code']);
-        $this->assertEquals('third', $list[2]['payment_method_code']);
-
-        $this->assertEquals('simple', $list[0]['type']);
-        $this->assertEquals('simple', $list[1]['type']);
-        $this->assertEquals('notsimple', $list[2]['type']);
-
-        $this->assertEquals('2020-09-04 10:18:15', $list[0]['expires_at']);
-        $this->assertEquals('2020-10-04 10:18:15', $list[1]['expires_at']);
-        $this->assertEquals('2020-11-04 10:18:15', $list[2]['expires_at']);
+        $this->assertTokenDetails(['type' => 'VI', 'maskedCC' => '9876', 'expirationDate' => '12/2020'], $list[0]['details']);
+        $this->assertTokenDetails(['type' => 'MC', 'maskedCC' => '4444', 'expirationDate' => '12/2030'], $list[1]['details']);
+        $this->assertTokenDetails(['type' => 'DI', 'maskedCC' => '0001', 'expirationDate' => '12/2040'], $list[2]['details']);
     }
 
     /**
@@ -91,6 +95,7 @@ QUERY;
     public_hash
     payment_method_code
     type
+    gateway_token
     created_at
     expires_at
     details {
@@ -133,10 +138,28 @@ QUERY;
         }
     }
 
+    /**
+     * Verify is details is array
+     *
+     * @param array $response
+     */
     private function assertIsDetailsArray(array $response)
     {
-        foreach ($response as $tokn) {
-            $this->assertTrue(is_array($tokn['details']));
+        foreach ($response as $token) {
+            $this->assertTrue(is_array($token['details']));
+        }
+    }
+
+    /**
+     * Verify token details
+     *
+     * @param array $expected
+     * @param array $response
+     */
+    private function assertTokenDetails(array $expected, array $response)
+    {
+        foreach($response as $details) {
+            $this->assertEquals($expected[$details['attribute_code']], $details['value']);
         }
     }
 
