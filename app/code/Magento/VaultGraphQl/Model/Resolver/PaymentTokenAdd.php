@@ -106,7 +106,7 @@ class PaymentTokenAdd implements ResolverInterface
     }
 
     /**
-     * Process PaymentToken add
+     * Process payment token add
      *
      * @param $customerId
      * @param array $tokenInfo
@@ -122,7 +122,6 @@ class PaymentTokenAdd implements ResolverInterface
                 __('Required parameter %1 is missing', [$errorInput])
             );
         }
-
         /** @var \Magento\Vault\Api\Data\PaymentTokenInterface $token */
         $token = $this->paymentTokenDataProvider->fillPaymentToken(
             $this->paymentTokenFactoryInterface->create($tokenInfo['type']),

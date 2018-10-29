@@ -3,7 +3,7 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Magento\VaultGraphQl\Model\Resolver\PaymentToken;
 
@@ -49,6 +49,8 @@ class PaymentTokenDataProvider
     }
 
     /**
+     * Transform array of payment token data from object to in array format
+     *
      * @param \Magento\Vault\Api\Data\PaymentTokenInterface[] $paymentTokens
      * @return array
      */
@@ -63,6 +65,8 @@ class PaymentTokenDataProvider
     }
 
     /**
+     * Transform single payment token data from object to in array format
+     *
      * @param \Magento\Vault\Api\Data\PaymentTokenInterface $paymentTokenObject
      * @return array
      */

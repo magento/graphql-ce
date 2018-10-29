@@ -80,7 +80,6 @@ class PaymentTokenDelete implements ResolverInterface
                 __('Current customer does not have permission to delete Payment Token id %1', [$tokenId])
             );
         }
-
         return $this->paymentTokenRepositoryInterface->delete($token);
     }
 }
