@@ -38,14 +38,12 @@ class PaymentTokenDeleteTest extends GraphQlAbstract
         /** @var \Magento\Vault\Api\Data\PaymentTokenInterface $token */
         $token = current($tokenList);
         $tokenId = $token->getEntityId();
-
         $query
             = <<<MUTATION
 mutation {
   paymentTokenDelete(id: {$tokenId})
 }
 MUTATION;
-
         $response = $this->graphQlQuery($query, [], '', $headerMap);
         $this->assertTrue(is_array($response));
         $this->assertArrayHasKey('paymentTokenDelete', $response);
@@ -53,7 +51,7 @@ MUTATION;
     }
 
     /**
-     * Verify delete payment token with valid credentials
+     * Verify delete payment token without credentials
      */
     public function testDeletePaymentTokenWithoutCredentials()
     {
@@ -63,7 +61,6 @@ mutation {
   paymentTokenDelete(id: 1)
 }
 MUTATION;
-
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('GraphQL response contains errors:' . ' ' .
             'Current customer does not have access to the resource "store_payment_token"');

@@ -42,7 +42,6 @@ class PaymentTokenListTest extends GraphQlAbstract
   }
 }
 QUERY;
-
         $userName = 'customer@example.com';
         $password = 'password';
         /** @var CustomerTokenServiceInterface $customerTokenService */
@@ -53,7 +52,6 @@ QUERY;
         /** @var CustomerRepositoryInterface $customerRepository */
         $customerRepository = ObjectManager::getInstance()->get(CustomerRepositoryInterface::class);
         $customer = $customerRepository->get($userName);
-
         $response = $this->graphQlQuery($query, [], '', $headerMap);
         $this->assertTrue(is_array($response['paymentTokenList']), "paymentTokenList field must be of an array type.");
         $this->assertEquals($this->getPaymentTokenAmountFroCustomer($customer->getId()), count($response['paymentTokenList']));
@@ -77,8 +75,6 @@ QUERY;
         $this->assertEquals('2020-09-04 10:18:15', $list[0]['expires_at']);
         $this->assertEquals('2020-10-04 10:18:15', $list[1]['expires_at']);
         $this->assertEquals('2020-11-04 10:18:15', $list[2]['expires_at']);
-
-        //TODO: add more checke
     }
 
     /**
