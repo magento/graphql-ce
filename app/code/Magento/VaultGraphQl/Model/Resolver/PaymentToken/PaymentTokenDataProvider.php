@@ -42,19 +42,20 @@ class PaymentTokenDataProvider
         ServiceOutputProcessor $serviceOutputProcessor,
         SerializerInterface $jsonSerializer,
         DataObjectHelper $dataObjectHelper
-    ) {
+    )
+    {
         $this->serviceOutputProcessor = $serviceOutputProcessor;
         $this->jsonSerializer = $jsonSerializer;
         $this->dataObjectHelper = $dataObjectHelper;
     }
 
     /**
-     * Transform array of payment token data from object to in array format
+     * Transform array of payment token data to array of object array format
      *
      * @param PaymentTokenInterface[] $paymentTokens
      * @return array
      */
-    public function processPaymentTokens(array $paymentTokens) : array
+    public function processPaymentTokenArray(array $paymentTokens): array
     {
         $result = [];
         /** @var PaymentTokenInterface $paymentToken */
@@ -65,12 +66,12 @@ class PaymentTokenDataProvider
     }
 
     /**
-     * Transform single payment token data from object to in array format
+     * Transform single payment token data from object to an array format
      *
      * @param PaymentTokenInterface $paymentTokenObject
      * @return array
      */
-    public function processPaymentToken(PaymentTokenInterface $paymentTokenObject) : array
+    public function processPaymentToken(PaymentTokenInterface $paymentTokenObject): array
     {
         $paymentToken = $this->serviceOutputProcessor->process(
             $paymentTokenObject,
@@ -88,19 +89,19 @@ class PaymentTokenDataProvider
                     foreach ($attribute as $attributeValue) {
                         if (is_array($attributeValue)) {
                             $detailsAttributes[] = [
-                                'attribute_code' => $key,
+                                'code' => $key,
                                 'value' => $this->jsonSerializer->serialize($attribute)
                             ];
                             continue;
                         }
-                        $detailsAttributes[] = ['attribute_code' => $key, 'value' => implode(',', $attribute)];
+                        $detailsAttributes[] = ['code' => $key, 'value' => implode(',', $attribute)];
                         continue;
                     }
                 }
                 if ($isArray) {
                     continue;
                 }
-                $detailsAttributes[] = ['attribute_code' => $key, 'value' => $attribute];
+                $detailsAttributes[] = ['code' => $key, 'value' => $attribute];
             }
         }
 
@@ -115,7 +116,7 @@ class PaymentTokenDataProvider
      * @param array $tokenInput
      * @return PaymentTokenInterface
      */
-    public function fillPaymentToken(PaymentTokenInterface $token, array $tokenInput) : PaymentTokenInterface
+    public function fillPaymentToken(PaymentTokenInterface $token, array $tokenInput): PaymentTokenInterface
     {
         $this->dataObjectHelper->populateWithArray(
             $token,
@@ -124,7 +125,7 @@ class PaymentTokenDataProvider
         );
         $tokenDetails = [];
         foreach ($tokenInput['details'] as $attribute) {
-            $tokenDetails[$attribute['attribute_code']] = $attribute['value'];
+            $tokenDetails[$attribute['code']] = $attribute['value'];
         }
         $token->setTokenDetails($this->jsonSerializer->serialize($tokenDetails));
         return $token;

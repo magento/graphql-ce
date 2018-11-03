@@ -15,7 +15,7 @@ use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
 use Magento\Vault\Api\PaymentTokenRepositoryInterface;
-use Magento\Vault\Api\Data\PaymentTokenInterface;
+use Magento\Vault\Api\PaymentTokenManagementInterface;
 
 /**
  * Store Payment Delete, used for GraphQL request processing.
@@ -25,15 +25,23 @@ class PaymentTokenDelete implements ResolverInterface
     /**
      * @var PaymentTokenRepositoryInterface
      */
-    private $paymentTokenRepositoryInterface;
+    private $paymentTokenRepository;
 
     /**
-     * @param PaymentTokenRepositoryInterface $paymentTokenRepositoryInterface
+     * @var PaymentTokenManagementInterface
+     */
+    private $paymentTokenManagement;
+
+    /**
+     * @param PaymentTokenRepositoryInterface $paymentTokenRepository
+     * @param PaymentTokenManagementInterface $paymentTokenManagement
      */
     public function __construct(
-        PaymentTokenRepositoryInterface $paymentTokenRepositoryInterface
+        PaymentTokenRepositoryInterface $paymentTokenRepository,
+        PaymentTokenManagementInterface $paymentTokenManagement
     ) {
-        $this->paymentTokenRepositoryInterface = $paymentTokenRepositoryInterface;
+        $this->paymentTokenRepository = $paymentTokenRepository;
+        $this->paymentTokenManagement = $paymentTokenManagement;
     }
 
     /**
@@ -50,38 +58,32 @@ class PaymentTokenDelete implements ResolverInterface
         if ((!$context->getUserId()) || $context->getUserType() == UserContextInterface::USER_TYPE_GUEST) {
             throw new GraphQlAuthorizationException(
                 __(
-                    'Current customer does not have access to the resource "%1"',
+                    'A guest customer cannot access resource "%1".',
                     ['store_payment_token']
                 )
             );
         }
         $customerId = $context->getUserId();
-        return $this->deleteToken($customerId, $args['id']);
+        return $this->deleteToken($customerId, $args['public_hash']);
     }
 
     /**
      * Process delete request
      *
      * @param int $customerId
-     * @param int $tokenId
+     * @param string $publicHash
      * @return bool
      * @throws GraphQlAuthorizationException
      * @throws GraphQlNoSuchEntityException
      */
-    private function deleteToken($customerId, $tokenId)
+    private function deleteToken($customerId, $publicHash)
     {
-        /** @var PaymentTokenInterface $token */
-        $token = $this->paymentTokenRepositoryInterface->getById($tokenId);
+        $token = $this->paymentTokenManagement->getByPublicHash($publicHash, $customerId);
         if (empty($token->getEntityId())) {
             throw new GraphQlNoSuchEntityException(
-                __('Payment Token id %1 does not exist.', [$tokenId])
+                __('Payment token public_hash %1 does not exist.', [$publicHash])
             );
         }
-        if ($customerId != $token->getCustomerId()) {
-            throw new GraphQlAuthorizationException(
-                __('Current customer does not have permission to delete Payment Token id %1', [$tokenId])
-            );
-        }
-        return $this->paymentTokenRepositoryInterface->delete($token);
+        return $this->paymentTokenRepository->delete($token);
     }
 }

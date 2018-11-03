@@ -13,7 +13,7 @@ use Magento\TestFramework\TestCase\GraphQlAbstract;
 use Magento\Integration\Api\CustomerTokenServiceInterface;
 use Magento\Vault\Api\PaymentTokenManagementInterface;
 
-class PaymentTokenListTest extends GraphQlAbstract
+class PaymentTokensTest extends GraphQlAbstract
 {
     /**
      * Verify store payment token with valid credentials
@@ -25,16 +25,13 @@ class PaymentTokenListTest extends GraphQlAbstract
         $query
             = <<<QUERY
 {
-  paymentTokenList {
-    entity_id
-    customer_id
+  paymentTokens {
     public_hash
     payment_method_code
     type
-    gateway_token
     expires_at
     details {
-      attribute_code
+      code
       value
     }
     is_active
@@ -53,10 +50,9 @@ QUERY;
         $customerRepository = ObjectManager::getInstance()->get(CustomerRepositoryInterface::class);
         $customer = $customerRepository->get($userName);
         $response = $this->graphQlQuery($query, [], '', $headerMap);
-        $this->assertTrue(is_array($response['paymentTokenList']), "paymentTokenList field must be of an array type.");
-        $this->assertEquals($this->getPaymentTokenAmountFroCustomer($customer->getId()), count($response['paymentTokenList']));
-        $list = $response['paymentTokenList'];
-        $this->assertCustomerId($customer->getId(), $list);
+        $this->assertTrue(is_array($response['paymentTokens']), "paymentTokens field must be of an array type.");
+        $this->assertEquals($this->getPaymentTokenAmountFroCustomer($customer->getId()), count($response['paymentTokens']));
+        $list = $response['paymentTokens'];
         $this->assertIsActive($list);
 
         $this->assertEquals('H123456789', $list[0]['public_hash']);
@@ -70,10 +66,6 @@ QUERY;
         $this->assertEquals('card', $list[0]['type']);
         $this->assertEquals('card', $list[1]['type']);
         $this->assertEquals('account', $list[2]['type']);
-
-        $this->assertEquals('ABC1234', $list[0]['gateway_token']);
-        $this->assertEquals('ABC4567', $list[1]['gateway_token']);
-        $this->assertEquals('ABC7890', $list[2]['gateway_token']);
 
         $this->assertIsDetailsArray($list);
         $this->assertTokenDetails(['type' => 'VI', 'maskedCC' => '9876', 'expirationDate' => '12/2020'], $list[0]['details']);
@@ -89,17 +81,14 @@ QUERY;
         $query
             = <<<QUERY
 {
-  paymentTokenList {
-    entity_id
-    customer_id
+  paymentTokens {
     public_hash
     payment_method_code
     type
-    gateway_token
     created_at
     expires_at
     details {
-      attribute_code
+      code
       value
     }
     is_active
@@ -109,7 +98,7 @@ QUERY;
 QUERY;
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('GraphQL response contains errors:' . ' ' .
-            'Current customer does not have access to the resource "store_payment_token"');
+            'A guest customer cannot access resource "store_payment_token".');
         $this->graphQlQuery($query);
     }
 
@@ -159,7 +148,7 @@ QUERY;
     private function assertTokenDetails(array $expected, array $response)
     {
         foreach($response as $details) {
-            $this->assertEquals($expected[$details['attribute_code']], $details['value']);
+            $this->assertEquals($expected[$details['code']], $details['value']);
         }
     }
 

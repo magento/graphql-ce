@@ -2,50 +2,47 @@
 # See COPYING.txt for license details.
 
 type Query {
-    paymentTokenList: [PaymentToken] @resolver(class: "Magento\\VaultGraphQl\\Model\\Resolver\\PaymentTokenList") @doc(description: "The paymentTokenList query returns a list of stored payment methods for a logged-in customer")
+    paymentTokens: [PaymentToken] @resolver(class: "Magento\\VaultGraphQl\\Model\\Resolver\\PaymentTokens") @doc(description: "The paymentTokens query returns a list of stored payment methods for a logged-in customer")
 }
 
 type Mutation {
     paymentTokenAdd(input: PaymentTokenInput!): PaymentToken @resolver(class: "Magento\\VaultGraphQl\\Model\\Resolver\\PaymentTokenAdd") @doc(description: "Add payment tokens")
-    paymentTokenDelete(id: Int!): Boolean @resolver(class: "Magento\\VaultGraphQl\\Model\\Resolver\\PaymentTokenDelete") @doc(description: "Remove stored payment tokens")
+    paymentTokenDelete(public_hash: String!): Boolean @resolver(class: "Magento\\VaultGraphQl\\Model\\Resolver\\PaymentTokenDelete") @doc(description: "Remove stored payment tokens")
 }
 
-type PaymentToken @doc(description: "PaymentToken defines the stored payment details") {
-    entity_id: Int @doc(description: "The ID assigned to the payment token")
-    customer_id: Int @doc(description: "The customer ID")
-    public_hash: String @doc(description: "The public hash")
-    payment_method_code: String @doc(description: "The payment method code")
-    type: TokenType @doc(description: "The token type")
-    created_at: String @doc(description: "Timestamp indicating when the payment token was created")
-    expires_at: String @doc(description: "Timestamp indicating when the payment token was updated")
-    gateway_token: String @doc(description: "The getaway payment token")
+type PaymentToken @doc(description: "PaymentToken defines stored payment details") {
+    public_hash: String! @doc(description: "The public hash")
+    payment_method_code: String! @doc(description: "The payment method code")
+    type: PaymentTokenType! @doc(description: "The payment token type")
+    created_at: String! @doc(description: "Timestamp indicating when the payment token was created")
+    expires_at: String! @doc(description: "Timestamp indicating when the payment token was updated")
     details: [DetailsAttribute] @doc(description: "Payment token details")
-    is_active: Boolean @doc(description: "Indicating is active")
-    is_visible: Boolean @doc(description: "Indicating is visible")
+    is_active: Boolean! @doc(description: "Indicates the payment token is active")
+    is_visible: Boolean! @doc(description: "Indicates the payment token is visible")
 }
 
 type DetailsAttribute {
-    attribute_code: String @doc(description: "Attribute code")
-    value: String @doc(description: "Attribute value")
+    code: String! @doc(description: "Attribute code")
+    value: String! @doc(description: "Attribute value")
 }
 
 input PaymentTokenInput {
     public_hash: String! @doc(description: "The public hash")
     payment_method_code: String! @doc(description: "The payment method code")
-    type: TokenType! @doc(description: "The payment token type")
+    type: PaymentTokenType! @doc(description: "The payment token type")
     expires_at: String @doc(description: "Timestamp indicating when the payment token was updated")
     gateway_token: String! @doc(description: "The getaway payment token")
     details: [DetailsAttributeInput] @doc(description: "Payment token details")
-    is_active: Boolean @doc(description: "Indicating is active")
-    is_visible: Boolean @doc(description: "Indicating is visible")
+    is_active: Boolean @doc(description: "Indicates the payment token is active")
+    is_visible: Boolean @doc(description: "Indicates the payment token is visible")
 }
 
 input DetailsAttributeInput {
-    attribute_code: String @doc(description: "Attribute code")
-    value: String @doc(description: "Attribute value")
+    code: String! @doc(description: "Attribute code")
+    value: String! @doc(description: "Attribute value")
 }
 
-enum TokenType @doc(description: "Token types availables"){
+enum PaymentTokenType @doc(description: "Token types availables"){
     card @doc(description: "Card token type")
     account @doc(description: "Account token type")
 }

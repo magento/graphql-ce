@@ -19,7 +19,7 @@ use Magento\Vault\Api\PaymentTokenManagementInterface;
 /**
  * Store Payment Method List, used for GraphQL request processing.
  */
-class PaymentTokenList implements ResolverInterface
+class PaymentTokens implements ResolverInterface
 {
     /**
      * @var PaymentTokenDataProvider
@@ -29,18 +29,18 @@ class PaymentTokenList implements ResolverInterface
     /**
      * @var PaymentTokenManagementInterface
      */
-    private $paymentTokenManagementInterface;
+    private $paymentTokenManagement;
 
     /**
      * @param PaymentTokenDataProvider $paymentTokenDataProvider
-     * @param PaymentTokenManagementInterface $paymentTokenManagementInterface
+     * @param PaymentTokenManagementInterface $paymentTokenManagement
      */
     public function __construct(
         PaymentTokenDataProvider $paymentTokenDataProvider,
-        PaymentTokenManagementInterface $paymentTokenManagementInterface
+        PaymentTokenManagementInterface $paymentTokenManagement
     ) {
         $this->paymentTokenDataProvider = $paymentTokenDataProvider;
-        $this->paymentTokenManagementInterface = $paymentTokenManagementInterface;
+        $this->paymentTokenManagement = $paymentTokenManagement;
     }
 
     /**
@@ -57,14 +57,14 @@ class PaymentTokenList implements ResolverInterface
         if ((!$context->getUserId()) || $context->getUserType() == UserContextInterface::USER_TYPE_GUEST) {
             throw new GraphQlAuthorizationException(
                 __(
-                    'Current customer does not have access to the resource "%1"',
+                    'A guest customer cannot access resource "%1".',
                     ['store_payment_token']
                 )
             );
         }
         $customerId = $context->getUserId();
-        return $this->paymentTokenDataProvider->processPaymentTokens(
-            $this->paymentTokenManagementInterface->getVisibleAvailableTokens($customerId)
+        return $this->paymentTokenDataProvider->processPaymentTokenArray(
+            $this->paymentTokenManagement->getVisibleAvailableTokens($customerId)
         );
     }
 }

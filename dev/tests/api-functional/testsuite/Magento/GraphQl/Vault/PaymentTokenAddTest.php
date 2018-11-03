@@ -9,7 +9,7 @@ namespace Magento\GraphQl\Vault;
 
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Integration\Api\CustomerTokenServiceInterface;
-use Magento\Vault\Api\PaymentTokenRepositoryInterface;
+use Magento\Vault\Api\PaymentTokenManagementInterface;
 use Magento\Vault\Api\Data\PaymentTokenInterface;
 use Magento\TestFramework\ObjectManager;
 use Magento\TestFramework\TestCase\GraphQlAbstract;
@@ -42,9 +42,9 @@ class PaymentTokenAddTest extends GraphQlAbstract
             'is_active' => true,
             'is_visible' => true,
             'details' => [
-                ['attribute_code' => 'type', 'value' => 'VI'],
-                ['attribute_code' => 'maskedCC', 'value' => '9876'],
-                ['attribute_code' => 'expirationDate', 'value' => '12/2055'],
+                ['code' => 'type', 'value' => 'VI'],
+                ['code' => 'maskedCC', 'value' => '9876'],
+                ['code' => 'expirationDate', 'value' => '12/2055'],
 
             ]
         ];
@@ -61,31 +61,28 @@ mutation {
     gateway_token: "{$paymentTokenInfo['gateway_token']}"
     details: [
           {
-            attribute_code: "{$paymentTokenInfo['details'][0]['attribute_code']}",
+            code: "{$paymentTokenInfo['details'][0]['code']}",
             value: "{$paymentTokenInfo['details'][0]['value']}"
           },
           {
-            attribute_code: "{$paymentTokenInfo['details'][1]['attribute_code']}",
+            code: "{$paymentTokenInfo['details'][1]['code']}",
             value: "{$paymentTokenInfo['details'][1]['value']}"
           },
           {
-            attribute_code: "{$paymentTokenInfo['details'][2]['attribute_code']}",
+            code: "{$paymentTokenInfo['details'][2]['code']}",
             value: "{$paymentTokenInfo['details'][2]['value']}"
           }
         ],
     is_active: {$isActiveText}
     is_visible: {$isVisibleText}
   }) {
-    entity_id
-    customer_id
     public_hash
     payment_method_code
     type
     created_at
     expires_at
-    gateway_token
     details {
-      attribute_code
+      code
       value
     }
     is_active
@@ -96,15 +93,11 @@ MUTATION;
         $response = $this->graphQlQuery($query, [], '', $headerMap);
         $this->assertTrue(is_array($response));
         $this->assertArrayHasKey('paymentTokenAdd', $response);
-        $this->assertArrayHasKey('customer_id', $response['paymentTokenAdd']);
-        $this->assertEquals($customer->getId(), $response['paymentTokenAdd']['customer_id']);
-        $this->assertArrayHasKey('entity_id', $response['paymentTokenAdd']);
-        $tokenId = $response['paymentTokenAdd']['entity_id'];
-        /** @var PaymentTokenRepositoryInterface $tokenRepository */
-        $tokenRepository = ObjectManager::getInstance()->get(PaymentTokenRepositoryInterface::class);
+        $tokenPublicHash = $response['paymentTokenAdd']['public_hash'];
+        /** @var PaymentTokenManagementInterface $tokenManager */
+        $tokenManager = ObjectManager::getInstance()->get(PaymentTokenManagementInterface::class);
         /** @var PaymentTokenInterface $token */
-        $token = $tokenRepository->getById($tokenId);
-        $this->assertEquals($token->getEntityId(), $response['paymentTokenAdd']['entity_id']);
+        $token = $tokenManager->getByPublicHash($tokenPublicHash, $customer->getId());
         $this->assertPaymentTokenFields($token, $response['paymentTokenAdd']);
         $this->assertPaymentTokenFields($token, $paymentTokenInfo);
     }
@@ -125,31 +118,28 @@ mutation {
     gateway_token: "ABCDEF1234"
     details: [
           {
-            attribute_code: "type",
+            code: "type",
             value: "MC"
           },
           {
-            attribute_code: "maskedCC",
+            code: "maskedCC",
             value: "0000"
           },
           {
-            attribute_code: "expirationDate",
+            code: "expirationDate",
             value: "01/2020"
           }
         ],
     is_active: true
     is_visible: true
   }) {
-    entity_id
-    customer_id
     public_hash
     payment_method_code
     type
     created_at
     expires_at
-    gateway_token
     details {
-      attribute_code
+      code
       value
     }
     is_active
@@ -160,7 +150,7 @@ MUTATION;
 
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('GraphQL response contains errors:' . ' ' .
-            'Current customer does not have access to the resource "store_payment_token"');
+            'A guest customer cannot access resource "store_payment_token".');
         $this->graphQlQuery($query);
     }
 
@@ -177,7 +167,6 @@ MUTATION;
             ['response_field' => 'payment_method_code', 'expected_value' => $paymentToken->getPaymentMethodCode()],
             ['response_field' => 'type', 'expected_value' => $paymentToken->getType()],
             ['response_field' => 'expires_at', 'expected_value' => $paymentToken->getExpiresAt()],
-            ['response_field' => 'gateway_token', 'expected_value' => $paymentToken->getGatewayToken()],
             ['response_field' => 'is_active', 'expected_value' => $paymentToken->getIsActive()],
             ['response_field' => 'is_visible', 'expected_value' => $paymentToken->getIsVisible()],
         ];
@@ -186,7 +175,7 @@ MUTATION;
         $jsonSerializer = ObjectManager::getInstance()->get(SerializerInterface::class);
         $paymentTokenDetailArray = $jsonSerializer->unserialize($paymentToken->getTokenDetails());
         foreach($actualResponse['details'] as $details) {
-            $this->assertEquals($paymentTokenDetailArray[$details['attribute_code']], $details['value']);
+            $this->assertEquals($paymentTokenDetailArray[$details['code']], $details['value']);
         }
     }
 }

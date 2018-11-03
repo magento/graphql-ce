@@ -39,12 +39,12 @@ class PaymentTokenAdd implements ResolverInterface
     /**
      * @var PaymentTokenRepositoryInterface
      */
-    private $paymentTokenRepositoryInterface;
+    private $paymentTokenRepository;
 
     /**
      * @var PaymentTokenFactoryInterface
      */
-    private $paymentTokenFactoryInterface;
+    private $paymentTokenFactory;
 
     /**
      * @var PaymentTokenDataProvider
@@ -52,17 +52,18 @@ class PaymentTokenAdd implements ResolverInterface
     private $paymentTokenDataProvider;
 
     /**
-     * @param PaymentTokenRepositoryInterface $paymentTokenRepositoryInterface
-     * @param PaymentTokenFactoryInterface $paymentTokenInterface
+     * @param PaymentTokenRepositoryInterface $paymentTokenRepository
+     * @param PaymentTokenFactoryInterface $paymentTokenFactory
      * @param PaymentTokenDataProvider $paymentTokenDataProvider
      */
     public function __construct(
-        PaymentTokenRepositoryInterface $paymentTokenRepositoryInterface,
-        PaymentTokenFactoryInterface $paymentTokenInterface,
+        PaymentTokenRepositoryInterface $paymentTokenRepository,
+        PaymentTokenFactoryInterface $paymentTokenFactory,
         PaymentTokenDataProvider $paymentTokenDataProvider
-    ) {
-        $this->paymentTokenRepositoryInterface = $paymentTokenRepositoryInterface;
-        $this->paymentTokenFactoryInterface = $paymentTokenInterface;
+    )
+    {
+        $this->paymentTokenRepository = $paymentTokenRepository;
+        $this->paymentTokenFactory = $paymentTokenFactory;
         $this->paymentTokenDataProvider = $paymentTokenDataProvider;
     }
 
@@ -75,12 +76,13 @@ class PaymentTokenAdd implements ResolverInterface
         ResolveInfo $info,
         array $value = null,
         array $args = null
-    ) {
+    )
+    {
         /** @var ContextInterface $context */
         if ((!$context->getUserId()) || $context->getUserType() == UserContextInterface::USER_TYPE_GUEST) {
             throw new GraphQlAuthorizationException(
                 __(
-                    'Current customer does not have access to the resource "%1"',
+                    'A guest customer cannot access resource "%1".',
                     ['store_payment_token']
                 )
             );
@@ -99,8 +101,8 @@ class PaymentTokenAdd implements ResolverInterface
      */
     private function getInputError(array $tokenInfo)
     {
-        foreach(self::REQUIRED_ATTRIBUTES as $attributeName){
-            if(!isset($tokenInfo[$attributeName]) || empty($tokenInfo[$attributeName])){
+        foreach (self::REQUIRED_ATTRIBUTES as $attributeName) {
+            if (!isset($tokenInfo[$attributeName]) || empty($tokenInfo[$attributeName])) {
                 return $attributeName;
             }
         }
@@ -110,29 +112,31 @@ class PaymentTokenAdd implements ResolverInterface
     /**
      * Process payment token add
      *
-     * @param $customerId
+     * @param int $customerId
      * @param array $tokenInfo
      * @return PaymentTokenInterface
      * @throws GraphQlInputException
      * @throws GraphQlAlreadyExistsException
      */
-    private function processPaymentTokenAdd($customerId, array $tokenInfo) : PaymentTokenInterface
+    private function processPaymentTokenAdd($customerId, array $tokenInfo): PaymentTokenInterface
     {
         $errorInput = $this->getInputError($tokenInfo);
         if ($errorInput) {
             throw new GraphQlInputException(
-                __('Required parameter %1 is missing', [$errorInput])
+                __('The required parameter %1 is missing.', [$errorInput])
             );
         }
         /** @var PaymentTokenInterface $token */
         $token = $this->paymentTokenDataProvider->fillPaymentToken(
-            $this->paymentTokenFactoryInterface->create($tokenInfo['type']),
+            $this->paymentTokenFactory->create($tokenInfo['type']),
             $tokenInfo
         );
         $token->setCustomerId($customerId);
         try {
-            return $this->paymentTokenRepositoryInterface->save($token);
-        }catch (AlreadyExistsException $e) {
+            $this->paymentTokenRepository->save($token);
+            // Reload current token object from repository to get "created_at" updated
+            return $this->paymentTokenRepository->getById($token->getEntityId());
+        } catch (AlreadyExistsException $e) {
             throw new GraphQlAlreadyExistsException(__($e->getMessage()), $e);
         }
     }
