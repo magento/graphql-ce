@@ -13,7 +13,7 @@ use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Multishipping\Model\Checkout\Type\Multishipping as MultishippingModel;
 use Magento\MultishippingGraphQl\Model\Resolver\SetShippingAddressesOnCart\MultiShipping\ShippingItemsMapper;
-use Magento\QuoteGraphQl\Model\Cart\GetCartForUser;
+use Magento\Quote\Api\Data\CartInterface;
 use Magento\QuoteGraphQl\Model\Cart\SetShippingAddressesOnCartInterface;
 
 /**
@@ -32,29 +32,21 @@ class MultiShipping implements SetShippingAddressesOnCartInterface
     private $shippingItemsInformationMapper;
 
     /**
-     * @var GetCartForUser
-     */
-    private $getCartForUser;
-
-    /**
      * @param MultishippingModel $multishippingModel
      * @param ShippingItemsMapper $shippingItemsInformationMapper
-     * @param GetCartForUser $getCartForUser
      */
     public function __construct(
         MultishippingModel $multishippingModel,
-        ShippingItemsMapper $shippingItemsInformationMapper,
-        GetCartForUser $getCartForUser
+        ShippingItemsMapper $shippingItemsInformationMapper
     ) {
         $this->multishippingModel = $multishippingModel;
         $this->shippingItemsInformationMapper = $shippingItemsInformationMapper;
-        $this->getCartForUser = $getCartForUser;
     }
 
     /**
      * @inheritdoc
      */
-    public function execute(ContextInterface $context, int $cartId, array $shippingAddresses): void
+    public function execute(ContextInterface $context, CartInterface $cart, array $shippingAddresses): void
     {
         if (count($shippingAddresses) === 1) {
             return;
@@ -84,8 +76,7 @@ class MultiShipping implements SetShippingAddressesOnCartInterface
             );
         }
 
-        $cart = $this->getCartForUser->execute($cartId);
-        $this->multishippingModel->getCheckoutSession()->replaceQuote();
+        $this->multishippingModel->getCheckoutSession()->replaceQuote($cart);
         $this->multishippingModel->setShippingItemsInformation($shippingItemsInformation);
     }
 }
