@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\QuoteGraphQl\Model\Cart;
+namespace Magento\QuoteGraphQl\Model\Cart\SetShippingAddressesOnCart;
 
 use Magento\Authorization\Model\UserContextInterface;
 use Magento\Customer\Api\Data\AddressInterface;
@@ -15,13 +15,12 @@ use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Quote\Model\ShippingAddressManagementInterface;
 use Magento\Customer\Api\AddressRepositoryInterface;
+use Magento\QuoteGraphQl\Model\Cart\SetShippingAddressesOnCartInterface;
 
 /**
- * Class SetShippingAddressOnCart
- *
- * Set shipping address for a specified shopping cart
+ * Set single shipping address for a specified shopping cart
  */
-class SetShippingAddressOnCart
+class SingleShippingAddressProcessor implements SetShippingAddressesOnCartInterface
 {
     /**
      * @var ShippingAddressManagementInterface
@@ -54,17 +53,12 @@ class SetShippingAddressOnCart
     }
 
     /**
-     * @param ContextInterface $context
-     * @param int $cartId
-     * @param array $shippingAddresses
-     * @return void
+     * @inheritdoc
      */
-    public function setAddresses(ContextInterface $context, int $cartId, array $shippingAddresses): void
+    public function execute(ContextInterface $context, int $cartId, array $shippingAddresses): void
     {
         if (count($shippingAddresses) > 1) {
-            throw new GraphQlInputException(
-                __('Multiple address does not allowed here!')
-            );
+            return;
         }
         $shippingAddress = current($shippingAddresses);
         $customerAddressId = $shippingAddress['customer_address_id'] ?? null;
@@ -84,19 +78,12 @@ class SetShippingAddressOnCart
             if ((!$context->getUserId()) || $context->getUserType() == UserContextInterface::USER_TYPE_GUEST) {
                 throw new GraphQlAuthorizationException(
                     __(
-                        'Address management allowed only for authorized customers'
+                        'Address management allowed only for authorized customers.'
                     )
                 );
             }
             /** @var AddressInterface $customerAddress */
             $customerAddress = $this->addressRepository->getById($customerAddressId);
-            if ($context->getUserId() !== (int)$customerAddress->getCustomerId()) {
-                throw new GraphQlInputException(
-                    __(
-                        'Address is not applicable for current customer'
-                    )
-                );
-            }
             $shippingAddress = $this->addressModel->importCustomerAddressData($customerAddress);
         } else {
             $shippingAddress = $this->addressModel->addData($addressInput);
