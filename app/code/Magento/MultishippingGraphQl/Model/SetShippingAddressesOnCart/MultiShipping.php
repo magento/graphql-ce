@@ -13,11 +13,13 @@ use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Multishipping\Model\Checkout\Type\Multishipping as MultishippingModel;
 use Magento\MultishippingGraphQl\Model\Resolver\SetShippingAddressesOnCart\MultiShipping\ShippingItemsMapper;
+use Magento\QuoteGraphQl\Model\Cart\GetCartForUser;
+use Magento\QuoteGraphQl\Model\Cart\SetShippingAddressesOnCartInterface;
 
 /**
  * Multishipping address assigning flow
  */
-class MultiShipping
+class MultiShipping implements SetShippingAddressesOnCartInterface
 {
     /**
      * @var MultishippingModel
@@ -30,24 +32,33 @@ class MultiShipping
     private $shippingItemsInformationMapper;
 
     /**
+     * @var GetCartForUser
+     */
+    private $getCartForUser;
+
+    /**
      * @param MultishippingModel $multishippingModel
      * @param ShippingItemsMapper $shippingItemsInformationMapper
+     * @param GetCartForUser $getCartForUser
      */
     public function __construct(
         MultishippingModel $multishippingModel,
-        ShippingItemsMapper $shippingItemsInformationMapper
+        ShippingItemsMapper $shippingItemsInformationMapper,
+        GetCartForUser $getCartForUser
     ) {
         $this->multishippingModel = $multishippingModel;
         $this->shippingItemsInformationMapper = $shippingItemsInformationMapper;
+        $this->getCartForUser = $getCartForUser;
     }
 
     /**
-     * @param ContextInterface $context
-     * @param int $cartId
-     * @param array $shippingAddresses
+     * @inheritdoc
      */
-    public function setAddresses(ContextInterface $context, int $cartId, array $shippingAddresses): void
+    public function execute(ContextInterface $context, int $cartId, array $shippingAddresses): void
     {
+        if (count($shippingAddresses) === 1) {
+            return;
+        }
         if ((!$context->getUserId()) || $context->getUserType() == UserContextInterface::USER_TYPE_GUEST) {
             throw new GraphQlAuthorizationException(
                 __(
@@ -73,7 +84,7 @@ class MultiShipping
             );
         }
 
-        //TODO: multishipping model works with session. Do we need to avoid it?
+        $cart = $this->getCartForUser->execute($cartId);
         $this->multishippingModel->getCheckoutSession()->replaceQuote();
         $this->multishippingModel->setShippingItemsInformation($shippingItemsInformation);
     }
