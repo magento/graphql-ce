@@ -9,7 +9,7 @@
     <type name="Magento\QuoteGraphQl\Model\Cart\SetShippingAddressesOnCartInterface">
         <arguments>
             <argument name="shippingAddressProcessors" xsi:type="array">
-                <item name="multiShipping" xsi:type="object">Magento\MultishippingGraphQl\Model\Resolver\SetShippingAddressesOnCart\MultiShipping</item>
+                <item name="multiShipping" xsi:type="object">Magento\MultishippingGraphQl\Model\SetShippingAddressesOnCart\MultiShipping</item>
             </argument>
         </arguments>
     </type>

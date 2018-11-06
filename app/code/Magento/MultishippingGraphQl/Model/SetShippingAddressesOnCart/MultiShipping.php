@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\MultishippingGraphQl\Model\Resolver\SetShippingAddressesOnCart;
+namespace Magento\MultishippingGraphQl\Model\SetShippingAddressesOnCart;
 
 use Magento\Authorization\Model\UserContextInterface;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
