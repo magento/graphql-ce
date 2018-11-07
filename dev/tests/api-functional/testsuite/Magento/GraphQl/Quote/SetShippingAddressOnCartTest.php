@@ -147,7 +147,6 @@ QUERY;
 
     /**
      * @magentoApiDataFixture Magento/Checkout/_files/quote_with_simple_product_saved.php
-     * @magentoApiConfigFixture default_store multishipping/options/checkout_multiple 0
      */
     public function testSetMultipleShippingAddressesOnCartByGuest()
     {
