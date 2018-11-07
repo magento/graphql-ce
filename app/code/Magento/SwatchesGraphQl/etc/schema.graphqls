@@ -24,7 +24,7 @@ type SwatchLayerFilterItem implements LayerFilterItemInterface, SwatchLayerFilte
     }
 
 type ConfigurableProductOptionsValues {
-    swatch_data: SwatchData @doc(description: "Test") @resolver (class: "Magento\\SwatchesGraphQl\\Model\\Resolver\\Product\\Options")
+    swatch_data: SwatchData @doc(description: "Swatch data for configurable product options") @resolver (class: "Magento\\SwatchesGraphQl\\Model\\Resolver\\Product\\Options")
 }
 
 type SwatchData {
