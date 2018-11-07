@@ -7,7 +7,9 @@ declare(strict_types=1);
 
 namespace Magento\GraphQl\Quote;
 
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Integration\Api\CustomerTokenServiceInterface;
+use Magento\Multishipping\Helper\Data;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\QuoteIdToMaskedQuoteIdInterface;
 use Magento\Quote\Model\ResourceModel\Quote as QuoteResource;
@@ -145,7 +147,7 @@ QUERY;
 
     /**
      * @magentoApiDataFixture Magento/Checkout/_files/quote_with_simple_product_saved.php
-     * @magentoConfigFixture default_store multishipping/options/checkout_multiple 0
+     * @magentoApiConfigFixture default_store multishipping/options/checkout_multiple 0
      */
     public function testSetMultipleShippingAddressesOnCartByGuest()
     {
@@ -185,6 +187,18 @@ mutation {
   }
 }
 QUERY;
+        /** @var \Magento\Config\Model\ResourceModel\Config $config */
+        $config = ObjectManager::getInstance()->get(\Magento\Config\Model\ResourceModel\Config::class);
+        $config->saveConfig(
+            Data::XML_PATH_CHECKOUT_MULTIPLE_AVAILABLE,
+            null,
+            ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
+            1
+        );
+        /** @var \Magento\Framework\App\Config\ReinitableConfigInterface $config */
+        $config = ObjectManager::getInstance()->get(\Magento\Framework\App\Config\ReinitableConfigInterface::class);
+        $config->reinit();
+
         self::expectExceptionMessage('Multiple addresses do not allowed here!');
         $this->graphQlQuery($query);
     }
@@ -466,5 +480,23 @@ QUERY;
         $customerToken = $customerTokenService->createCustomerAccessToken($username, $password);
         $headerMap = ['Authorization' => 'Bearer ' . $customerToken];
         return $headerMap;
+    }
+
+    public function tearDown()
+    {
+        /** @var \Magento\Config\Model\ResourceModel\Config $config */
+        $config = ObjectManager::getInstance()->get(\Magento\Config\Model\ResourceModel\Config::class);
+
+        //default state of multishipping config
+        $config->saveConfig(
+            Data::XML_PATH_CHECKOUT_MULTIPLE_AVAILABLE,
+            1,
+            ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
+            1
+        );
+
+        /** @var \Magento\Framework\App\Config\ReinitableConfigInterface $config */
+        $config = ObjectManager::getInstance()->get(\Magento\Framework\App\Config\ReinitableConfigInterface::class);
+        $config->reinit();
     }
 }

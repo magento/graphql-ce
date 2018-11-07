@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\MultishippingGraphQl\Model\Resolver\SetShippingAddressesOnCart\MultiShipping;
+namespace Magento\MultishippingGraphQl\Model\SetShippingAddressesOnCart\MultiShipping;
 
 /**
  * Shipping address to shipping items mapper
