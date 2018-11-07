@@ -115,7 +115,7 @@ QUERY;
                         'value_string' => $options[1]->getValue(),
                         'items_count' => 2,
                         'swatch_data' => [
-                            'type' => '1',
+                            'type' => 'COLOR',
                             'value' => '#555555',
                         ],
                     ],
@@ -161,8 +161,7 @@ QUERY;
         foreach ($expectedFilters as $expectedFilter) {
             $found = false;
             foreach ($response['products']['filters'] as $responseFilter) {
-                if ($responseFilter['name'] == $expectedFilter['name']
-                    && $responseFilter['request_var'] == $expectedFilter['request_var']) {
+                if ($responseFilter === $expectedFilter) {
                     $found = true;
                     break;
                 }
