@@ -79,7 +79,7 @@ class PaymentTokenDelete implements ResolverInterface
     private function deleteToken($customerId, $publicHash)
     {
         $token = $this->paymentTokenManagement->getByPublicHash($publicHash, $customerId);
-        if (empty($token->getEntityId())) {
+        if (!$token) {
             throw new GraphQlNoSuchEntityException(
                 __('Payment token public_hash %1 does not exist.', [$publicHash])
             );
