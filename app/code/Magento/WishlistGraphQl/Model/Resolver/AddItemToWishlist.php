@@ -9,6 +9,7 @@ namespace Magento\WishlistGraphQl\Model\Resolver;
 
 use Magento\Catalog\Model\Product;
 use Magento\Wishlist\Controller\WishlistProviderInterface;
+use Magento\WishlistGraphQl\Model\WishlistDataProvider;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Wishlist\Model\Wishlist;
 use Magento\Framework\GraphQl\Config\Element\Field;
@@ -29,17 +30,24 @@ class AddItemToWishlist implements ResolverInterface
      * @var ProductRepositoryInterface
      */
     private $productRepository;
+    /**
+     * @var WishlistDataProvider
+     */
+    private $wishlistDataProvider;
 
     /**
      * @param WishlistProviderInterface $wishlistProvider
      * @param ProductRepositoryInterface $productRepository
+     * @param WishlistDataProvider $wishlistDataProvider
      */
     public function __construct(
         WishlistProviderInterface $wishlistProvider,
-        ProductRepositoryInterface $productRepository
+        ProductRepositoryInterface $productRepository,
+        WishlistDataProvider $wishlistDataProvider
     ) {
         $this->wishlistProvider = $wishlistProvider;
         $this->productRepository = $productRepository;
+        $this->wishlistDataProvider = $wishlistDataProvider;
     }
 
     /**
@@ -53,13 +61,13 @@ class AddItemToWishlist implements ResolverInterface
         array $args = null
     ) {
         if (!isset($args['input']['skus'])) {
-            throw new GraphQlInputException(__('at least one "sku" value should be specified'));
+            throw new GraphQlInputException(__('You must specify at least one "sku" value'));
         }
-        $wishlist = $this->wishlistProvider->getWishlist();
+        $wishlist = $this->wishlistDataProvider->getWishlistForCustomer($context->getUserId());
+        if (!$wishlist || !$wishlist->getId()) {
+            throw new GraphQlInputException(__('Cannot get a wish list for the specified Customer ID'));
+        }
         $this->addMultipleProducts($args['input']['skus'], $wishlist);
-        if (!$wishlist) {
-            throw new GraphQlInputException(__('Cannot get Wish List even from Customer ID'));
-        }
         return [
             'wishlist' => [
                 'sharing_code' => $wishlist->getSharingCode(),

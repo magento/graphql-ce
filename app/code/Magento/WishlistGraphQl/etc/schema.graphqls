@@ -22,7 +22,7 @@ type WishlistItem {
 }
 
 type Mutation {
-    addItemsToWishlist (input: AddItemToWishlistInput): AddItemToWishlistOutput @resolver(class: "\\Magento\\WishlistGraphQl\\Model\\Resolver\\AddItemToWishlist") @doc(description:"Add Items by SKUs to the Wish list")
+    addItemsToWishlist (input: AddItemToWishlistInput): AddItemToWishlistOutput @resolver(class: "\\Magento\\WishlistGraphQl\\Model\\Resolver\\AddItemToWishlist") @doc(description:"Add items by SKU to the wish list")
 }
 
 input AddItemToWishlistInput {
