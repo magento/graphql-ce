@@ -8,11 +8,11 @@ declare(strict_types=1);
 namespace Magento\SwatchesGraphQl\Model\Resolver\Product\Fields;
 
 use Magento\Framework\GraphQl\Config\Element\Field;
+use Magento\Framework\GraphQl\Query\EnumLookup;
 use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Framework\GraphQl\Query\Resolver\Value;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
-use Magento\Framework\GraphQl\Query\EnumLookup;
 
 /**
  * Class Type
@@ -50,8 +50,8 @@ class Type implements ResolverInterface
         $context,
         ResolveInfo $info,
         array $value = null,
-        array $args = null)
-    {
+        array $args = null
+    ) {
         $result = isset($value['type'])
             ? $this->enumLookup->getEnumValueFromField('SwatchTypeEnum', $value['type'])
             : null;

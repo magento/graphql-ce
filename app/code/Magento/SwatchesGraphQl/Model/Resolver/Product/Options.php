@@ -7,9 +7,9 @@ declare(strict_types=1);
 
 namespace Magento\SwatchesGraphQl\Model\Resolver\Product;
 
-use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
+use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 
 /**
  * Class Options
@@ -29,8 +29,7 @@ class Options implements ResolverInterface
      */
     public function __construct(
         \Magento\Swatches\Helper\Data $helper
-    )
-    {
+    ) {
         $this->helper = $helper;
     }
 
@@ -40,7 +39,7 @@ class Options implements ResolverInterface
      * @param ResolveInfo $info
      * @param array|null $value
      * @param array|null $args
-     * @return \Magento\Framework\GraphQl\Query\Resolver\Value|mixed
+     * @return array|\Magento\Framework\GraphQl\Query\Resolver\Value|mixed|null
      */
     public function resolve(
         Field $field,
@@ -48,14 +47,16 @@ class Options implements ResolverInterface
         ResolveInfo $info,
         array $value = null,
         array $args = null
-    )
-    {
-        $swatches = $this->helper->getSwatchesByOptionsId([$value['value_index']]);
-        $swatchData = [
+    ) {
+        $swatches = $this->helper->getSwatchesByOptionsId([$value['value_index']]) ?: null;
+
+        if (null === $swatches) {
+            return null;
+        }
+
+        return [
             'value' => $swatches[$value['value_index']]['value'],
             'type' => $swatches[$value['value_index']]['type']
         ];
-
-        return $swatchData;
     }
 }
