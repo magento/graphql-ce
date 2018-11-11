@@ -7,34 +7,69 @@ declare(strict_types=1);
 
 namespace Magento\ReviewGraphQl\Model\Resolver\Product;
 
-use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\Api\FilterBuilder;
+use Magento\Framework\Api\Search\FilterGroupBuilder;
+use Magento\Framework\Api\SortOrderBuilder;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
-use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
+use Magento\Framework\GraphQl\Query\Resolver\Argument\SearchCriteria\Builder as SearchCriteriaBuilder;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Review\Model\Review;
-use Magento\ReviewGraphQl\Model\Reviews\DataProvider as ReviewsDataProvider;
+use Magento\ReviewGraphQl\Model\Resolver\Product\Reviews\Query\Filter;
 
 /**
- * Product reviews resolver
+ * Class Reviews
+ * @package Magento_ReviewGraphQl
  */
 class Reviews implements ResolverInterface
 {
     /**
-     * @var ReviewsDataProvider
+     * @var SearchCriteriaBuilder
      */
-    private $reviewsDataProvider;
+    private $searchCriteriaBuilder;
+
+    /**
+     * @var FilterGroupBuilder
+     */
+    private $filterGroupBuilder;
+
+    /**
+     * @var FilterBuilder
+     */
+    private $filterBuilder;
+
+    /**
+     * @var SortOrderBuilder
+     */
+    private $sortOrderBuilder;
+
+    /**
+     * @var Filter
+     */
+    private $filterQuery;
 
     /**
      * Reviews constructor
      *
-     * @param ReviewsDataProvider $reviewDataProvider
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
+     * @param FilterGroupBuilder $filterGroupBuilder
+     * @param FilterBuilder $filterBuilder
+     * @param SortOrderBuilder $sortOrderBuilder
+     * @param Filter $filterQuery
      */
     public function __construct(
-        ReviewsDataProvider $reviewDataProvider
+        SearchCriteriaBuilder $searchCriteriaBuilder,
+        FilterGroupBuilder $filterGroupBuilder,
+        FilterBuilder $filterBuilder,
+        SortOrderBuilder $sortOrderBuilder,
+        Filter $filterQuery
     ) {
-        $this->reviewsDataProvider = $reviewDataProvider;
+        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
+        $this->filterGroupBuilder = $filterGroupBuilder;
+        $this->filterBuilder = $filterBuilder;
+        $this->sortOrderBuilder = $sortOrderBuilder;
+        $this->filterQuery = $filterQuery;
     }
 
     /**
@@ -47,48 +82,74 @@ class Reviews implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
-        $entityId = $this->getEntityId($args);
+        $searchCriteria = $this->searchCriteriaBuilder->build($field->getName(), $args);
 
-        return [
-            'items' => $this->getReviewsData($entityId, $args['pageSize'], $args['currentPage'])
+        $skuFilter = $this->filterBuilder
+            ->setField('sku')
+            ->setValue($this->getSku($args, $value))
+            ->create();
+
+        $statusFilter = $this->filterBuilder
+            ->setField('status_id')
+            ->setValue(Review::STATUS_APPROVED)
+            ->create();
+
+        $filterGroups = $searchCriteria->getFilterGroups();
+        $filterGroups[] = $this->filterGroupBuilder
+            ->addFilter($skuFilter)
+            ->addFilter($statusFilter)
+            ->create();
+
+        $searchCriteria->setFilterGroups($filterGroups);
+        $searchCriteria->setCurrentPage($args['currentPage']);
+        $searchCriteria->setPageSize($args['pageSize']);
+
+        $searchResult = $this->filterQuery->getResult($searchCriteria);
+
+        //possible division by 0
+        if ($searchCriteria->getPageSize()) {
+            $maxPages = ceil($searchResult->getTotalCount() / $searchCriteria->getPageSize());
+        } else {
+            $maxPages = 0;
+        }
+
+        $currentPage = $searchCriteria->getCurrentPage();
+        if ($searchCriteria->getCurrentPage() > $maxPages && $searchResult->getTotalCount() > 0) {
+            throw new GraphQlInputException(
+                __(
+                    'currentPage value %1 specified is greater than the %2 page(s) available.',
+                    [$currentPage, $maxPages]
+                )
+            );
+        }
+
+        $data = [
+            'total_count' => $searchResult->getTotalCount(),
+            'items' => $searchResult->getReviewsSearchResult(),
+            'page_info' => [
+                'page_size' => $searchCriteria->getPageSize(),
+                'current_page' => $currentPage,
+                'total_pages' => $maxPages
+            ],
         ];
+
+        return $data;
     }
 
     /**
+     * Get sku from arguments
+     *
      * @param array $args
-     * @return int
+     * @param array $value
+     * @return string
      * @throws GraphQlInputException
      */
-    private function getEntityId(array $args): int
+    protected function getSku(array $args, array $value): string
     {
-        if (!isset($args['entity_id'])) {
-            throw new GraphQlInputException(__('"entity_id" should be specified'));
+        if (!isset($args['sku'])) {
+            throw new GraphQlInputException(__('"sku" should be specified'));
         }
 
-        return (int)$args['entity_id'];
-    }
-
-    /**
-     * Get reviews data
-     *
-     * @param int $productId
-     * @param int $pageSize
-     * @param int $currentPage
-     * @return array
-     * @throws GraphQlNoSuchEntityException
-     */
-    private function getReviewsData(int $productId, int $pageSize, int $currentPage): array
-    {
-        try {
-            $reviewData = $this->reviewsDataProvider->getEntityReviews(
-                Review::ENTITY_PRODUCT_CODE,
-                $productId,
-                $pageSize,
-                $currentPage
-            );
-        } catch (NoSuchEntityException $e) {
-            throw new GraphQlNoSuchEntityException(__($e->getMessage()), $e);
-        }
-        return $reviewData;
+        return $args['sku'];
     }
 }

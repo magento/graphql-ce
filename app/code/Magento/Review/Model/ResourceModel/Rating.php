@@ -525,4 +525,22 @@ class Rating extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 
         return $this;
     }
+
+    /**
+     * Get rating id by code
+     *
+     * @param string $ratingCode
+     * @return string
+     */
+    public function getRatingIdByCode($ratingCode)
+    {
+        $select = $this->getConnection()->select()->from(
+            $this->getMainTable(),
+            ['rating_id']
+        )->where(
+            'rating_code = :rating_code'
+        );
+
+        return (int)$this->getConnection()->fetchOne($select, [':rating_code' => $ratingCode]);
+    }
 }

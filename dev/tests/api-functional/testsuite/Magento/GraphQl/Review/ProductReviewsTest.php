@@ -21,26 +21,34 @@ class ProductReviewsTest extends GraphQlAbstract
      */
     public function testGetProductReviews()
     {
-        $productId = 1;
+        $sku = 'simple';
 
         $query = <<<QUERY
 query {
-  productReviews(entity_id: {$productId}) {
+  productReviews(sku: "{$sku}", pageSize: 2, currentPage: 1, sort: {created_at: DESC}) {
     items {
       review_id
-      entity_id
-      customer_id
+      product {
+        name
+        sku
+      }
       title
-      detail
+      review_text
       nickname
       created_at
-      rating_votes {
-        rating_id
-        rating_code
+      average_rating
+      ratings {
+        name
         percent
         value
       }
     }
+    page_info {
+      page_size
+      current_page
+      total_pages
+    }
+    total_count
   }
 }
 QUERY;
@@ -49,17 +57,19 @@ QUERY;
 
         $this->assertNotEmpty($response['productReviews']['items']);
         $this->assertInternalType('array', $response['productReviews']['items']);
-        $this->assertCount(3, $response['productReviews']['items']);
+        $this->assertEquals(3, $response['productReviews']['total_count']);
+        $this->assertEquals(2, $response['productReviews']['page_info']['page_size']);
+        $this->assertEquals(1, $response['productReviews']['page_info']['current_page']);
+        $this->assertEquals(2, $response['productReviews']['page_info']['total_pages']);
 
         foreach ($this->getExpectedData() as $key => $data) {
-            $this->assertEquals($data['entity_id'], $response['productReviews']['items'][$key]['entity_id']);
-            $this->assertEquals($data['customer_id'], $response['productReviews']['items'][$key]['customer_id']);
             $this->assertEquals($data['title'], $response['productReviews']['items'][$key]['title']);
-            $this->assertEquals($data['detail'], $response['productReviews']['items'][$key]['detail']);
+            $this->assertEquals($data['review_text'], $response['productReviews']['items'][$key]['review_text']);
             $this->assertEquals($data['nickname'], $response['productReviews']['items'][$key]['nickname']);
 
-            $this->assertNotEmpty($response['productReviews']['items'][$key]['rating_votes']);
-            $this->assertInternalType('array', $response['productReviews']['items'][$key]['rating_votes']);
+            $this->assertEquals($response['productReviews']['items'][$key]['product']['sku'], $sku);
+            $this->assertNotEmpty($response['productReviews']['items'][$key]['ratings']);
+            $this->assertInternalType('array', $response['productReviews']['items'][$key]['ratings']);
         }
     }
 
@@ -72,24 +82,13 @@ QUERY;
     {
         return [
             [
-                'entity_id' => 1,
-                'customer_id' => null,
                 'title' => 'GraphQl: Approved Empty Customer Review Summary',
-                'detail' => 'Review text',
+                'review_text' => 'Review text',
                 'nickname' => 'Nickname',
             ],
             [
-                'entity_id' => 1,
-                'customer_id' => 1,
                 'title' => 'GraphQl: Approved Review Summary',
-                'detail' => 'Review text',
-                'nickname' => 'Nickname',
-            ],
-            [
-                'entity_id' => 1,
-                'customer_id' => 1,
-                'title' => 'GraphQl: Secondary Approved Review Summary',
-                'detail' => 'Review text',
+                'review_text' => 'Review text',
                 'nickname' => 'Nickname',
             ],
         ];

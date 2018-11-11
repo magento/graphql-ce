@@ -276,6 +276,23 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     }
 
     /**
+     * Add product data to review collection
+     *
+     * @param array $data
+     * @return $this
+     */
+    public function addProductData(array $data)
+    {
+        $this->_select->joinInner(
+            ['p' => $this->getTable('catalog_product_entity')],
+            'main_table.entity_pk_value = p.entity_id',
+            $data
+        );
+
+        return $this;
+    }
+
+    /**
      * Load data
      *
      * @param boolean $printQuery

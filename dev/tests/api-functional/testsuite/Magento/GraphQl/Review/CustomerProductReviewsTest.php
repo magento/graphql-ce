@@ -47,20 +47,29 @@ class CustomerProductReviewsTest extends GraphQlAbstract
 
         $query = <<<QUERY
 query {
-  customerProductReviews {
+  customerProductReviews(pageSize: 3, currentPage: 1, sort: {created_at: DESC}) {
     items {
       review_id
-      entity_id
-      store_id
-      entity_name
+      product {
+        name
+      }
       title
-      detail
-      sum
-      count
+      review_text
       nickname
-      status_id
       created_at
+      average_rating
+      ratings {
+        name
+        percent
+        value
+      }
     }
+    page_info {
+      page_size
+      current_page
+      total_pages
+    }
+    total_count
   }
 }
 QUERY;
@@ -69,15 +78,15 @@ QUERY;
 
         $this->assertNotEmpty($response['customerProductReviews']['items']);
         $this->assertInternalType('array', $response['customerProductReviews']['items']);
-        $this->assertCount(4, $response['customerProductReviews']['items']);
+        $this->assertEquals(4, $response['customerProductReviews']['total_count']);
+        $this->assertEquals(3, $response['customerProductReviews']['page_info']['page_size']);
+        $this->assertEquals(1, $response['customerProductReviews']['page_info']['current_page']);
+        $this->assertEquals(2, $response['customerProductReviews']['page_info']['total_pages']);
 
         foreach ($this->getExpectedData() as $key => $data) {
-            $this->assertEquals($data['entity_id'], $response['customerProductReviews']['items'][$key]['entity_id']);
-            $this->assertEquals($data['store_id'], $response['customerProductReviews']['items'][$key]['store_id']);
-            $this->assertEquals($data['entity_name'], $response['customerProductReviews']['items'][$key]['entity_name']);
+            $this->assertEquals($data['product_name'], $response['customerProductReviews']['items'][$key]['product']['name']);
             $this->assertEquals($data['title'], $response['customerProductReviews']['items'][$key]['title']);
-            $this->assertEquals($data['detail'], $response['customerProductReviews']['items'][$key]['detail']);
-            $this->assertEquals($data['status_id'], $response['customerProductReviews']['items'][$key]['status_id']);
+            $this->assertEquals($data['review_text'], $response['customerProductReviews']['items'][$key]['review_text']);
             $this->assertEquals($data['nickname'], $response['customerProductReviews']['items'][$key]['nickname']);
         }
     }
@@ -104,39 +113,21 @@ QUERY;
     {
         return [
             [
-                'entity_id' => 1,
-                'store_id' => 1,
-                'entity_name' => 'Simple Product',
+                'product_name' => 'Simple Product',
                 'title' => 'GraphQl: Not Approved Review Summary',
-                'detail' => 'Review text',
-                'status_id' => Review::STATUS_NOT_APPROVED,
+                'review_text' => 'Review text',
                 'nickname' => 'Nickname',
             ],
             [
-                'entity_id' => 1,
-                'store_id' => 1,
-                'entity_name' => 'Simple Product',
+                'product_name' => 'Simple Product',
                 'title' => 'GraphQl: Approved Review Summary',
-                'detail' => 'Review text',
-                'status_id' => Review::STATUS_APPROVED,
+                'review_text' => 'Review text',
                 'nickname' => 'Nickname',
             ],
             [
-                'entity_id' => 1,
-                'store_id' => 1,
-                'entity_name' => 'Simple Product',
+                'product_name' => 'Simple Product',
                 'title' => 'GraphQl: Secondary Approved Review Summary',
-                'detail' => 'Review text',
-                'status_id' => Review::STATUS_APPROVED,
-                'nickname' => 'Nickname',
-            ],
-            [
-                'entity_id' => 1,
-                'store_id' => 1,
-                'entity_name' => 'Simple Product',
-                'title' => 'GraphQl: Pending Review Summary',
-                'detail' => 'Review text',
-                'status_id' => Review::STATUS_PENDING,
+                'review_text' => 'Review text',
                 'nickname' => 'Nickname',
             ],
         ];

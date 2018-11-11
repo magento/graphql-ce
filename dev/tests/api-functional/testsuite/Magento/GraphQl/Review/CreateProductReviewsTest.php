@@ -45,11 +45,10 @@ class CreateProductReviewsTest extends GraphQlAbstract
      */
     public function testCreateProductReviews()
     {
-        $entityId = 1;
-        $entityType = 'product';
+        $sku = 'simple';
         $nickname = 'Mutation';
         $title = 'Mutation Review Title';
-        $detail = 'Mutation Review Detail';
+        $reviewText = 'Mutation Review Detail';
 
         /** @var \Magento\Review\Model\Rating $rating */
         $rating = $this->ratingCollection
@@ -68,27 +67,27 @@ class CreateProductReviewsTest extends GraphQlAbstract
 mutation {
   createProductReview(
     input: {
-      entity_id: {$entityId}, 
-      entity_type: "{$entityType}",
+      sku: "{$sku}",
       nickname: "{$nickname}", 
       title: "{$title}", 
-      detail: "{$detail}",
+      review_text: "{$reviewText}",
       ratings: {
-        rating_id: {$rating->getId()},
-        option_id: {$ratingOption->getId()}
+        rating_name: "{$rating->getRatingCode()}",
+        rating_value: {$ratingOption->getValue()}
       }
     }
   ) {
     review_id
-    entity_id
-    customer_id
+    product {
+      sku
+    }
     title
-    detail
+    review_text
     nickname
     created_at
-    rating_votes {
-      rating_id
-      rating_code
+    average_rating
+    ratings {
+      name
       percent
       value
     }
@@ -102,6 +101,6 @@ QUERY;
         $this->assertNotEmpty($response['createProductReview']);
         $this->assertInternalType('array', $response['createProductReview']);
         $this->assertNotEmpty($response['createProductReview']['review_id']);
-        $this->assertEquals($response['createProductReview']['entity_id'], $entityId);
+        $this->assertEquals($response['createProductReview']['product']['sku'], $sku);
     }
 }
