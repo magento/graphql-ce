@@ -201,6 +201,7 @@ class DataProvider
     public function getReviewData(Review $review)
     {
         return [
+            'model' => $review,
             'review_id' => $review->getReviewId(),
             'sku' => $review->getSku(),
             'title' => $review->getTitle(),

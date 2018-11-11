@@ -45,7 +45,7 @@ type ProductReview @doc(description: "ProductReview defines the review details")
     title: String! @doc(description: "The review title")
     review_text: String! @doc(description: "The review text")
     nickname: String! @doc(description: "The customer's nickname")
-    created_at: String! @doc(description: "Timestamp indicating when the review was created")
+    created_at: String! @doc(description: "Date indicating when the review was created") @resolver(class: "Magento\\ReviewGraphQl\\Model\\Resolver\\Product\\Review\\CreatedAt")
     average_rating: Float! @doc(description: "The average rating for product review")
     ratings: [ReviewRating!]! @doc(description: "An array of review ratings")
 }

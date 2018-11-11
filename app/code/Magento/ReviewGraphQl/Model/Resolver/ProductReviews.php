@@ -20,9 +20,9 @@ class ProductReviews extends ProductReviewsResolver
     /**
      * {@inheritdoc}
      */
-    protected function getSku(array $args, array $value): string
+    protected function getSku($args, $value): string
     {
-        if (!array_key_exists('model', $value) || !$value['model'] instanceof ProductInterface) {
+        if (!is_array($value) || !array_key_exists('model', $value) || !$value['model'] instanceof ProductInterface) {
             throw new GraphQlInputException(__('"model" value should be specified'));
         }
 

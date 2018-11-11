@@ -144,7 +144,7 @@ class Reviews implements ResolverInterface
      * @return string
      * @throws GraphQlInputException
      */
-    protected function getSku(array $args, array $value): string
+    protected function getSku($args, $value): string
     {
         if (!isset($args['sku'])) {
             throw new GraphQlInputException(__('"sku" should be specified'));
