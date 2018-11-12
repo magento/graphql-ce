@@ -92,6 +92,54 @@ QUERY;
     }
 
     /**
+     * Single customer product review test
+     *
+     * @magentoApiDataFixture Magento/Customer/_files/customer.php
+     * @magentoApiDataFixture Magento/Review/_files/customer_reviews.php
+     */
+    public function testGetSingleCustomerProductReview()
+    {
+        $reviewId = 3;
+        $currentEmail = 'customer@example.com';
+        $currentPassword = 'password';
+
+        $query = <<<QUERY
+query {
+  customerProductReviews(filter: {review_id: {eq: "{$reviewId}"}}) {
+    items {
+      review_id
+      product {
+        name
+      }
+      title
+      review_text
+      nickname
+      created_at
+      average_rating
+      ratings {
+        name
+        percent
+        value
+      }
+    }
+    page_info {
+      page_size
+      current_page
+      total_pages
+    }
+    total_count
+  }
+}
+QUERY;
+
+        $response = $this->graphQlQuery($query, [], '', $this->getCustomerAuthHeaders($currentEmail, $currentPassword));
+
+        $this->assertNotEmpty($response['customerProductReviews']['items']);
+        $this->assertInternalType('array', $response['customerProductReviews']['items']);
+        $this->assertEquals(1, $response['customerProductReviews']['total_count']);
+    }
+
+    /**
      * Get customer authentication headers
      *
      * @param string $email

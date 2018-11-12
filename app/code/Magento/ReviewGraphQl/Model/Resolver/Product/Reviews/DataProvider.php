@@ -157,6 +157,9 @@ class DataProvider
         $conditions = [];
         foreach ($filterGroup->getFilters() as $filter) {
             switch ($filter->getField()) {
+                case 'review_id':
+                    $collection->addFieldToFilter('main_table.review_id', $filter->getValue());
+                    break;
                 case 'customer_id':
                     $collection->addCustomerFilter($filter->getValue());
                     break;
