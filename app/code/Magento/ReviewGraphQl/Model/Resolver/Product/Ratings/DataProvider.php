@@ -47,7 +47,7 @@ class DataProvider
      *
      * @return array
      */
-    public function getRatings()
+    public function getRatings(): array
     {
         /** @var \Magento\Review\Model\ResourceModel\Rating\Collection $collection */
         $collection = $this->ratingCollectionFactory->create();
@@ -58,6 +58,7 @@ class DataProvider
         $ratings = [];
         foreach ($collection as $rating) {
             $ratings['items'][] = [
+                'model' => $rating,
                 'name' => $rating->getRatingCode(),
                 'position' => $rating->getPosition(),
             ];

@@ -63,6 +63,17 @@ type ProductRatings {
 type Rating @doc(description: "Rating defines the rating details") {
     name: String! @doc(description: "The rating name")
     position: Int! @doc(description: "The rating sort order")
+    options: RatingOptions @doc(description: "An array of rating options") @resolver(class: "Magento\\ReviewGraphQl\\Model\\Resolver\\Rating\\Options")
+}
+
+type RatingOptions {
+    items: [RatingOption!]! @doc(description: "And array of rating options")
+}
+
+type RatingOption {
+    code: Int! @doc(description: "The option code")
+    value: Int! @doc(description: "The option value")
+    position: Int! @doc(description: "The option sort order")
 }
 
 interface ProductInterface {
