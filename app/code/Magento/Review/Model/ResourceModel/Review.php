@@ -6,7 +6,6 @@
 namespace Magento\Review\Model\ResourceModel;
 
 use Magento\Framework\Model\AbstractModel;
-use Magento\Review\Api\Data\ReviewInterface;
 
 /**
  * Review resource model
@@ -14,7 +13,7 @@ use Magento\Review\Api\Data\ReviewInterface;
  * @api
  * @since 100.0.2
  */
-class Review extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb implements ReviewInterface
+class Review extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     /**
      * Review table

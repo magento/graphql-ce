@@ -11,6 +11,7 @@ use Magento\Catalog\Model\ResourceModel\Product as ProductResource;
 use Magento\Framework\Api\Search\FilterGroup;
 use Magento\Framework\Api\SearchCriteriaInterface;
 use Magento\Framework\Api\SearchResultsInterface;
+use Magento\Review\Api\Data\ReviewInterface;
 use Magento\Review\Api\Data\ReviewSearchResultsInterfaceFactory;
 use Magento\Review\Model\RatingFactory;
 use Magento\Review\Model\ResourceModel\Rating\Option\Vote\CollectionFactory as VoteCollectionFactory;
@@ -195,10 +196,10 @@ class DataProvider
     /**
      * Get review data
      *
-     * @param Review $review
+     * @param ReviewInterface $review
      * @return array
      */
-    public function getReviewData(Review $review)
+    public function getReviewData(ReviewInterface $review)
     {
         return [
             'model' => $review,
@@ -216,10 +217,10 @@ class DataProvider
     /**
      * Get review ratings data
      *
-     * @param Review $review
+     * @param ReviewInterface $review
      * @return array
      */
-    private function getReviewRatingsData(Review $review)
+    private function getReviewRatingsData(ReviewInterface $review)
     {
         $ratingData = [];
 
@@ -238,10 +239,10 @@ class DataProvider
     /**
      * Get review rating votes
      *
-     * @param Review $review
+     * @param ReviewInterface $review
      * @return \Magento\Review\Model\ResourceModel\Rating\Option\Vote\Collection
      */
-    private function getReviewRatingVotes(Review $review)
+    private function getReviewRatingVotes(ReviewInterface $review)
     {
         $voteCollection = $this->voteCollectionFactory->create()
             ->setReviewFilter(
