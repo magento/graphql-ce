@@ -141,7 +141,7 @@ mutation {
   }
 }
 QUERY;
-        self::expectExceptionMessage('Address management allowed only for authorized customers.');
+        self::expectExceptionMessage('Guest users cannot manage addresses.');
         $this->graphQlQuery($query);
     }
 
@@ -198,7 +198,7 @@ QUERY;
         $config = ObjectManager::getInstance()->get(\Magento\Framework\App\Config\ReinitableConfigInterface::class);
         $config->reinit();
 
-        self::expectExceptionMessage('Multiple addresses do not allowed here!');
+        self::expectExceptionMessage('You cannot specify multiple shipping addresses.');
         $this->graphQlQuery($query);
     }
 
@@ -253,7 +253,7 @@ mutation {
 }
 QUERY;
         self::expectExceptionMessage(
-            'Shipping address can\'t contain "customer_address_id" and "address" input at the same time.'
+            'The shipping address cannot contain "customer_address_id" and "address" at the same time.'
         );
         $this->graphQlQuery($query);
     }
@@ -295,7 +295,7 @@ mutation {
 }
 QUERY;
         self::expectExceptionMessage(
-            'Shipping address should contain either "customer_address_id" or "address" input.'
+            'The shipping address must contain either "customer_address_id" or "address".'
         );
         $this->graphQlQuery($query);
     }
