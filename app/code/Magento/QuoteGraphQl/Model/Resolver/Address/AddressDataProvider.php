@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\QuoteGraphQl\Model\Resolver\Address;
 
 use Magento\Framework\Api\ExtensibleDataObjectConverter;
+use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Model\Quote\Address as QuoteAddress;
@@ -25,14 +26,22 @@ class AddressDataProvider
     private $dataObjectConverter;
 
     /**
+     * @var CartRepositoryInterface
+     */
+    private $cartRepository;
+
+    /**
      * AddressDataProvider constructor.
      *
      * @param ExtensibleDataObjectConverter $dataObjectConverter
+     * @param CartRepositoryInterface $cartRepository
      */
     public function __construct(
-        ExtensibleDataObjectConverter $dataObjectConverter
+        ExtensibleDataObjectConverter $dataObjectConverter,
+        CartRepositoryInterface $cartRepository
     ) {
         $this->dataObjectConverter = $dataObjectConverter;
+        $this->cartRepository = $cartRepository;
     }
 
     /**
@@ -43,8 +52,9 @@ class AddressDataProvider
      */
     public function getCartAddresses(CartInterface $cart): array
     {
+        $cart = $this->cartRepository->get($cart->getId());
         $addressData = [];
-        $shippingAddress = $cart->getShippingAddress();
+        $shippingAddress = $cart->getAllShippingAddresses();
         $billingAddress = $cart->getBillingAddress();
 
         if ($shippingAddress) {

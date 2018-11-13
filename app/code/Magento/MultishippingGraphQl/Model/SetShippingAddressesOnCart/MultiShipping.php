@@ -8,13 +8,11 @@ declare(strict_types=1);
 namespace Magento\MultishippingGraphQl\Model\SetShippingAddressesOnCart;
 
 use Magento\Authorization\Model\UserContextInterface;
-use Magento\Customer\Model\CustomerFactory;
-use Magento\Customer\Model\ResourceModel\Customer as CustomerResource;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Multishipping\Helper\Data as MultishippingHelper;
-use Magento\Multishipping\Model\Checkout\Type\Multishipping as MultishippingModel;
+use Magento\MultishippingGraphQl\Model\Builder\MultiShipping as MultiShippingBuilder;
 use Magento\MultishippingGraphQl\Model\SetShippingAddressesOnCart\MultiShipping\ShippingItemsMapper;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\QuoteGraphQl\Model\Cart\SetShippingAddressesOnCartInterface;
@@ -25,11 +23,6 @@ use Magento\QuoteGraphQl\Model\Cart\SetShippingAddressOnCart;
  */
 class MultiShipping implements SetShippingAddressesOnCartInterface
 {
-    /**
-     * @var MultishippingModel
-     */
-    private $multishippingModel;
-
     /**
      * @var ShippingItemsMapper
      */
@@ -46,37 +39,26 @@ class MultiShipping implements SetShippingAddressesOnCartInterface
     private $multishippingHelper;
 
     /**
-     * @var CustomerResource
+     * @var MultiShippingBuilder
      */
-    private $customerResource;
+    private $multiShippingBuilder;
 
     /**
-     * @var CustomerFactory
-     */
-    private $customerFactory;
-
-    /**
-     * @param MultishippingModel $multishippingModel
      * @param ShippingItemsMapper $shippingItemsInformationMapper
      * @param SetShippingAddressOnCart $setShippingAddressOnCart
      * @param MultishippingHelper $multishippingHelper
-     * @param CustomerResource $customerResource
-     * @param CustomerFactory $customerFactory
+     * @param MultiShippingBuilder $multiShippingBuilder
      */
     public function __construct(
-        MultishippingModel $multishippingModel,
         ShippingItemsMapper $shippingItemsInformationMapper,
         SetShippingAddressOnCart $setShippingAddressOnCart,
         MultishippingHelper $multishippingHelper,
-        CustomerResource $customerResource,
-        CustomerFactory $customerFactory
+        MultiShippingBuilder $multiShippingBuilder
     ) {
-        $this->multishippingModel = $multishippingModel;
         $this->shippingItemsInformationMapper = $shippingItemsInformationMapper;
         $this->setShippingAddressOnCart = $setShippingAddressOnCart;
         $this->multishippingHelper = $multishippingHelper;
-        $this->customerResource = $customerResource;
-        $this->customerFactory = $customerFactory;
+        $this->multiShippingBuilder = $multiShippingBuilder;
     }
 
     /**
@@ -84,7 +66,7 @@ class MultiShipping implements SetShippingAddressesOnCartInterface
      */
     public function execute(ContextInterface $context, CartInterface $cart, array $shippingAddresses): void
     {
-        $this->initModel($context, $cart);
+        $multiShippingModel = $this->multiShippingBuilder->get($context, $cart);
         if (count($shippingAddresses) === 1 || !$this->multishippingHelper->isMultishippingCheckoutAvailable()) {
             $this->setShippingAddressOnCart->execute($context, $cart, $shippingAddresses);
             return;
@@ -114,26 +96,6 @@ class MultiShipping implements SetShippingAddressesOnCartInterface
             );
         }
 
-        $this->multishippingModel->setShippingItemsInformation($shippingItemsInformation);
-    }
-
-    /**
-     * Initialize Multishipping checkout model
-     *
-     * @param ContextInterface $context
-     * @param CartInterface $cart
-     */
-    private function initModel(ContextInterface $context, CartInterface $cart): void
-    {
-        $customerSession = $this->multishippingModel->getCustomerSession();
-        $customer = $this->customerFactory->create();
-        $this->customerResource->load(
-            $customer,
-            $context->getUserId()
-        );
-        $customerData = $customer->getDataModel();
-        $customerSession->setCustomer($customer);
-        $customerSession->setCustomerDataObject($customerData);
-        $this->multishippingModel->getCheckoutSession()->replaceQuote($cart);
+        $multiShippingModel->setShippingItemsInformation($shippingItemsInformation);
     }
 }

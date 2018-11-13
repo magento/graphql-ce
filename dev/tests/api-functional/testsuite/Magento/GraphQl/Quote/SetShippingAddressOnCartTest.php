@@ -192,7 +192,7 @@ QUERY;
             Data::XML_PATH_CHECKOUT_MULTIPLE_AVAILABLE,
             null,
             ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
-            1
+            0
         );
         /** @var \Magento\Framework\App\Config\ReinitableConfigInterface $config */
         $config = ObjectManager::getInstance()->get(\Magento\Framework\App\Config\ReinitableConfigInterface::class);
@@ -491,7 +491,7 @@ QUERY;
             Data::XML_PATH_CHECKOUT_MULTIPLE_AVAILABLE,
             1,
             ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
-            1
+            0
         );
 
         /** @var \Magento\Framework\App\Config\ReinitableConfigInterface $config */

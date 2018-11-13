@@ -125,11 +125,11 @@ mutation {
       cart_id: "$maskedQuoteId"
       shipping_addresses: [
         {
-          customer_address_id: 2
+          customer_address_id: 1
           cart_items: [{ cart_item_id: $cartItemId, quantity: 1 }]
         },
         {
-          customer_address_id: 1
+          customer_address_id: 2
           cart_items: [{ cart_item_id: $cartItemId, quantity: 1 }]
         }
       ]
