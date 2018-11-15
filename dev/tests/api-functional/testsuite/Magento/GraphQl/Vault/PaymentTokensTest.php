@@ -34,8 +34,6 @@ class PaymentTokensTest extends GraphQlAbstract
       code
       value
     }
-    is_active
-    is_visible
   }
 }
 QUERY;
@@ -51,9 +49,11 @@ QUERY;
         $customer = $customerRepository->get($userName);
         $response = $this->graphQlQuery($query, [], '', $headerMap);
         $this->assertTrue(is_array($response['paymentTokens']), "paymentTokens field must be of an array type.");
-        $this->assertEquals($this->getPaymentTokenAmountFroCustomer($customer->getId()), count($response['paymentTokens']));
+        $this->assertEquals(
+            $this->getPaymentTokenAmountFroCustomer($customer->getId()),
+            count($response['paymentTokens'])
+        );
         $list = $response['paymentTokens'];
-        $this->assertIsActive($list);
 
         $this->assertEquals('H123456789', $list[0]['public_hash']);
         $this->assertEquals('H987654321', $list[1]['public_hash']);
@@ -68,9 +68,18 @@ QUERY;
         $this->assertEquals('account', $list[2]['type']);
 
         $this->assertIsDetailsArray($list);
-        $this->assertTokenDetails(['type' => 'VI', 'maskedCC' => '9876', 'expirationDate' => '12/2020'], $list[0]['details']);
-        $this->assertTokenDetails(['type' => 'MC', 'maskedCC' => '4444', 'expirationDate' => '12/2030'], $list[1]['details']);
-        $this->assertTokenDetails(['type' => 'DI', 'maskedCC' => '0001', 'expirationDate' => '12/2040'], $list[2]['details']);
+        $this->assertTokenDetails(
+            ['type' => 'VI', 'maskedCC' => '9876', 'expirationDate' => '12/2020'],
+            $list[0]['details']
+        );
+        $this->assertTokenDetails(
+            ['type' => 'MC', 'maskedCC' => '4444', 'expirationDate' => '12/2030'],
+            $list[1]['details']
+        );
+        $this->assertTokenDetails(
+            ['type' => 'DI', 'maskedCC' => '0001', 'expirationDate' => '12/2040'],
+            $list[2]['details']
+        );
     }
 
     /**
@@ -91,8 +100,6 @@ QUERY;
       code
       value
     }
-    is_active
-    is_visible
   }
 }
 QUERY;
@@ -100,31 +107,6 @@ QUERY;
         $this->expectExceptionMessage('GraphQL response contains errors:' . ' ' .
             'A guest customer cannot access resource "store_payment_token".');
         $this->graphQlQuery($query);
-    }
-
-    /**
-     * Verify Customer Id for all items in response
-     *
-     * @param int $customerId
-     * @param array $response
-     */
-    private function assertCustomerId($customerId, array $response)
-    {
-        foreach ($response as $token) {
-            $this->assertEquals($customerId, $token['customer_id']);
-        }
-    }
-
-    /**
-     * Verify Customer Id for all items in response
-     *
-     * @param array $response
-     */
-    private function assertIsActive(array $response)
-    {
-        foreach ($response as $token) {
-            $this->assertTrue($token['is_active']);
-        }
     }
 
     /**
@@ -147,7 +129,7 @@ QUERY;
      */
     private function assertTokenDetails(array $expected, array $response)
     {
-        foreach($response as $details) {
+        foreach ($response as $details) {
             $this->assertEquals($expected[$details['code']], $details['value']);
         }
     }
@@ -166,4 +148,3 @@ QUERY;
         return count($paymentTokenManagementInterface->getVisibleAvailableTokens($customerId));
     }
 }
-

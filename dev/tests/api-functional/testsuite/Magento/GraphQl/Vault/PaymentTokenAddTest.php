@@ -39,8 +39,6 @@ class PaymentTokenAddTest extends GraphQlAbstract
             'type' => 'card',
             'expires_at' => '2018-12-31 23:59:59',
             'gateway_token' => 'ABC123',
-            'is_active' => true,
-            'is_visible' => true,
             'details' => [
                 ['code' => 'type', 'value' => 'VI'],
                 ['code' => 'maskedCC', 'value' => '9876'],
@@ -48,8 +46,6 @@ class PaymentTokenAddTest extends GraphQlAbstract
 
             ]
         ];
-        $isActiveText = $paymentTokenInfo['is_active'] ? "true": "false";
-        $isVisibleText = $paymentTokenInfo['is_visible'] ? "true": "false";
         $query
             = <<<MUTATION
 mutation {
@@ -60,21 +56,19 @@ mutation {
     expires_at: "{$paymentTokenInfo['expires_at']}"
     gateway_token: "{$paymentTokenInfo['gateway_token']}"
     details: [
-          {
-            code: "{$paymentTokenInfo['details'][0]['code']}",
-            value: "{$paymentTokenInfo['details'][0]['value']}"
-          },
-          {
-            code: "{$paymentTokenInfo['details'][1]['code']}",
-            value: "{$paymentTokenInfo['details'][1]['value']}"
-          },
-          {
-            code: "{$paymentTokenInfo['details'][2]['code']}",
-            value: "{$paymentTokenInfo['details'][2]['value']}"
-          }
-        ],
-    is_active: {$isActiveText}
-    is_visible: {$isVisibleText}
+      {
+        code: "{$paymentTokenInfo['details'][0]['code']}",
+        value: "{$paymentTokenInfo['details'][0]['value']}"
+      },
+      {
+        code: "{$paymentTokenInfo['details'][1]['code']}",
+        value: "{$paymentTokenInfo['details'][1]['value']}"
+      },
+      {
+        code: "{$paymentTokenInfo['details'][2]['code']}",
+        value: "{$paymentTokenInfo['details'][2]['value']}"
+      }
+    ]
   }) {
     public_hash
     payment_method_code
@@ -85,8 +79,6 @@ mutation {
       code
       value
     }
-    is_active
-    is_visible
   }
 }
 MUTATION;
@@ -117,21 +109,19 @@ mutation {
     expires_at: "2020-01-01 00:00:00"
     gateway_token: "ABCDEF1234"
     details: [
-          {
-            code: "type",
-            value: "MC"
-          },
-          {
-            code: "maskedCC",
-            value: "0000"
-          },
-          {
-            code: "expirationDate",
-            value: "01/2020"
-          }
-        ],
-    is_active: true
-    is_visible: true
+      {
+        code: "type",
+        value: "MC"
+      },
+      {
+        code: "maskedCC",
+        value: "0000"
+      },
+      {
+        code: "expirationDate",
+        value: "01/2020"
+      }
+    ]
   }) {
     public_hash
     payment_method_code
@@ -142,8 +132,6 @@ mutation {
       code
       value
     }
-    is_active
-    is_visible
   }
 }
 MUTATION;
@@ -167,14 +155,12 @@ MUTATION;
             ['response_field' => 'payment_method_code', 'expected_value' => $paymentToken->getPaymentMethodCode()],
             ['response_field' => 'type', 'expected_value' => $paymentToken->getType()],
             ['response_field' => 'expires_at', 'expected_value' => $paymentToken->getExpiresAt()],
-            ['response_field' => 'is_active', 'expected_value' => $paymentToken->getIsActive()],
-            ['response_field' => 'is_visible', 'expected_value' => $paymentToken->getIsVisible()],
         ];
         $this->assertResponseFields($actualResponse, $assertionMap);
         /** @var SerializerInterface $jsonSerializer */
         $jsonSerializer = ObjectManager::getInstance()->get(SerializerInterface::class);
         $paymentTokenDetailArray = $jsonSerializer->unserialize($paymentToken->getTokenDetails());
-        foreach($actualResponse['details'] as $details) {
+        foreach ($actualResponse['details'] as $details) {
             $this->assertEquals($paymentTokenDetailArray[$details['code']], $details['value']);
         }
     }

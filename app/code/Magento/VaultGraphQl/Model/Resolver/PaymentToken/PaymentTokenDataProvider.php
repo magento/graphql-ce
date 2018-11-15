@@ -42,8 +42,7 @@ class PaymentTokenDataProvider
         ServiceOutputProcessor $serviceOutputProcessor,
         SerializerInterface $jsonSerializer,
         DataObjectHelper $dataObjectHelper
-    )
-    {
+    ) {
         $this->serviceOutputProcessor = $serviceOutputProcessor;
         $this->jsonSerializer = $jsonSerializer;
         $this->dataObjectHelper = $dataObjectHelper;
@@ -78,7 +77,6 @@ class PaymentTokenDataProvider
             PaymentTokenRepositoryInterface::class,
             'getById'
         );
-
         $detailsAttributes = [];
         if (!empty($paymentTokenObject->getTokenDetails())) {
             $details = $this->jsonSerializer->unserialize($paymentTokenObject->getTokenDetails());
@@ -104,7 +102,6 @@ class PaymentTokenDataProvider
                 $detailsAttributes[] = ['code' => $key, 'value' => $attribute];
             }
         }
-
         $paymentToken['details'] = $detailsAttributes;
         return $paymentToken;
     }

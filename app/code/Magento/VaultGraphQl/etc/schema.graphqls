@@ -17,8 +17,6 @@ type PaymentToken @doc(description: "PaymentToken defines stored payment details
     created_at: String! @doc(description: "Timestamp indicating when the payment token was created")
     expires_at: String! @doc(description: "Timestamp indicating when the payment token was updated")
     details: [DetailsAttribute] @doc(description: "Payment token details")
-    is_active: Boolean! @doc(description: "Indicates the payment token is active")
-    is_visible: Boolean! @doc(description: "Indicates the payment token is visible")
 }
 
 type DetailsAttribute {
@@ -33,8 +31,6 @@ input PaymentTokenInput {
     expires_at: String @doc(description: "Timestamp indicating when the payment token was updated")
     gateway_token: String! @doc(description: "The getaway payment token")
     details: [DetailsAttributeInput] @doc(description: "Payment token details")
-    is_active: Boolean @doc(description: "Indicates the payment token is active")
-    is_visible: Boolean @doc(description: "Indicates the payment token is visible")
 }
 
 input DetailsAttributeInput {

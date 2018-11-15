@@ -17,6 +17,7 @@ use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Exception\GraphQlAlreadyExistsException;
 use Magento\Vault\Api\PaymentTokenRepositoryInterface;
+use Magento\Vault\Api\PaymentTokenManagementInterface;
 use Magento\Vault\Api\Data\PaymentTokenFactoryInterface;
 use Magento\Vault\Api\Data\PaymentTokenInterface;
 use Magento\VaultGraphQl\Model\Resolver\PaymentToken\PaymentTokenDataProvider;
@@ -42,6 +43,11 @@ class PaymentTokenAdd implements ResolverInterface
     private $paymentTokenRepository;
 
     /**
+     * @var PaymentTokenManagementInterface
+     */
+    private $paymentTokenManagement;
+
+    /**
      * @var PaymentTokenFactoryInterface
      */
     private $paymentTokenFactory;
@@ -53,15 +59,18 @@ class PaymentTokenAdd implements ResolverInterface
 
     /**
      * @param PaymentTokenRepositoryInterface $paymentTokenRepository
+     * @param PaymentTokenManagementInterface $paymentTokenManagement
      * @param PaymentTokenFactoryInterface $paymentTokenFactory
      * @param PaymentTokenDataProvider $paymentTokenDataProvider
      */
     public function __construct(
         PaymentTokenRepositoryInterface $paymentTokenRepository,
+        PaymentTokenManagementInterface $paymentTokenManagement,
         PaymentTokenFactoryInterface $paymentTokenFactory,
         PaymentTokenDataProvider $paymentTokenDataProvider
     ) {
         $this->paymentTokenRepository = $paymentTokenRepository;
+        $this->paymentTokenManagement = $paymentTokenManagement;
         $this->paymentTokenFactory = $paymentTokenFactory;
         $this->paymentTokenDataProvider = $paymentTokenDataProvider;
     }
@@ -133,7 +142,7 @@ class PaymentTokenAdd implements ResolverInterface
         try {
             $this->paymentTokenRepository->save($token);
             // Reload current token object from repository to get "created_at" updated
-            return $this->paymentTokenRepository->getById($token->getEntityId());
+            return $this->paymentTokenManagement->getByPublicHash($token->getPublicHash(), $customerId);
         } catch (AlreadyExistsException $e) {
             throw new GraphQlAlreadyExistsException(__($e->getMessage()), $e);
         }
