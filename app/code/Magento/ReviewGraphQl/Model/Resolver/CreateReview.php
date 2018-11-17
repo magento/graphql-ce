@@ -163,9 +163,9 @@ class CreateReview implements ResolverInterface
      */
     private function getRatingIdByName(string $name)
     {
-        $ratingId = $this->ratingResource->getRatingIdByCode($name);
+        $ratingId = $this->ratingResource->getRatingIdByCode($name, $this->storeManager->getStore()->getId());
         if (empty($ratingId)) {
-            throw new GraphQlInputException(__('"ratings[rating_name]" has invalid value'));
+            throw new GraphQlInputException(__('"ratings[rating_name]" has invalid value: %1', $name));
         }
         return $ratingId;
     }
@@ -182,7 +182,7 @@ class CreateReview implements ResolverInterface
     {
         $optionId = $this->ratingOptionResource->getOptionIdByRatingIdAndValue($ratingId, $value);
         if (empty($ratingId)) {
-            throw new GraphQlInputException(__('"ratings[rating_value]" has invalid value'));
+            throw new GraphQlInputException(__('"ratings[rating_value]" has invalid value: %1', $value));
         }
         return $optionId;
     }

@@ -530,17 +530,25 @@ class Rating extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      * Get rating id by code
      *
      * @param string $ratingCode
+     * @param int $storeId
      * @return string
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function getRatingIdByCode($ratingCode)
+    public function getRatingIdByCode($ratingCode, $storeId)
     {
         $select = $this->getConnection()->select()->from(
-            $this->getMainTable(),
+            ['rating' => $this->getMainTable()],
             ['rating_id']
+        )->joinInner(
+            ['rating_store' => $this->getTable('rating_store')],
+            'rating_store.rating_id = rating.rating_id AND store_id = :store_id',
+            []
         )->where(
             'rating_code = :rating_code'
-        );
+        )->where(
+            'is_active = 1'
+        )->limit(1);
 
-        return (int)$this->getConnection()->fetchOne($select, [':rating_code' => $ratingCode]);
+        return (int)$this->getConnection()->fetchOne($select, [':rating_code' => $ratingCode, ':store_id' => $storeId]);
     }
 }
