@@ -1,0 +1,40 @@
+# Copyright © Magento, Inc. All rights reserved.
+# See COPYING.txt for license details.
+
+type Query {
+    compareProducts: CompareProducts @resolver(class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\CompareProducts") @doc(description: "todo")
+}
+
+type CompareProducts {
+    items: [CompareItem] @resolver(class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\CompareProducts") @doc(description: "todo")
+}
+
+type CompareItem {
+    item_id: Int
+    product: ProductInterface
+}
+
+type Mutation {
+    addProductToCompare(input: AddProductToCompareInput): AddProductToCompareOutput @resolver(class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\AddProductToCompare") @doc(description: "todo")
+    removeProductFromCompare(input: RemoveProductFromCompareInput): RemoveProductFromCompareOutput @resolver(class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\RemoveProductFromCompare") @doc(description: "todo")
+}
+
+input AddProductToCompareInput {
+    ids: [Int!]
+}
+
+type AddProductToCompareOutput {
+    result: Boolean!
+    compareProducts: CompareProducts
+}
+
+input RemoveProductFromCompareInput {
+    ids: [Int!]
+}
+
+type RemoveProductFromCompareOutput {
+    result: Boolean!
+    compareProducts: CompareProducts
+}
+
+
