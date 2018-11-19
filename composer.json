@@ -156,6 +156,7 @@
         "magento/module-graph-ql": "*",
         "magento/module-catalog-graph-ql": "*",
         "magento/module-catalog-url-rewrite-graph-ql": "*",
+        "magento/module-product-compare-graph-ql": "*",
         "magento/module-configurable-product-graph-ql": "*",
         "magento/module-customer-graph-ql": "*",
         "magento/module-eav-graph-ql": "*",
