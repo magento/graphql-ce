@@ -8,9 +8,7 @@ declare(strict_types=1);
 namespace Magento\WishlistGraphQl\Model\Resolver;
 
 use Magento\Catalog\Model\Product;
-use Magento\Wishlist\Controller\WishlistProviderInterface;
 use Magento\WishlistGraphQl\Model\WishlistDataProvider;
-use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Wishlist\Model\Wishlist;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
@@ -27,14 +25,6 @@ use Magento\Catalog\Model\ResourceModel\Product\Collection;
  */
 class AddItemToWishlist implements ResolverInterface
 {
-    /**
-     * @var WishlistProviderInterface
-     */
-    private $wishlistProvider;
-    /**
-     * @var ProductRepositoryInterface
-     */
-    private $productRepository;
     /**
      * @var WishlistDataProvider
      */
@@ -57,8 +47,6 @@ class AddItemToWishlist implements ResolverInterface
     private $productCollectionFactory;
 
     /**
-     * @param WishlistProviderInterface $wishlistProvider
-     * @param ProductRepositoryInterface $productRepository
      * @param WishlistDataProvider $wishlistDataProvider
      * @param SearchCriteriaInterface $searchCriteria
      * @param Visibility $catalogProductVisibility
@@ -66,16 +54,12 @@ class AddItemToWishlist implements ResolverInterface
      * @param CollectionFactory $productCollectionFactory
      */
     public function __construct(
-        WishlistProviderInterface $wishlistProvider,
-        ProductRepositoryInterface $productRepository,
         WishlistDataProvider $wishlistDataProvider,
         SearchCriteriaInterface $searchCriteria,
         Visibility $catalogProductVisibility,
         StockProcessor $stockProcessor,
         CollectionFactory $productCollectionFactory
     ) {
-        $this->wishlistProvider = $wishlistProvider;
-        $this->productRepository = $productRepository;
         $this->wishlistDataProvider = $wishlistDataProvider;
         $this->searchCriteria = $searchCriteria;
         $this->catalogProductVisibility = $catalogProductVisibility;
