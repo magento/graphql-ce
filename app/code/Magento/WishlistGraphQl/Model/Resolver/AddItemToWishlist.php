@@ -16,6 +16,11 @@ use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
+use Magento\Framework\Api\SearchCriteriaInterface;
+use Magento\Catalog\Model\Product\Visibility;
+use Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\Product\CollectionProcessor\StockProcessor;
+use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
+use Magento\Catalog\Model\ResourceModel\Product\Collection;
 
 /**
  * @inheritdoc
@@ -34,20 +39,48 @@ class AddItemToWishlist implements ResolverInterface
      * @var WishlistDataProvider
      */
     private $wishlistDataProvider;
+    /**
+     * @var SearchCriteriaInterface
+     */
+    private $searchCriteria;
+    /**
+     * @var Visibility
+     */
+    private $catalogProductVisibility;
+    /**
+     * @var StockProcessor
+     */
+    private $stockProcessor;
+    /**
+     * @var CollectionFactory
+     */
+    private $productCollectionFactory;
 
     /**
      * @param WishlistProviderInterface $wishlistProvider
      * @param ProductRepositoryInterface $productRepository
      * @param WishlistDataProvider $wishlistDataProvider
+     * @param SearchCriteriaInterface $searchCriteria
+     * @param Visibility $catalogProductVisibility
+     * @param StockProcessor $stockProcessor
+     * @param CollectionFactory $productCollectionFactory
      */
     public function __construct(
         WishlistProviderInterface $wishlistProvider,
         ProductRepositoryInterface $productRepository,
-        WishlistDataProvider $wishlistDataProvider
+        WishlistDataProvider $wishlistDataProvider,
+        SearchCriteriaInterface $searchCriteria,
+        Visibility $catalogProductVisibility,
+        StockProcessor $stockProcessor,
+        CollectionFactory $productCollectionFactory
     ) {
         $this->wishlistProvider = $wishlistProvider;
         $this->productRepository = $productRepository;
         $this->wishlistDataProvider = $wishlistDataProvider;
+        $this->searchCriteria = $searchCriteria;
+        $this->catalogProductVisibility = $catalogProductVisibility;
+        $this->stockProcessor = $stockProcessor;
+        $this->productCollectionFactory = $productCollectionFactory;
     }
 
     /**
@@ -77,19 +110,34 @@ class AddItemToWishlist implements ResolverInterface
     }
 
     /**
-     * @param array $skus
+     * @param $skus
      * @param Wishlist $wishList
+     *
      * @return Wishlist
      * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function addMultipleProducts($skus, Wishlist $wishList)
     {
-        foreach ($skus as $sku) {
-            /** @var Product $product */
-            $product = $this->productRepository->get($sku);
-            $wishList->addNewItem($product);
+        $productCollection = $this->getProductCollectionBySkus($skus);
+        if ($productCollection->getSize()) {
+            foreach ($productCollection as $product) {
+                /** @var Product $product */
+                $wishList->addNewItem($product);
+            }
         }
         return $wishList;
+    }
+
+    /**
+     * @param array $skus
+     * @return Collection
+     */
+    private function getProductCollectionBySkus($skus)
+    {
+        /** @var Collection $productsCollection */
+        $productsCollection = $this->productCollectionFactory->create();
+        $productsCollection->setVisibility($this->catalogProductVisibility->getVisibleInSiteIds());
+        $productsCollection->addAttributeToFilter('sku', ['in' => $skus]);
+        return $productsCollection;
     }
 }
