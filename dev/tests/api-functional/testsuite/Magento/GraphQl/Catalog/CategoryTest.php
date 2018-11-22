@@ -84,7 +84,7 @@ QUERY;
         //Some sort of smoke testing
         self::assertEquals(
             'Ololo',
-            $responseDataObject->getData('category/children/7/children/1/description')
+            $responseDataObject->getData('category/children/0/children/1/description')
         );
         self::assertEquals(
             'default-category',
@@ -104,11 +104,11 @@ QUERY;
         );
         self::assertCount(
             2,
-            $responseDataObject->getData('category/children/7/children')
+            $responseDataObject->getData('category/children/0/children')
         );
         self::assertEquals(
             5,
-            $responseDataObject->getData('category/children/7/children/1/children/0/id')
+            $responseDataObject->getData('category/children/0/children/0/children/0/id')
         );
     }
 
