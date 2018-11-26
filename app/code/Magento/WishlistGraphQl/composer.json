@@ -7,7 +7,6 @@
         "magento/framework": "*",
         "magento/module-catalog-graph-ql": "*",
         "magento/module-wishlist": "*",
-        "magento/module-catalog": "*",
         "magento/module-store": "*"
     },
     "license": [
