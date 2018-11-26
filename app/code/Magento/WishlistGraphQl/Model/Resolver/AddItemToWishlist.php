@@ -88,7 +88,10 @@ class AddItemToWishlist implements ResolverInterface
         return [
             'wishlist' => [
                 'sharing_code' => $wishlist->getSharingCode(),
-                'updated_at' => $wishlist->getUpdatedAt()
+                'updated_at' => $wishlist->getUpdatedAt(),
+                'items_count' => $wishlist->getItemsCount(),
+                'name' => $wishlist->getName(),
+                'model' => $wishlist,
             ]
         ];
     }
