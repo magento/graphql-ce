@@ -61,6 +61,8 @@ mutation {
       }
       sharing_code
       updated_at
+      items_count
+      name
     }
   }
 }
@@ -68,6 +70,8 @@ MUTATION;
 
         $response = $this->graphQlQuery($mutation, [], '', $this->getCustomerAuthHeaders('customer@example.com', 'password'));
         $this->assertEquals($wishlist->getSharingCode(), $response['addItemsToWishlist']['wishlist']['sharing_code']);
+        $this->assertEquals($wishlist->getItemsCount(), $response['addItemsToWishlist']['wishlist']['items_count']);
+        $this->assertEquals($wishlist->getName(), $response['addItemsToWishlist']['wishlist']['name']);
         $this->assertEquals($wishlistItem->getData('qty') + 1, $response['addItemsToWishlist']['wishlist']['items'][0]['qty']);
         $this->assertEquals($wishlistItem->getDescription(), $response['addItemsToWishlist']['wishlist']['items'][0]['description']);
     }
