@@ -49,9 +49,11 @@ class FiltersProvider
      * Get layer type filters.
      *
      * @param string $layerType
+     * @param null|int $categoryIdFilter
      * @return array
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function getFilters(string $layerType) : array
+    public function getFilters(string $layerType, ?int $categoryIdFilter = null) : array
     {
         $filterableAttributesList = $this->filterableAttributesListFactory->create(
             $layerType
@@ -61,6 +63,20 @@ class FiltersProvider
                 'filterableAttributes' => $filterableAttributesList
             ]
         );
-        return $filterList->getFilters($this->layerResolver->get());
+
+        if ($categoryIdFilter !== null) {
+            $this->layerResolver->get()->setCurrentCategory($categoryIdFilter);
+        }
+
+        $filters = $filterList->getFilters($this->layerResolver->get());
+
+        $filtersWithItems = [];
+        foreach ($filters as $filter) {
+            if ($filter->getItemsCount()) {
+                $filtersWithItems[] = $filter;
+            }
+        }
+
+        return $filtersWithItems;
     }
 }

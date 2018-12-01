@@ -34,13 +34,15 @@ class Filters
      * Get layered navigation filters data
      *
      * @param string $layerType
+     * @param int|null $categoryIdFilter
      * @return array
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function getData(string $layerType) : array
+    public function getData(string $layerType, ?int $categoryIdFilter = null) : array
     {
         $filtersData = [];
         /** @var AbstractFilter $filter */
-        foreach ($this->filtersProvider->getFilters($layerType) as $filter) {
+        foreach ($this->filtersProvider->getFilters($layerType, $categoryIdFilter) as $filter) {
             if ($filter->getItemsCount()) {
                 $filterGroup = [
                     'name' => (string)$filter->getName(),

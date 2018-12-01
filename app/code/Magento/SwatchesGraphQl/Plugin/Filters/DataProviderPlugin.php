@@ -36,6 +36,7 @@ class DataProviderPlugin
      *
      * @param FiltersProvider $filtersProvider
      * @param \Magento\Swatches\Helper\Data $swatchHelper
+     * @param \Magento\Swatches\Block\LayeredNavigation\RenderLayered $renderLayered
      */
     public function __construct(
         FiltersProvider $filtersProvider,
@@ -53,15 +54,21 @@ class DataProviderPlugin
      * @param Filters $subject
      * @param \Closure $proceed
      * @param string $layerType
+     * @param null|int $categoryIdFilter
      * @return array
+     * @throws \Magento\Framework\Exception\LocalizedException
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    public function aroundGetData(Filters $subject, \Closure $proceed, string $layerType) : array
-    {
+    public function aroundGetData(
+        Filters $subject,
+        \Closure $proceed,
+        string $layerType,
+        ?int $categoryIdFilter = null
+    ) : array {
         $swatchFilters = [];
         /** @var AbstractFilter $filter */
-        foreach ($this->filtersProvider->getFilters($layerType) as $filter) {
+        foreach ($this->filtersProvider->getFilters($layerType, $categoryIdFilter) as $filter) {
             if ($filter->hasAttributeModel()) {
                 if ($this->swatchHelper->isSwatchAttribute($filter->getAttributeModel())) {
                     $swatchFilters[] = $filter;

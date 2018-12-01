@@ -44,6 +44,7 @@ class LayerFilters implements ResolverInterface
             return null;
         }
 
-        return $this->filtersDataProvider->getData($value['layer_type']);
+        $categoryIdFilter = isset($value['category_id_filter']) ? $value['category_id_filter'] : null;
+        return $this->filtersDataProvider->getData($value['layer_type'], $categoryIdFilter);
     }
 }

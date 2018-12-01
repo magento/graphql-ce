@@ -7,8 +7,6 @@ declare(strict_types=1);
 
 namespace Magento\CatalogGraphQl\Model\Resolver;
 
-use Magento\CatalogGraphQl\Model\Resolver\Layer\DataProvider\Filters;
-use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\CatalogGraphQl\Model\Resolver\Products\Query\Filter;
 use Magento\CatalogGraphQl\Model\Resolver\Products\Query\Search;
 use Magento\Framework\GraphQl\Config\Element\Field;
@@ -16,6 +14,7 @@ use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\Resolver\Argument\SearchCriteria\Builder;
 use Magento\Framework\GraphQl\Query\Resolver\Argument\SearchCriteria\SearchFilter;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
+use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Catalog\Model\Layer\Resolver;
 
 /**
@@ -103,6 +102,10 @@ class Products implements ResolverInterface
             );
         }
 
+        /** @var null|int $categoryIdFilter */
+        $categoryIdFilter = isset($args['filter']['category_id']['eq']) ?
+            (int)$args['filter']['category_id']['eq'] : null;
+
         $data = [
             'total_count' => $searchResult->getTotalCount(),
             'items' => $searchResult->getProductsSearchResult(),
@@ -111,7 +114,8 @@ class Products implements ResolverInterface
                 'current_page' => $currentPage,
                 'total_pages' => $maxPages
             ],
-            'layer_type' => $layerType
+            'layer_type' => $layerType,
+            'category_id_filter' => $categoryIdFilter
         ];
 
         return $data;
