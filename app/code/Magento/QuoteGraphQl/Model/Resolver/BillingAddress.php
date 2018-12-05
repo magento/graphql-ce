@@ -11,23 +11,23 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
-use Magento\QuoteGraphQl\Model\Cart\Address\AddressDataProvider;
+use Magento\QuoteGraphQl\Model\Cart\Address\BillingAddressDataProvider;
 
 /**
  * @inheritdoc
  */
-class CartAddresses implements ResolverInterface
+class BillingAddress implements ResolverInterface
 {
     /**
-     * @var AddressDataProvider
+     * @var BillingAddressDataProvider
      */
     private $addressDataProvider;
 
     /**
-     * @param AddressDataProvider $addressDataProvider
+     * @param BillingAddressDataProvider $addressDataProvider
      */
     public function __construct(
-        AddressDataProvider $addressDataProvider
+        BillingAddressDataProvider $addressDataProvider
     ) {
         $this->addressDataProvider = $addressDataProvider;
     }

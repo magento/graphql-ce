@@ -74,7 +74,7 @@ mutation {
     }
   ) {
     cart {
-      addresses {
+      shipping_addresses {
         firstname
         lastname
         company
@@ -136,7 +136,7 @@ mutation {
     }
   ) {
     cart {
-      addresses {
+      shipping_addresses {
         firstname
         lastname
         company
@@ -153,9 +153,9 @@ QUERY;
 
         self::assertArrayHasKey('cart', $response['setShippingAddressesOnCart']);
         $cartResponse = $response['setShippingAddressesOnCart']['cart'];
-        self::assertArrayHasKey('addresses', $cartResponse);
+        self::assertArrayHasKey('shipping_addresses', $cartResponse);
         //TODO: add all needed checks after fixing cart output
-        $shippingAddressResponse = current($cartResponse['addresses']);
+        $shippingAddressResponse = current($cartResponse['shipping_addresses']);
         $this->assertShippingAddressFields($shippingAddressResponse);
     }
 
@@ -198,7 +198,7 @@ mutation {
     }
   ) {
     cart {
-      addresses {
+      shipping_addresses {
         firstname
         lastname
         company
@@ -258,7 +258,7 @@ mutation {
     }
   ) {
     cart {
-      addresses {
+      shipping_addresses {
         firstname
         lastname
         company
