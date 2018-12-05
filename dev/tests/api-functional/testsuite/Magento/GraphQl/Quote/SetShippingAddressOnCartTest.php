@@ -141,7 +141,7 @@ mutation {
   }
 }
 QUERY;
-        self::expectExceptionMessage('Guest users cannot manage addresses.');
+        self::expectExceptionMessage('The current customer isn\'t authorized.');
         $this->graphQlQuery($query);
     }
 
