@@ -104,6 +104,9 @@ class StoreConfigManager implements \Magento\Store\Api\StoreConfigManagerInterfa
         $storeConfig->setSecureBaseMediaUrl(
             $store->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA, true)
         );
+        $storeConfig->setName(
+            $store->getConfig(\Magento\Store\Model\Information::XML_PATH_STORE_INFO_NAME)
+        );
         return $storeConfig;
     }
 }

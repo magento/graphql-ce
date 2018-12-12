@@ -16,6 +16,7 @@ type Website @doc(description: "The type contains information about a website") 
 type StoreConfig @doc(description: "The type contains information about a store config") {
     id : Int @doc(description: "The ID number assigned to the store")
     code : String @doc(description: "A code assigned to the store to identify it")
+    name : String @doc(description: "The store name.")
     website_id : Int @doc(description: "The ID number assigned to the website store belongs")
     locale : String @doc(description: "Store locale")
     base_currency_code : String @doc(description: "Base currency code")

@@ -82,6 +82,7 @@ class StoreConfigDataProvider
         $storeConfigData = [
             'id' => $storeConfig->getId(),
             'code' => $storeConfig->getCode(),
+            'name' => $storeConfig->getName(),
             'website_id' => $storeConfig->getWebsiteId(),
             'locale' => $storeConfig->getLocale(),
             'base_currency_code' => $storeConfig->getBaseCurrencyCode(),
