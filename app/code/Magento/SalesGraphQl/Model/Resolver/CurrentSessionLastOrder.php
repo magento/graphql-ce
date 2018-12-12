@@ -14,30 +14,40 @@ use Magento\Sales\Model\ResourceModel\Order\CollectionFactoryInterface;
 use Magento\CustomerGraphQl\Model\Customer\CheckCustomerAccount;
 
 /**
- * Orders data resolver
+ * CurrentSessionLastOrder data resolver
  */
-class Orders implements ResolverInterface
+class CurrentSessionLastOrder implements ResolverInterface
 {
     /**
-     * @var CollectionFactoryInterface
+     * @var \Magento\Checkout\Model\Session
      */
-    private $collectionFactory;
+    private $checkoutSession;
 
     /**
-     * @var CheckCustomerAccount
+     * @var \Magento\Sales\Model\OrderFactory
      */
-    private $checkCustomerAccount;
+    private $orderFactory;
 
     /**
-     * @param CollectionFactoryInterface $collectionFactory
-     * @param CheckCustomerAccount $checkCustomerAccount
+     * CurrentSessionLastOrder constructor.
+     *
+     * @param \Magento\Checkout\Model\Session $checkoutSession
+     * @param \Magento\Sales\Model\OrderFactory $orderFactory
      */
     public function __construct(
-        CollectionFactoryInterface $collectionFactory,
-        CheckCustomerAccount $checkCustomerAccount
+        \Magento\Checkout\Model\Session $checkoutSession,
+        \Magento\Sales\Model\OrderFactory $orderFactory
     ) {
-        $this->collectionFactory = $collectionFactory;
-        $this->checkCustomerAccount = $checkCustomerAccount;
+        $this->checkoutSession = $checkoutSession;
+        $this->orderFactory = $orderFactory;
+    }
+
+    /**
+     * @return mixed
+     */
+    private function getLastRealOrderId()
+    {
+        return $this->checkoutSession->getLastRealOrderId();
     }
 
     /**
@@ -50,22 +60,17 @@ class Orders implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
-        $customerId = $context->getUserId();
-        $this->checkCustomerAccount->execute($customerId, $context->getUserType());
-
-        $items = [];
-        $orders = $this->collectionFactory->create($customerId);
-
-        /** @var \Magento\Sales\Model\Order $order */
-        foreach ($orders as $order) {
-            $items[] = [
+        if ($this->getLastRealOrderId()) {
+            $order = $this->orderFactory->create()->loadByIncrementId($this->getLastRealOrderId());
+            return [
                 'id' => $order->getId(),
                 'increment_id' => $order->getIncrementId(),
                 'created_at' => $order->getCreatedAt(),
                 'grand_total' => $order->getGrandTotal(),
                 'status' => $order->getStatus(),
             ];
+            return $order;
         }
-        return ['items' => $items];
+        return [];
     }
 }

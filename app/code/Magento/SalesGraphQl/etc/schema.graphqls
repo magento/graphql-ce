@@ -2,7 +2,8 @@
 # See COPYING.txt for license details.
 
 type Query {
-    customerOrders: CustomerOrders @resolver(class: "Magento\\SalesGraphQl\\Model\\Resolver\\Orders") @doc(description: "List of customer orders")
+    customerOrders: CustomerOrders @resolver(class: "Magento\\SalesGraphQl\\Model\\Resolver\\Orders") @doc(description: "List of customer orders"),
+    currentSessionLastOrder: CustomerOrder @resolver(class: "Magento\\SalesGraphQl\\Model\\Resolver\\CurrentSessionLastOrder") @doc(description: "Return the information of the last order of the current user."),
 }
 
 type CustomerOrder @doc(description: "Order mapping fields") {
