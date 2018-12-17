@@ -44,6 +44,19 @@ class Address
             'customer_notes' => $address->getCustomerNotes()
         ];
 
+        if (!$address->hasItems()) {
+            return $addressData;
+        }
+
+        $addressItemsData = [];
+        foreach ($address->getAllItems() as $addressItem) {
+            $addressItemsData[] = [
+                'cart_item_id' => $addressItem->getQuoteItemId(),
+                'quantity' => $addressItem->getQty()
+            ];
+        }
+        $addressData['cart_items'] = $addressItemsData;
+
         return $addressData;
     }
 }

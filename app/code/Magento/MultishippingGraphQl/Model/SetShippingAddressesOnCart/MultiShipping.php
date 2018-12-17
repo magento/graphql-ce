@@ -7,8 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\MultishippingGraphQl\Model\SetShippingAddressesOnCart;
 
-use Magento\Authorization\Model\UserContextInterface;
-use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
+use Magento\CustomerGraphQl\Model\Customer\CheckCustomerAccount;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Multishipping\Helper\Data as MultishippingHelper;
@@ -26,7 +25,7 @@ class MultiShipping implements SetShippingAddressesOnCartInterface
     /**
      * @var ShippingItemsMapper
      */
-    private $shippingItemsInformationMapper;
+    private $shippingItemsMapper;
 
     /**
      * @var SetShippingAddressOnCart
@@ -44,21 +43,29 @@ class MultiShipping implements SetShippingAddressesOnCartInterface
     private $multiShippingBuilder;
 
     /**
-     * @param ShippingItemsMapper $shippingItemsInformationMapper
+     * @var CheckCustomerAccount
+     */
+    private $checkCustomerAccount;
+
+    /**
+     * @param ShippingItemsMapper $shippingItemsMapper
      * @param SetShippingAddressOnCart $setShippingAddressOnCart
      * @param MultishippingHelper $multishippingHelper
      * @param MultiShippingBuilder $multiShippingBuilder
+     * @param CheckCustomerAccount $checkCustomerAccount
      */
     public function __construct(
-        ShippingItemsMapper $shippingItemsInformationMapper,
+        ShippingItemsMapper $shippingItemsMapper,
         SetShippingAddressOnCart $setShippingAddressOnCart,
         MultishippingHelper $multishippingHelper,
-        MultiShippingBuilder $multiShippingBuilder
+        MultiShippingBuilder $multiShippingBuilder,
+        CheckCustomerAccount $checkCustomerAccount
     ) {
-        $this->shippingItemsInformationMapper = $shippingItemsInformationMapper;
+        $this->shippingItemsMapper = $shippingItemsMapper;
         $this->setShippingAddressOnCart = $setShippingAddressOnCart;
         $this->multishippingHelper = $multishippingHelper;
         $this->multiShippingBuilder = $multiShippingBuilder;
+        $this->checkCustomerAccount = $checkCustomerAccount;
     }
 
     /**
@@ -66,18 +73,11 @@ class MultiShipping implements SetShippingAddressesOnCartInterface
      */
     public function execute(ContextInterface $context, CartInterface $cart, array $shippingAddresses): void
     {
-        $multiShippingModel = $this->multiShippingBuilder->get($context, $cart);
         if (count($shippingAddresses) === 1 || !$this->multishippingHelper->isMultishippingCheckoutAvailable()) {
             $this->setShippingAddressOnCart->execute($context, $cart, $shippingAddresses);
             return;
         }
-        if ((!$context->getUserId()) || $context->getUserType() == UserContextInterface::USER_TYPE_GUEST) {
-            throw new GraphQlAuthorizationException(
-                __(
-                    'Multishipping allowed only for authorized customers.'
-                )
-            );
-        }
+        $this->checkCustomerAccount->execute($context->getUserId(), $context->getUserType());
 
         $shippingItemsInformation = [];
         foreach ($shippingAddresses as $shippingAddress) {
@@ -92,10 +92,11 @@ class MultiShipping implements SetShippingAddressesOnCartInterface
 
             $shippingItemsInformation = array_merge(
                 $shippingItemsInformation,
-                $this->shippingItemsInformationMapper->map($shippingAddress)
+                $this->shippingItemsMapper->map($shippingAddress, $cart)
             );
         }
 
+        $multiShippingModel = $this->multiShippingBuilder->get($context, $cart);
         $multiShippingModel->setShippingItemsInformation($shippingItemsInformation);
     }
 }
