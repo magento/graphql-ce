@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\MultishippingGraphQl\Model\SetShippingAddressesOnCart;
 
 use Magento\CustomerGraphQl\Model\Customer\CheckCustomerAccount;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Multishipping\Helper\Data as MultishippingHelper;
@@ -97,6 +98,10 @@ class MultiShipping implements SetShippingAddressesOnCartInterface
         }
 
         $multiShippingModel = $this->multiShippingBuilder->get($context, $cart);
-        $multiShippingModel->setShippingItemsInformation($shippingItemsInformation);
+        try {
+            $multiShippingModel->setShippingItemsInformation($shippingItemsInformation);
+        } catch (LocalizedException $e) {
+            throw new GraphQlInputException(__($e->getMessage()));
+        }
     }
 }

@@ -19,7 +19,7 @@ use Magento\TestFramework\ObjectManager;
 /**
  * Test for set shipping addresses on cart mutation
  */
-class SetShippingAddressOnCartTest extends GraphQlAbstract
+class SetShippingAddressesOnCartTest extends GraphQlAbstract
 {
     /**
      * @var QuoteResource
@@ -222,8 +222,7 @@ mutation {
   }
 }
 QUERY;
-        self::expectExceptionMessage('Internal server error
-Verify the shipping address information and continue.');
+        self::expectExceptionMessage('Verify the shipping address information and continue.');
         $this->graphQlQuery($query, [], '', $headerMap);
     }
 
