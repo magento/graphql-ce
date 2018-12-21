@@ -13,14 +13,13 @@ use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Model\Quote\Address;
-use Magento\Quote\Model\BillingAddressManagement;
 use Magento\Quote\Api\BillingAddressManagementInterface;
 use Magento\Customer\Api\AddressRepositoryInterface;
 
 /**
  * Set single shipping address for a specified shopping cart
  */
-class SetBillingAddressOnCart implements SetBillingAddressOnCartInterface
+class SetBillingAddressOnCart
 {
     /**
      * @var BillingAddressManagementInterface

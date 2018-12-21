@@ -13,7 +13,7 @@ use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\Stdlib\ArrayManager;
 use Magento\QuoteGraphQl\Model\Cart\GetCartForUser;
-use Magento\QuoteGraphQl\Model\Cart\SetBillingAddressOnCartInterface;
+use Magento\QuoteGraphQl\Model\Cart\SetBillingAddressOnCart as SetBillingAddressOnCartModel;
 
 /**
  * Class SetBillingAddressOnCart
@@ -33,19 +33,19 @@ class SetBillingAddressOnCart implements ResolverInterface
     private $arrayManager;
 
     /**
-     * @var SetBillingAddressOnCartInterface
+     * @var SetBillingAddressOnCartModel
      */
     private $setBillingAddressOnCart;
 
     /**
      * @param GetCartForUser $getCartForUser
      * @param ArrayManager $arrayManager
-     * @param SetBillingAddressOnCartInterface $setBillingAddressOnCart
+     * @param SetBillingAddressOnCartModel $setBillingAddressOnCart
      */
     public function __construct(
         GetCartForUser $getCartForUser,
         ArrayManager $arrayManager,
-        SetBillingAddressOnCartInterface $setBillingAddressOnCart
+        SetBillingAddressOnCartModel $setBillingAddressOnCart
     ) {
         $this->getCartForUser = $getCartForUser;
         $this->arrayManager = $arrayManager;

@@ -35,7 +35,7 @@ input CartItemQuantityInput {
 
 input SetBillingAddressOnCartInput {
     cart_id: String!
-    billing_address: [BillingAddressInput!]
+    billing_address: BillingAddressInput!
 }
 
 input BillingAddressInput {

@@ -8,6 +8,4 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Magento\QuoteGraphQl\Model\Cart\SetShippingAddressesOnCartInterface"
                 type="Magento\QuoteGraphQl\Model\Cart\SetShippingAddressOnCart" />
-    <preference for="Magento\QuoteGraphQl\Model\Cart\SetBillingAddressOnCartInterface"
-                type="Magento\QuoteGraphQl\Model\Cart\SetBillingAddressOnCart" />
 </config>
