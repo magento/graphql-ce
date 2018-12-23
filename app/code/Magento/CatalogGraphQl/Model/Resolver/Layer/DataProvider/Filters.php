@@ -34,16 +34,15 @@ class Filters
      * Get layered navigation filters data
      *
      * @param string $layerType
-     * @param int|null $categoryIdFilter
      * @return array
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    public function getData(string $layerType, ?int $categoryIdFilter = null) : array
+    public function getData(string $layerType) : array
     {
         $filtersData = [];
         /** @var AbstractFilter $filter */
-        foreach ($this->filtersProvider->getFilters($layerType, $categoryIdFilter) as $filter) {
-            if ($filter->getItemsCount()) {
+        foreach ($this->filtersProvider->getFilters($layerType) as $filter) {
+            if ($filter->getItemsCount() > 1) {
                 $filterGroup = [
                     'name' => (string)$filter->getName(),
                     'filter_items_count' => $filter->getItemsCount(),
@@ -51,13 +50,18 @@ class Filters
                 ];
                 /** @var \Magento\Catalog\Model\Layer\Filter\Item $filterItem */
                 foreach ($filter->getItems() as $filterItem) {
-                    $filterGroup['filter_items'][] = [
-                        'label' => (string)$filterItem->getLabel(),
-                        'value_string' => $filterItem->getValueString(),
-                        'items_count' => $filterItem->getCount(),
-                    ];
+                    if ($filterItem->getCount()) {
+                        $filterGroup['filter_items'][] = [
+                            'label' => (string)$filterItem->getLabel(),
+                            'value_string' => $filterItem->getValueString(),
+                            'items_count' => $filterItem->getCount(),
+                        ];
+                    }
                 }
-                $filtersData[] = $filterGroup;
+
+                if (isset($filterGroup['filter_items']) && count($filterGroup['filter_items'])) {
+                    $filtersData[] = $filterGroup;
+                }
             }
         }
         return $filtersData;

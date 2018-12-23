@@ -7,6 +7,10 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="Magento\Catalog\Model\Product\Option\Type\Date" type="Magento\CatalogGraphQl\Model\Product\Option\DateType" />
+    <preference for="Magento\CatalogGraphQl\Model\Resolver\Layer\ProductCollection\FilterByCollectionProcessorInterface"
+                type="Magento\CatalogGraphQl\Model\Resolver\Layer\ProductCollection\FilterByCollectionProcessor"/>
+    <preference for="Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\Product\CollectionBuilderInterface"
+                type="Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\Product\CollectionBuilder"/>
     <type name="Magento\CatalogGraphQl\Model\ProductInterfaceTypeResolverComposite">
         <arguments>
             <argument name="productTypeNameResolvers" xsi:type="array">

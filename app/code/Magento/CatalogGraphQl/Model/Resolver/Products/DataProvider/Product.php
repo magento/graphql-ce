@@ -13,6 +13,7 @@ use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\Catalog\Api\Data\ProductSearchResultsInterfaceFactory;
 use Magento\Framework\Api\SearchResultsInterface;
 use Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\Product\CollectionProcessorInterface;
+use Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\Product\CollectionBuilderInterface;
 
 /**
  * Product field data provider, used for GraphQL resolver processing.
@@ -20,41 +21,26 @@ use Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\Product\Collecti
 class Product
 {
     /**
-     * @var CollectionFactory
-     */
-    private $collectionFactory;
-
-    /**
      * @var ProductSearchResultsInterfaceFactory
      */
     private $searchResultsFactory;
 
     /**
-     * @var CollectionProcessorInterface
+     * @var CollectionBuilderInterface
      */
-    private $collectionProcessor;
+    private $collectionBuilder;
 
     /**
-     * @var Visibility
-     */
-    private $visibility;
-
-    /**
-     * @param CollectionFactory $collectionFactory
+     * Product constructor.
      * @param ProductSearchResultsInterfaceFactory $searchResultsFactory
-     * @param Visibility $visibility
-     * @param CollectionProcessorInterface $collectionProcessor
+     * @param CollectionBuilderInterface $collectionBuilder
      */
     public function __construct(
-        CollectionFactory $collectionFactory,
         ProductSearchResultsInterfaceFactory $searchResultsFactory,
-        Visibility $visibility,
-        CollectionProcessorInterface $collectionProcessor
+        CollectionBuilderInterface $collectionBuilder
     ) {
-        $this->collectionFactory = $collectionFactory;
         $this->searchResultsFactory = $searchResultsFactory;
-        $this->visibility = $visibility;
-        $this->collectionProcessor = $collectionProcessor;
+        $this->collectionBuilder = $collectionBuilder;
     }
 
     /**
@@ -73,16 +59,7 @@ class Product
         bool $isChildSearch = false
     ): SearchResultsInterface {
         /** @var \Magento\Catalog\Model\ResourceModel\Product\Collection $collection */
-        $collection = $this->collectionFactory->create();
-
-        $this->collectionProcessor->process($collection, $searchCriteria, $attributes);
-
-        if (!$isChildSearch) {
-            $visibilityIds = $isSearch
-                ? $this->visibility->getVisibleInSearchIds()
-                : $this->visibility->getVisibleInCatalogIds();
-            $collection->setVisibility($visibilityIds);
-        }
+        $collection = $this->collectionBuilder->build($searchCriteria, $attributes, $isSearch, $isChildSearch);
         $collection->load();
 
         // Methods that perform extra fetches post-load

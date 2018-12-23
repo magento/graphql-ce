@@ -115,7 +115,7 @@ class Products implements ResolverInterface
                 'total_pages' => $maxPages
             ],
             'layer_type' => $layerType,
-            'category_id_filter' => $categoryIdFilter
+            'search_criteria' => $searchCriteria
         ];
 
         return $data;
