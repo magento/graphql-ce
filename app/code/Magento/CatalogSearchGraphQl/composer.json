@@ -1,14 +1,12 @@
 {
-    "name": "magento/module-catalog-graph-ql",
+    "name": "magento/module-catalog-search-graph-ql",
     "description": "N/A",
     "type": "magento2-module",
     "require": {
         "php": "~7.1.3||~7.2.0",
-        "magento/module-eav": "*",
         "magento/module-catalog": "*",
-        "magento/module-catalog-inventory": "*",
-        "magento/module-store": "*",
-        "magento/module-eav-graph-ql": "*",
+        "magento/module-catalog-graph-ql": "*",
+        "magento/module-search": "*",
         "magento/framework": "*"
     },
     "suggest": {
@@ -24,7 +22,7 @@
             "registration.php"
         ],
         "psr-4": {
-            "Magento\\CatalogGraphQl\\": ""
+            "Magento\\CatalogSearchGraphQl\\": ""
         }
     }
 }

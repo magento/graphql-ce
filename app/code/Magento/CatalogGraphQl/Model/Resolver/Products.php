@@ -7,17 +7,15 @@ declare(strict_types=1);
 
 namespace Magento\CatalogGraphQl\Model\Resolver;
 
+use Magento\CatalogGraphQl\Model\Resolver\Products\SearchResult;
 use Magento\Framework\Exception\InputException;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
-use Magento\CatalogGraphQl\Model\Resolver\Products\Query\Filter;
-use Magento\CatalogGraphQl\Model\Resolver\Products\Query\Search;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\Resolver\Argument\SearchCriteria\Builder;
-use Magento\Framework\GraphQl\Query\Resolver\Argument\SearchCriteria\SearchFilter;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
-use Magento\Catalog\Model\Layer\Resolver;
 use Magento\Framework\Api\Search\SearchCriteriaInterface;
+use Magento\CatalogGraphQl\Model\Resolver\Products\Query\QueryInterface;
 
 /**
  * Products field resolver, used for GraphQL request processing.
@@ -30,36 +28,20 @@ class Products implements ResolverInterface
     private $searchCriteriaBuilder;
 
     /**
-     * @var Search
+     * @var QueryInterface[]
      */
-    private $searchQuery;
-
-    /**
-     * @var Filter
-     */
-    private $filterQuery;
-
-    /**
-     * @var SearchFilter
-     */
-    private $searchFilter;
+    private $queries;
 
     /**
      * @param Builder $searchCriteriaBuilder
-     * @param Search $searchQuery
-     * @param Filter $filterQuery
-     * @param SearchFilter $searchFilter
+     * @param QueryInterface[] $queries
      */
     public function __construct(
         Builder $searchCriteriaBuilder,
-        Search $searchQuery,
-        Filter $filterQuery,
-        SearchFilter $searchFilter
+        array $queries = []
     ) {
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
-        $this->searchQuery = $searchQuery;
-        $this->filterQuery = $filterQuery;
-        $this->searchFilter = $searchFilter;
+        $this->queries = $queries;
     }
 
     /**
@@ -75,18 +57,22 @@ class Products implements ResolverInterface
         $searchCriteria = $this->searchCriteriaBuilder->build($field->getName(), $args);
         $searchCriteria->setCurrentPage($args['currentPage']);
         $searchCriteria->setPageSize($args['pageSize']);
-        if (!isset($args['search']) && !isset($args['filter'])) {
-            throw new GraphQlInputException(
-                __("'search' or 'filter' input argument is required.")
-            );
-        } elseif (isset($args['search'])) {
-            $layerType = Resolver::CATALOG_LAYER_SEARCH;
-            $this->searchFilter->add($args['search'], $searchCriteria);
-            $searchResult = $this->getSearchResult($this->searchQuery, $searchCriteria, $info);
-        } else {
-            $layerType = Resolver::CATALOG_LAYER_CATEGORY;
-            $searchResult = $this->getSearchResult($this->filterQuery, $searchCriteria, $info);
+
+        $layerType = null;
+        foreach (array_reverse($this->queries) as $key => $query) {
+            if (isset($args[$key])) {
+                $layerType = $query->getLayerType();
+                $searchResult = $this->getSearchResult($query, $searchCriteria, $info, $args);
+                break;
+            }
         }
+
+        if (is_null($layerType)) {
+            throw new GraphQlInputException(
+                __("%1 input argument is required.", implode(' or ', array_keys($this->queries)))
+            );
+        }
+
         //possible division by 0
         if ($searchCriteria->getPageSize()) {
             $maxPages = ceil($searchResult->getTotalCount() / $searchCriteria->getPageSize());
@@ -121,17 +107,22 @@ class Products implements ResolverInterface
     /**
      * Get search result.
      *
-     * @param Filter|Search $query
+     * @param QueryInterface $query
      * @param SearchCriteriaInterface $searchCriteria
      * @param ResolveInfo $info
+     * @param array $args
      *
      * @return \Magento\CatalogGraphQl\Model\Resolver\Products\SearchResult
      * @throws GraphQlInputException
      */
-    private function getSearchResult($query, SearchCriteriaInterface $searchCriteria, ResolveInfo $info)
-    {
+    private function getSearchResult(
+        QueryInterface $query,
+        SearchCriteriaInterface $searchCriteria,
+        ResolveInfo $info,
+        array $args
+    ): SearchResult {
         try {
-            $searchResult = $query->getResult($searchCriteria, $info);
+            $searchResult = $query->getResult($searchCriteria, $info, $args);
         } catch (InputException $e) {
             throw new GraphQlInputException(__($e->getMessage()));
         }

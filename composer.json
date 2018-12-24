@@ -156,6 +156,7 @@
         "magento/module-google-optimizer": "*",
         "magento/module-graph-ql": "*",
         "magento/module-catalog-graph-ql": "*",
+        "magento/module-catalog-search-graph-ql": "*",
         "magento/module-catalog-url-rewrite-graph-ql": "*",
         "magento/module-configurable-product-graph-ql": "*",
         "magento/module-customer-graph-ql": "*",

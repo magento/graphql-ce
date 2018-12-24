@@ -821,23 +821,23 @@ QUERY;
         $productRepository = ObjectManager::getInstance()->get(ProductRepositoryInterface::class);
 
         $prod1 = $productRepository->get('simple1');
+        $prod2 = $productRepository->get('simple2');
+        $filteredProducts = ['simple1' => $prod1, 'simple2' => $prod2];
 
         $response = $this->graphQlQuery($query);
-        $this->assertEquals(1, $response['products']['total_count']);
+        $this->assertEquals(count($filteredProducts), $response['products']['total_count']);
 
-        $filteredProducts = [$prod1];
-        $productItemsInResponse = array_map(null, $response['products']['items'], $filteredProducts);
-        foreach ($productItemsInResponse as $itemIndex => $itemArray) {
+        foreach ($response['products']['items'] as $itemArray) {
             $this->assertNotEmpty($itemArray);
             $this->assertResponseFields(
-                $productItemsInResponse[$itemIndex][0],
+                $itemArray,
                 [
-                    'sku' => $filteredProducts[$itemIndex]->getSku(),
-                    'name' => $filteredProducts[$itemIndex]->getName(),
+                    'sku' => $filteredProducts[$itemArray['sku']]->getSku(),
+                    'name' => $filteredProducts[$itemArray['sku']]->getName(),
                     'price' => [
                         'minimalPrice' => [
                             'amount' => [
-                                'value' => $filteredProducts[$itemIndex]->getSpecialPrice(),
+                                'value' => $filteredProducts[$itemArray['sku']]->getSpecialPrice(),
                                 'currency' => 'USD'
                             ]
                         ]
@@ -1075,8 +1075,7 @@ QUERY;
 QUERY;
 
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('GraphQL response contains errors: \'search\' or \'filter\' input argument is ' .
-            'required.');
+        $this->expectExceptionMessage('GraphQL response contains errors: filter or search input argument is required.');
         $this->graphQlQuery($query);
     }
 

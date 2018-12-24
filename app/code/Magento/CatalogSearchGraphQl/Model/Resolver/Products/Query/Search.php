@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\CatalogGraphQl\Model\Resolver\Products\Query;
+namespace Magento\CatalogSearchGraphQl\Model\Resolver\Products\Query;
 
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\Api\Search\SearchCriteriaInterface;
@@ -13,12 +13,16 @@ use Magento\CatalogGraphQl\Model\Resolver\Products\SearchCriteria\Helper\Filter 
 use Magento\CatalogGraphQl\Model\Resolver\Products\SearchResult;
 use Magento\CatalogGraphQl\Model\Resolver\Products\SearchResultFactory;
 use Magento\Search\Api\SearchInterface;
+use Magento\CatalogGraphQl\Model\Resolver\Products\Query\Filter;
+use Magento\Framework\GraphQl\Query\Resolver\Argument\SearchCriteria\SearchFilter;
 
 /**
  * Full text search for catalog using given search criteria.
  */
-class Search
+class Search implements \Magento\CatalogGraphQl\Model\Resolver\Products\Query\QueryInterface
 {
+    const ARGUMENT_NAME = 'search';
+
     /**
      * @var SearchInterface
      */
@@ -50,12 +54,18 @@ class Search
     private $pageSizeProvider;
 
     /**
+     * @var SearchFilter
+     */
+    private $searchFilter;
+
+    /**
      * @param SearchInterface $search
      * @param FilterHelper $filterHelper
      * @param Filter $filterQuery
      * @param SearchResultFactory $searchResultFactory
      * @param \Magento\Framework\EntityManager\MetadataPool $metadataPool
      * @param \Magento\Search\Model\Search\PageSizeProvider $pageSize
+     * @param SearchFilter $searchFilter
      */
     public function __construct(
         SearchInterface $search,
@@ -63,7 +73,8 @@ class Search
         Filter $filterQuery,
         SearchResultFactory $searchResultFactory,
         \Magento\Framework\EntityManager\MetadataPool $metadataPool,
-        \Magento\Search\Model\Search\PageSizeProvider $pageSize
+        \Magento\Search\Model\Search\PageSizeProvider $pageSize,
+        SearchFilter $searchFilter
     ) {
         $this->search = $search;
         $this->filterHelper = $filterHelper;
@@ -71,6 +82,7 @@ class Search
         $this->searchResultFactory = $searchResultFactory;
         $this->metadataPool = $metadataPool;
         $this->pageSizeProvider = $pageSize;
+        $this->searchFilter = $searchFilter;
     }
 
     /**
@@ -78,11 +90,17 @@ class Search
      *
      * @param SearchCriteriaInterface $searchCriteria
      * @param ResolveInfo $info
+     * @param array $arguments
+     * @param bool $isSearch
      * @return SearchResult
      * @throws \Exception
      */
-    public function getResult(SearchCriteriaInterface $searchCriteria, ResolveInfo $info) : SearchResult
-    {
+    public function getResult(
+        SearchCriteriaInterface $searchCriteria,
+        ResolveInfo $info,
+        array $arguments = [],
+        bool $isSearch = false
+    ): SearchResult {
         $idField = $this->metadataPool->getMetadata(
             \Magento\Catalog\Api\Data\ProductInterface::class
         )->getIdentifierField();
@@ -92,6 +110,7 @@ class Search
         $pageSize = $this->pageSizeProvider->getMaxPageSize();
         $searchCriteria->setPageSize($pageSize);
         $searchCriteria->setCurrentPage(0);
+        $this->searchFilter->add($arguments[self::ARGUMENT_NAME], $searchCriteria);
         $itemsResults = $this->search->search($searchCriteria);
 
         $ids = [];
@@ -104,7 +123,7 @@ class Search
         $filter = $this->filterHelper->generate($idField, 'in', $searchIds);
         $searchCriteria = $this->filterHelper->remove($searchCriteria, 'search_term');
         $searchCriteria = $this->filterHelper->add($searchCriteria, $filter);
-        $searchResult = $this->filterQuery->getResult($searchCriteria, $info, true);
+        $searchResult = $this->filterQuery->getResult($searchCriteria, $info, $arguments, $isSearch);
 
         $searchCriteria->setPageSize($realPageSize);
         $searchCriteria->setCurrentPage($realCurrentPage);
@@ -128,6 +147,11 @@ class Search
         }
 
         return $this->searchResultFactory->create($searchResult->getTotalCount(), $products);
+    }
+
+    public function getLayerType(): string
+    {
+        return \Magento\Catalog\Model\Layer\Resolver::CATALOG_LAYER_SEARCH;
     }
 
     /**

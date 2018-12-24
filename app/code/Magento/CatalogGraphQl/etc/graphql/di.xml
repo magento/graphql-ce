@@ -64,6 +64,13 @@
             <argument name="collectionProcessor" xsi:type="object">Magento\Catalog\Model\Api\SearchCriteria\ProductCollectionProcessor</argument>
         </arguments>
     </type>
+    <type name="Magento\CatalogGraphQl\Model\Resolver\Products">
+        <arguments>
+            <argument name="queries" xsi:type="array">
+                <item name="filter" xsi:type="object">Magento\CatalogGraphQl\Model\Resolver\Products\Query\Filter</item>
+            </argument>
+        </arguments>
+    </type>
     <virtualType name="Magento\Catalog\Model\Api\SearchCriteria\CollectionProcessor\ProductFilterProcessor" type="Magento\Eav\Model\Api\SearchCriteria\CollectionProcessor\FilterProcessor">
         <arguments>
             <argument name="customFilters" xsi:type="array">

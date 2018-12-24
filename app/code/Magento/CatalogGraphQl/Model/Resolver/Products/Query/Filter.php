@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace Magento\CatalogGraphQl\Model\Resolver\Products\Query;
 
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
-use Magento\Framework\Api\SearchCriteriaInterface;
+use Magento\Framework\Api\Search\SearchCriteriaInterface;
 use Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\Product;
 use Magento\CatalogGraphQl\Model\Resolver\Products\SearchResult;
 use Magento\CatalogGraphQl\Model\Resolver\Products\SearchResultFactory;
@@ -17,7 +17,7 @@ use Magento\Framework\GraphQl\Query\FieldTranslator;
 /**
  * Retrieve filtered product data based off given search criteria in a format that GraphQL can interpret.
  */
-class Filter
+class Filter implements QueryInterface
 {
     /**
      * @var SearchResultFactory
@@ -62,12 +62,14 @@ class Filter
      *
      * @param SearchCriteriaInterface $searchCriteria
      * @param ResolveInfo $info
+     * @param array $arguments
      * @param bool $isSearch
      * @return SearchResult
      */
     public function getResult(
         SearchCriteriaInterface $searchCriteria,
         ResolveInfo $info,
+        array $arguments = [],
         bool $isSearch = false
     ): SearchResult {
         $fields = $this->getProductFields($info);
@@ -80,6 +82,11 @@ class Filter
         }
 
         return $this->searchResultFactory->create($products->getTotalCount(), $productArray);
+    }
+
+    public function getLayerType(): string
+    {
+        return \Magento\Catalog\Model\Layer\Resolver::CATALOG_LAYER_CATEGORY;
     }
 
     /**
