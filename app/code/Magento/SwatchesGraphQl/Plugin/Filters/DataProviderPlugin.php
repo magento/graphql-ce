@@ -54,7 +54,6 @@ class DataProviderPlugin
      * @param Filters $subject
      * @param \Closure $proceed
      * @param string $layerType
-     * @param null|int $categoryIdFilter
      * @return array
      * @throws \Magento\Framework\Exception\LocalizedException
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -63,12 +62,11 @@ class DataProviderPlugin
     public function aroundGetData(
         Filters $subject,
         \Closure $proceed,
-        string $layerType,
-        ?int $categoryIdFilter = null
+        string $layerType
     ) : array {
         $swatchFilters = [];
         /** @var AbstractFilter $filter */
-        foreach ($this->filtersProvider->getFilters($layerType, $categoryIdFilter) as $filter) {
+        foreach ($this->filtersProvider->getFilters($layerType) as $filter) {
             if ($filter->hasAttributeModel()) {
                 if ($this->swatchHelper->isSwatchAttribute($filter->getAttributeModel())) {
                     $swatchFilters[] = $filter;

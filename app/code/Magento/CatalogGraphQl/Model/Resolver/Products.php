@@ -102,10 +102,6 @@ class Products implements ResolverInterface
             );
         }
 
-        /** @var null|int $categoryIdFilter */
-        $categoryIdFilter = isset($args['filter']['category_id']['eq']) ?
-            (int)$args['filter']['category_id']['eq'] : null;
-
         $data = [
             'total_count' => $searchResult->getTotalCount(),
             'items' => $searchResult->getProductsSearchResult(),
