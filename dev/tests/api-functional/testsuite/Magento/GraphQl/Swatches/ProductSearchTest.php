@@ -94,34 +94,6 @@ QUERY;
         // Fetching option ID is required for continuous debug as of autoincrement IDs.
         return [
             [
-                'name' => 'Category',
-                'filter_items_count' => 1,
-                'request_var' => 'cat',
-                'filter_items' => [
-                    [
-                        'label' => 'Category 1',
-                        'value_string' => '333',
-                        'items_count' => 3,
-                    ],
-                ],
-            ],
-            [
-                'name' => 'Test Swatch',
-                'filter_items_count' => 1,
-                'request_var' => 'color_swatch',
-                'filter_items' => [
-                    [
-                        'label' => 'option 1',
-                        'value_string' => $options[1]->getValue(),
-                        'items_count' => 2,
-                        'swatch_data' => [
-                            'type' => '1',
-                            'value' => '#555555',
-                        ],
-                    ],
-                ],
-             ],
-            [
                 'name' => 'Price',
                 'filter_items_count' => 3,
                 'request_var' => 'price',
