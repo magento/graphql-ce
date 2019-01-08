@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\CatalogGraphQl\Model\Resolver\Products\FilterArgument;
+namespace Magento\Framework\GraphQl\Query\Resolver\Argument;
 
 use Magento\Framework\GraphQl\Config\Element\InterfaceType;
 use Magento\Framework\GraphQl\Config\Element\Type;
@@ -13,9 +13,9 @@ use Magento\Framework\GraphQl\ConfigInterface;
 use Magento\Framework\GraphQl\Query\Resolver\Argument\FieldEntityAttributesInterface;
 
 /**
- * Retrieves attributes for a field for the ast converter
+ * Default implementation to retrieves attributes for a field for the ast converter.
  */
-class ProductEntityAttributesForAst implements FieldEntityAttributesInterface
+class FieldEntityAttributes implements FieldEntityAttributesInterface
 {
     /**
      * @var ConfigInterface
@@ -25,28 +25,37 @@ class ProductEntityAttributesForAst implements FieldEntityAttributesInterface
     /**
      * @var array
      */
-    private $additionalAttributes = ['min_price', 'max_price', 'category_id'];
+    private $additionalAttributes;
+
+    /**
+     * @var string
+     */
+    private $configElementName;
 
     /**
      * @param ConfigInterface $config
+     * @param string $configElementName
      * @param array $additionalAttributes
      */
     public function __construct(
         ConfigInterface $config,
+        string $configElementName,
         array $additionalAttributes = []
-    ) {
+    )
+    {
         $this->config = $config;
-        $this->additionalAttributes = array_merge($this->additionalAttributes, $additionalAttributes);
+        $this->configElementName = $configElementName;
+        $this->additionalAttributes = $additionalAttributes;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getEntityAttributes() : array
+    public function getEntityAttributes(): array
     {
-        $productTypeSchema = $this->config->getConfigElement('SimpleProduct');
+        $productTypeSchema = $this->config->getConfigElement($this->configElementName);
         if (!$productTypeSchema instanceof Type) {
-            throw new \LogicException(__("SimpleProduct type not defined in schema."));
+            throw new \LogicException(__('%1 type not defined in schema.', $this->configElementName));
         }
 
         $fields = [];
@@ -55,12 +64,12 @@ class ProductEntityAttributesForAst implements FieldEntityAttributesInterface
             $configElement = $this->config->getConfigElement($interface['interface']);
 
             foreach ($configElement->getFields() as $field) {
-                $fields[$field->getName()] = 'String';
+                $fields[$field->getName()] = '';
             }
         }
 
         foreach ($this->additionalAttributes as $attribute) {
-            $fields[$attribute] = 'String';
+            $fields[$attribute] = '';
         }
 
         return array_keys($fields);
