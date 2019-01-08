@@ -5,9 +5,8 @@
  */
 declare(strict_types=1);
 
-namespace Magento\Framework\GraphQl\Query\Resolver\Argument;
+namespace Magento\Framework\GraphQl\Query\Resolver\Argument\Filter;
 
-use Magento\Framework\GraphQl\Config\Element\InterfaceType;
 use Magento\Framework\GraphQl\Config\Element\Type;
 use Magento\Framework\GraphQl\ConfigInterface;
 use Magento\Framework\GraphQl\Query\Resolver\Argument\FieldEntityAttributesInterface;
@@ -21,12 +20,10 @@ class FieldEntityAttributes implements FieldEntityAttributesInterface
      * @var ConfigInterface
      */
     private $config;
-
     /**
      * @var array
      */
     private $additionalAttributes;
-
     /**
      * @var string
      */
@@ -37,11 +34,7 @@ class FieldEntityAttributes implements FieldEntityAttributesInterface
      * @param string $configElementName
      * @param array $additionalAttributes
      */
-    public function __construct(
-        ConfigInterface $config,
-        string $configElementName,
-        array $additionalAttributes = []
-    )
+    public function __construct(ConfigInterface $config, string $configElementName, array $additionalAttributes = [])
     {
         $this->config = $config;
         $this->configElementName = $configElementName;
@@ -53,25 +46,45 @@ class FieldEntityAttributes implements FieldEntityAttributesInterface
      */
     public function getEntityAttributes(): array
     {
-        $productTypeSchema = $this->config->getConfigElement($this->configElementName);
-        if (!$productTypeSchema instanceof Type) {
+        $typeSchema = $this->config->getConfigElement($this->configElementName);
+        if (!$typeSchema instanceof Type) {
             throw new \LogicException(__('%1 type not defined in schema.', $this->configElementName));
         }
 
-        $fields = [];
-        foreach ($productTypeSchema->getInterfaces() as $interface) {
-            /** @var InterfaceType $configElement */
-            $configElement = $this->config->getConfigElement($interface['interface']);
+        $configElements = $this->getSchemaConfigElements($typeSchema);
 
+        $fields = [];
+        foreach ($configElements as $configElement) {
             foreach ($configElement->getFields() as $field) {
-                $fields[$field->getName()] = '';
+                $fields[$field->getName()] = 'String';
             }
         }
 
         foreach ($this->additionalAttributes as $attribute) {
-            $fields[$attribute] = '';
+            $fields[$attribute] = 'String';
         }
 
         return array_keys($fields);
+    }
+
+    /**
+     * Get the config elements for an entity.
+     * @param Type $type
+     * @return Type[]
+     */
+    private function getSchemaConfigElements(Type $type): array
+    {
+        $configElements = [];
+
+        if ($type->getInterfaces() === null) {
+            $configElements[] = $type;
+            return $configElements;
+        }
+
+        foreach ($type->getInterfaces() as $interface) {
+            $configElements[] = $this->config->getConfigElement($interface['interface']);
+        }
+
+        return $configElements;
     }
 }

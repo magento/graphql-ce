@@ -30,16 +30,6 @@
             </argument>
         </arguments>
     </type>
-    <virtualType name="Magento\CatalogGraphQl\Model\Resolver\Products\FilterArgument\ProductEntityAttributesForAst" type="\Magento\Framework\GraphQl\Query\Resolver\Argument\FieldEntityAttributes">
-        <arguments>
-            <argument name="configElementName" xsi:type="string">SimpleProduct</argument>
-            <argument name="additionalAttributes" xsi:type="array">
-                <item name="min_price" xsi:type="string">min_price</item>
-                <item name="max_price" xsi:type="string">max_price</item>
-                <item name="category_id" xsi:type="string">category_id</item>
-            </argument>
-        </arguments>
-    </virtualType>
     <type name="Magento\Framework\GraphQl\Query\Resolver\Argument\FieldEntityAttributesPool">
         <arguments>
             <argument name="attributesInstances" xsi:type="array">
