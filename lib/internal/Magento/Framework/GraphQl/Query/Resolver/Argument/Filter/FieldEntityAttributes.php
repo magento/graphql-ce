@@ -76,15 +76,11 @@ class FieldEntityAttributes implements FieldEntityAttributesInterface
     {
         $configElements = [];
 
-        if ($type->getInterfaces() === null) {
-            $configElements[] = $type;
-            return $configElements;
-        }
-
         foreach ($type->getInterfaces() as $interface) {
             $configElements[] = $this->config->getConfigElement($interface['interface']);
         }
 
+        $configElements[] = $type;
         return $configElements;
     }
 }
