@@ -179,6 +179,7 @@
         "magento/module-message-queue": "*",
         "magento/module-msrp": "*",
         "magento/module-multishipping": "*",
+        "magento/module-multishipping-graph-ql": "*",
         "magento/module-mysql-mq": "*",
         "magento/module-new-relic-reporting": "*",
         "magento/module-newsletter": "*",

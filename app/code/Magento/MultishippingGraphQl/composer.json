@@ -7,6 +7,7 @@
         "magento/framework": "*",
         "magento/module-quote": "*",
         "magento/module-multishipping": "*",
+        "magento/module-customer-graph-ql": "*",
         "magento/module-quote-graph-ql": "*"
     },
     "suggest": {
