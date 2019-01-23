@@ -2,9 +2,14 @@
 # See COPYING.txt for license details.
 
 type EntityUrl @doc(description: "EntityUrl is an output object containing the `id`, `canonical_url`, and `type` attributes") {
-    id: Int @doc(description: "The ID assigned to the object associated with the specified url. This could be a product ID, category ID, or page ID.")
-    canonical_url: String @doc(description: "The internal relative URL. If the specified  url is a redirect, the query returns the redirected URL, not the original.")
-    type: UrlRewriteEntityTypeEnum @doc(description: "One of PRODUCT, CATEGORY, or CMS_PAGE.")
+    entity_id: Int @doc(description: "The ID assigned to the object associated with the specified url. This could be a product ID, category ID, or page ID.")
+    entity_type: UrlRewriteEntityTypeEnum @doc(description: "One of PRODUCT, CATEGORY, or CMS_PAGE.")
+    url: Url @doc(description: "Entity URL")
+}
+
+type Url {
+    canonical: String @doc(description: "The canonical absolute URL. If the specified url is a redirect, the query returns the redirected URL, not the original.")
+    system: String @doc(description: "Target path.")
 }
 
 type Query {

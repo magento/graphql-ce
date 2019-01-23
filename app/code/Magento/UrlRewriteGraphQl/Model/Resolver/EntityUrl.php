@@ -14,6 +14,7 @@ use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\UrlRewrite\Model\UrlFinderInterface;
 use Magento\UrlRewriteGraphQl\Model\Resolver\UrlRewrite\CustomUrlLocatorInterface;
+use Magento\Framework\UrlInterface;
 
 /**
  * UrlRewrite field resolver, used for GraphQL request processing.
@@ -26,6 +27,11 @@ class EntityUrl implements ResolverInterface
     private $urlFinder;
 
     /**
+     * @var UrlInterface
+     */
+    protected $url;
+
+    /**
      * @var StoreManagerInterface
      */
     private $storeManager;
@@ -36,18 +42,22 @@ class EntityUrl implements ResolverInterface
     private $customUrlLocator;
 
     /**
+     * EntityUrl constructor.
      * @param UrlFinderInterface $urlFinder
      * @param StoreManagerInterface $storeManager
      * @param CustomUrlLocatorInterface $customUrlLocator
+     * @param UrlInterface $url
      */
     public function __construct(
         UrlFinderInterface $urlFinder,
         StoreManagerInterface $storeManager,
-        CustomUrlLocatorInterface $customUrlLocator
+        CustomUrlLocatorInterface $customUrlLocator,
+        UrlInterface $url
     ) {
         $this->urlFinder = $urlFinder;
         $this->storeManager = $storeManager;
         $this->customUrlLocator = $customUrlLocator;
+        $this->url = $url;
     }
 
     /**
@@ -71,12 +81,15 @@ class EntityUrl implements ResolverInterface
         }
         $customUrl = $this->customUrlLocator->locateUrl($url);
         $url = $customUrl ?: $url;
-        $urlRewrite = $this->findCanonicalUrl($url);
+        $urlRewrite = $this->findUrlRewrite($url);
         if ($urlRewrite) {
             $result = [
-                'id' => $urlRewrite->getEntityId(),
-                'canonical_url' => $urlRewrite->getTargetPath(),
-                'type' => $this->sanitizeType($urlRewrite->getEntityType())
+                'entity_id'   => $urlRewrite->getEntityId(),
+                'entity_type' => $this->sanitizeType($urlRewrite->getEntityType()),
+                'url'         => [
+                    'canonical' => $this->url->getDirectUrl($urlRewrite->getRequestPath()),
+                    'system'    => $urlRewrite->getTargetPath(),
+                ]
             ];
         }
         return $result;
@@ -88,7 +101,7 @@ class EntityUrl implements ResolverInterface
      * @param string $requestPath
      * @return \Magento\UrlRewrite\Service\V1\Data\UrlRewrite|null
      */
-    private function findCanonicalUrl(string $requestPath) : ?\Magento\UrlRewrite\Service\V1\Data\UrlRewrite
+    private function findUrlRewrite(string $requestPath) : ?\Magento\UrlRewrite\Service\V1\Data\UrlRewrite
     {
         $urlRewrite = $this->findUrlFromRequestPath($requestPath);
         if ($urlRewrite && $urlRewrite->getRedirectType() > 0) {
