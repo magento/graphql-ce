@@ -15,6 +15,7 @@ type Mutation {
     setBillingAddressOnCart(input: SetBillingAddressOnCartInput): SetBillingAddressOnCartOutput
     setShippingMethodsOnCart(input: SetShippingMethodsOnCartInput): SetShippingMethodsOnCartOutput @resolver(class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\SetShippingMethodsOnCart")
     addSimpleProductsToCart(input: AddSimpleProductsToCartInput): AddSimpleProductsToCartOutput @resolver(class: "Magento\\QuoteGraphQl\\Model\\Resolver\\AddSimpleProductsToCart")
+    addGroupedProductsToCart(input: AddGroupedProductsToCartInput): AddGroupedProductsToCartOutput @resolver(class: "Magento\\QuoteGraphQl\\Model\\Resolver\\AddGroupedProductsToCart")
 }
 
 input SetShippingAddressesOnCartInput {
@@ -167,9 +168,18 @@ input AddSimpleProductsToCartInput {
     cartItems: [SimpleProductCartItemInput!]!
 }
 
+input AddGroupedProductsToCartInput {
+    cart_id: String!
+    cartItems: [GroupedProductCartItemInput!]!
+}
+
 input SimpleProductCartItemInput {
     data: CartItemInput!
     customizable_options:[CustomizableOptionInput!]
+}
+
+input GroupedProductCartItemInput {
+    data: GroupedProductCartItemsInput!
 }
 
 input CustomizableOptionInput {
@@ -181,11 +191,25 @@ type AddSimpleProductsToCartOutput {
     cart: Cart!
 }
 
+type AddGroupedProductsToCartOutput {
+    cart: Cart!
+}
+
 type SimpleCartItem implements CartItemInterface @doc(description: "Simple Cart Item") {
     customizable_options: [SelectedCustomizableOption] @resolver(class: "Magento\\QuoteGraphQl\\Model\\Resolver\\CustomizableOptions")
 }
 
 input CartItemInput {
+    sku: String!
+    qty: Float!
+}
+
+input GroupedProductCartItemsInput {
+    sku: String!
+    grouped_products:[GroupedProductsInput!]
+}
+
+input GroupedProductsInput {
     sku: String!
     qty: Float!
 }
