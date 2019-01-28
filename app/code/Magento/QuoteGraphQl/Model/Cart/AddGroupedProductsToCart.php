@@ -15,7 +15,7 @@ use Magento\Quote\Model\Quote;
 /**
  * Add products to cart
  */
-class AddProductsToCart implements AddToCartHandlerInterface
+class AddGroupedProductsToCart implements AddToCartHandlerInterface
 {
     /**
      * @var CartRepositoryInterface

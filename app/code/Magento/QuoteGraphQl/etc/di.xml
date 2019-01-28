@@ -14,6 +14,14 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\QuoteGraphQl\Model\Cart\AddToCartHandlerResolver">
+        <arguments>
+            <argument name="supportedHandlers" xsi:type="array">
+                <item name="simple" xsi:type="object">Magento\QuoteGraphQl\Model\Cart\AddProductsToCart</item>
+                <item name="grouped" xsi:type="object">Magento\QuoteGraphQl\Model\Cart\AddGroupedProductsToCart</item>
+            </argument>
+        </arguments>
+    </type>
     <type name="Magento\QuoteGraphQl\Model\CartItem\DataProvider\CustomizableOptionValue\Composite">
         <arguments>
             <argument name="customizableOptionValues" xsi:type="array">
