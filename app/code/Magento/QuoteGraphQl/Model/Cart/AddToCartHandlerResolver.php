@@ -33,6 +33,9 @@ class AddToCartHandlerResolver
      */
     public function getAddToCartHandler(array $data) : AddToCartHandlerInterface
     {
+        if (isset($data[0]['data']['grouped_products'])) {
+            return $this->supportedHandlers['grouped'];    
+        }
         return $this->supportedHandlers['simple'];
     }
 }

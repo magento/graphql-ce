@@ -23,17 +23,17 @@ class AddGroupedProductsToCart implements AddToCartHandlerInterface
     private $cartRepository;
 
     /**
-     * @var AddSimpleProductToCart
+     * @var AddGroupedProductToCart
      */
     private $addProductToCart;
 
     /**
      * @param CartRepositoryInterface $cartRepository
-     * @param AddSimpleProductToCart $addProductToCart
+     * @param AddGroupedProductToCart $addProductToCart
      */
     public function __construct(
         CartRepositoryInterface $cartRepository,
-        AddSimpleProductToCart $addProductToCart
+        AddGroupedProductToCart $addProductToCart
     ) {
         $this->cartRepository = $cartRepository;
         $this->addProductToCart = $addProductToCart;
