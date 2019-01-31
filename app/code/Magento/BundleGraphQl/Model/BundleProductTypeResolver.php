@@ -16,7 +16,7 @@ use Magento\Bundle\Model\Product\Type;
 class BundleProductTypeResolver implements TypeResolverInterface
 {
     /**
-     * Configurable product type resolver code
+     * Bundle product type resolver code
      */
     const TYPE_RESOLVER = 'BundleProduct';
 
