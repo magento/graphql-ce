@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\DownloadableGraphQl\Model;
 
 use Magento\Framework\GraphQl\Query\Resolver\TypeResolverInterface;
+use Magento\Downloadable\Model\Product\Type;
 
 /**
  * {@inheritdoc}
@@ -15,12 +16,18 @@ use Magento\Framework\GraphQl\Query\Resolver\TypeResolverInterface;
 class DownloadableProductTypeResolver implements TypeResolverInterface
 {
     /**
+     * Downloadable product type resolver code
+     */
+    const TYPE_RESOLVER = 'DownloadableProduct';
+
+
+    /**
      * {@inheritdoc}
      */
     public function resolveType(array $data) : string
     {
-        if (isset($data['type_id']) && $data['type_id'] == 'downloadable') {
-            return 'DownloadableProduct';
+        if (isset($data['type_id']) && $data['type_id'] == Type::TYPE_DOWNLOADABLE) {
+            return self::TYPE_RESOLVER;
         }
         return '';
     }
