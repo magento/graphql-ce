@@ -16,15 +16,15 @@ type Mutation {
 }
 
 input CustomerAddressInput {
-    firstname: String @doc(description: "The first name of the person associated with the shipping/billing address")
-    lastname: String @doc(description: "The family name of the person associated with the shipping/billing address")
+    firstname: String! @doc(description: "The first name of the person associated with the shipping/billing address")
+    lastname: String! @doc(description: "The family name of the person associated with the shipping/billing address")
     company: String @doc(description: "The customer's company")
-    telephone: String @doc(description: "The telephone number")
-    street: [String] @doc(description: "An array of strings that define the street number and name")
-    city: String @doc(description: "The city or town")
+    telephone: String! @doc(description: "The telephone number")
+    street: [String]! @doc(description: "An array of strings that define the street number and name")
+    city: String! @doc(description: "The city or town")
     region: CustomerAddressRegionInput @doc(description: "An object containing the region name, region code, and region ID")
     postcode: String @doc(description: "The customer's ZIP or postal code")
-    country_id: CountryCodeEnum @doc(description: "The customer's country")
+    country_id: CountryCodeEnum! @doc(description: "The customer's country")
     default_shipping: Boolean @doc(description: "Indicates whether the address is the default shipping address")
     default_billing: Boolean @doc(description: "Indicates whether the address is the default billing address")
     fax: String @doc(description: "The fax number")
