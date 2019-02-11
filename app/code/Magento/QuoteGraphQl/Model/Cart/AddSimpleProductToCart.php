@@ -10,6 +10,7 @@ namespace Magento\QuoteGraphQl\Model\Cart;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\DataObjectFactory;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
@@ -74,7 +75,11 @@ class AddSimpleProductToCart
             throw new GraphQlNoSuchEntityException(__('Could not find a product with SKU "%sku"', ['sku' => $sku]));
         }
 
-        $result = $cart->addProduct($product, $this->createBuyRequest($qty, $customizableOptions));
+        try {
+            $result = $cart->addProduct($product, $this->createBuyRequest($qty, $customizableOptions));
+        } catch (LocalizedException $e) {
+            throw new GraphQlInputException(__($e->getMessage()));
+        }
 
         if (is_string($result)) {
             throw new GraphQlInputException(__($result));
