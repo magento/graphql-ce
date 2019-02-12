@@ -8,14 +8,19 @@ declare(strict_types=1);
 namespace Magento\QuoteGraphQl\Model\Cart;
 
 use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\DataObjectFactory;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
 use Magento\Framework\Stdlib\ArrayManager;
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Quote\Model\Quote;
 
+/**
+ * Add grouped product to cart
+ */
 class AddGroupedProductToCart
 {
     /**
@@ -34,18 +39,26 @@ class AddGroupedProductToCart
     private $productRepository;
 
     /**
+     * @var SearchCriteriaBuilder
+     */
+    private $searchCriteriaBuilder;
+
+    /**
      * @param ArrayManager $arrayManager
      * @param DataObjectFactory $dataObjectFactory
      * @param ProductRepositoryInterface $productRepository
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
      */
     public function __construct(
         ArrayManager $arrayManager,
         DataObjectFactory $dataObjectFactory,
-        ProductRepositoryInterface $productRepository
+        ProductRepositoryInterface $productRepository,
+        SearchCriteriaBuilder $searchCriteriaBuilder
     ) {
         $this->arrayManager = $arrayManager;
         $this->dataObjectFactory = $dataObjectFactory;
         $this->productRepository = $productRepository;
+        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
     }
 
     /**
@@ -60,8 +73,7 @@ class AddGroupedProductToCart
     public function execute(Quote $cart, array $cartItemData): void
     {
         $sku = $this->extractSku($cartItemData);
-        $qty = $this->extractQty($cartItemData);
-        $customizableOptions = $this->extractCustomizableOptions($cartItemData);
+        $subProducts = $this->extractSubProducts($cartItemData);
 
         try {
             $product = $this->productRepository->get($sku);
@@ -69,7 +81,7 @@ class AddGroupedProductToCart
             throw new GraphQlNoSuchEntityException(__('Could not find a product with SKU "%sku"', ['sku' => $sku]));
         }
 
-        $result = $cart->addProduct($product, $this->createBuyRequest($qty, $customizableOptions));
+        $result = $cart->addProduct($product, $this->createBuyRequest($product, $subProducts));
 
         if (is_string($result)) {
             throw new GraphQlInputException(__($result));
@@ -93,51 +105,51 @@ class AddGroupedProductToCart
     }
 
     /**
-     * Extract Qty from cart item data
-     *
-     * @param array $cartItemData
-     * @return float
-     * @throws GraphQlInputException
-     */
-    private function extractQty(array $cartItemData): float
-    {
-        $qty = $this->arrayManager->get('data/qty', $cartItemData);
-        if (!isset($qty)) {
-            throw new GraphQlInputException(__('Missing key "qty" in cart item data'));
-        }
-        return (float)$qty;
-    }
-
-    /**
      * Extract Customizable Options from cart item data
      *
      * @param array $cartItemData
      * @return array
      */
-    private function extractCustomizableOptions(array $cartItemData): array
+    private function extractSubProducts(array $cartItemData): array
     {
-        $customizableOptions = $this->arrayManager->get('customizable_options', $cartItemData, []);
+        $subProducts = $cartItemData['data']['grouped_products'];
 
-        $customizableOptionsData = [];
-        foreach ($customizableOptions as $customizableOption) {
-            $customizableOptionsData[$customizableOption['id']] = $customizableOption['value'];
+        $subProductsData = [];
+        foreach ($subProducts as $subProduct) {
+            $subProductsData[$subProduct['sku']] = $subProduct['qty'];
         }
-        return $customizableOptionsData;
+
+        return $subProductsData;
     }
 
     /**
      * Format GraphQl input data to a shape that buy request has
      *
-     * @param float $qty
-     * @param array $customOptions
+     * @param ProductInterface $product
+     * @param array $subProducts
      * @return DataObject
      */
-    private function createBuyRequest(float $qty, array $customOptions): DataObject
+    private function createBuyRequest(ProductInterface $product, array $subProducts): DataObject
     {
+        $searchCriteria = $this->searchCriteriaBuilder
+            ->addFilter('sku', array_keys($subProducts) , 'in')
+            ->create();
+
+        $products = $this->productRepository->getList($searchCriteria)->getItems();
+        $associatedProductIds = $product->getTypeInstance()->getAssociatedProductIds($product);
+        $superGroup = [];
+
+        foreach ($associatedProductIds as $associatedProductId) {
+            $superGroup[$associatedProductId] = 0;
+
+            if (isset($products[$associatedProductId])) {
+                $superGroup[$associatedProductId] = $subProducts[$products[$associatedProductId]->getSku()];
+            }
+        }
+
         return $this->dataObjectFactory->create([
             'data' => [
-                'qty' => $qty,
-                'options' => $customOptions,
+                'super_group' => $superGroup,
             ],
         ]);
     }
