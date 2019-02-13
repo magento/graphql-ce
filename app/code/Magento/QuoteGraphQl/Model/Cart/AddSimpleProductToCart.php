@@ -58,9 +58,9 @@ class AddSimpleProductToCart
      *
      * @param Quote $cart
      * @param array $cartItemData
-     * @return void
-     * @throws GraphQlNoSuchEntityException
      * @throws GraphQlInputException
+     * @throws GraphQlNoSuchEntityException
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function execute(Quote $cart, array $cartItemData): void
     {
@@ -118,14 +118,31 @@ class AddSimpleProductToCart
      *
      * @param array $cartItemData
      * @return array
+     * @throws GraphQlInputException
      */
     private function extractCustomizableOptions(array $cartItemData): array
     {
         $customizableOptions = $this->arrayManager->get('customizable_options', $cartItemData, []);
+        $customOptionGroup = [];
+
+        foreach ($customizableOptions as $optionItem) {
+            if (!isset($optionItem['value'])) {
+                throw new GraphQlInputException(__('Value is required for Option Id %1', $optionItem['id']));
+            }
+
+            $customOptionGroup[$optionItem['id']][] = $optionItem['value'];
+        }
 
         $customizableOptionsData = [];
         foreach ($customizableOptions as $customizableOption) {
-            $customizableOptionsData[$customizableOption['id']] = $customizableOption['value'];
+            if (count($customOptionGroup[$customizableOption['id']]) > 1) {
+                //Sort needed to prevent add option twice with same options different ways
+                //Eg. {id: 1, value: "1"},{id: 1, value: "2"} and {id: 1, value: "2"},{id: 1, value: "1"}
+                arsort($customOptionGroup[$customizableOption['id']]);
+                $customizableOptionsData[$customizableOption['id']] = $customOptionGroup[$customizableOption['id']];
+            } else {
+                $customizableOptionsData[$customizableOption['id']] = $customizableOption['value'];
+            }
         }
         return $customizableOptionsData;
     }
