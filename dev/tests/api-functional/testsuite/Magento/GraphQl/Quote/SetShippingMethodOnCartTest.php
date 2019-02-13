@@ -220,7 +220,7 @@ mutation {
       ]}) {
     
     cart {
-     cart_id,
+      cart_id,
       shipping_addresses {
         selected_shipping_method {
           code
