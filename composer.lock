@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f22c780b1ed27ba951c0562e20078a70",
+    "content-hash": "49c8cc6157f8a9b63772b87391a7f3ea",
     "packages": [
         {
             "name": "braintree/braintree_php",
@@ -257,16 +257,16 @@
         },
         {
             "name": "composer/composer",
-            "version": "1.8.3",
+            "version": "1.8.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "a6a3b44581398b7135c7baa0557b7c5b10808b47"
+                "reference": "bc364c2480c17941e2135cfc568fa41794392534"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/a6a3b44581398b7135c7baa0557b7c5b10808b47",
-                "reference": "a6a3b44581398b7135c7baa0557b7c5b10808b47",
+                "url": "https://api.github.com/repos/composer/composer/zipball/bc364c2480c17941e2135cfc568fa41794392534",
+                "reference": "bc364c2480c17941e2135cfc568fa41794392534",
                 "shasum": ""
             },
             "require": {
@@ -333,7 +333,7 @@
                 "dependency",
                 "package"
             ],
-            "time": "2019-01-30T07:31:34+00:00"
+            "time": "2019-02-11T09:52:10+00:00"
         },
         {
             "name": "composer/semver",
