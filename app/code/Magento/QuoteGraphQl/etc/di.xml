@@ -18,9 +18,9 @@
         <arguments>
             <argument name="customizableOptionValues" xsi:type="array">
                 <item name="field" xsi:type="string">Magento\QuoteGraphQl\Model\CartItem\DataProvider\CustomizableOptionValue\Text</item>
-                <item name="date" xsi:type="string">Magento\QuoteGraphQl\Model\CartItem\DataProvider\CustomizableOptionValue\Text</item>
-                <item name="time" xsi:type="string">Magento\QuoteGraphQl\Model\CartItem\DataProvider\CustomizableOptionValue\Text</item>
-                <item name="date_time" xsi:type="string">Magento\QuoteGraphQl\Model\CartItem\DataProvider\CustomizableOptionValue\Text</item>
+                <item name="date" xsi:type="string">Magento\QuoteGraphQl\Model\CartItem\DataProvider\CustomizableOptionValue\Date</item>
+                <item name="time" xsi:type="string">Magento\QuoteGraphQl\Model\CartItem\DataProvider\CustomizableOptionValue\Date</item>
+                <item name="date_time" xsi:type="string">Magento\QuoteGraphQl\Model\CartItem\DataProvider\CustomizableOptionValue\Date</item>
                 <item name="area" xsi:type="string">Magento\QuoteGraphQl\Model\CartItem\DataProvider\CustomizableOptionValue\Text</item>
                 <item name="drop_down" xsi:type="string">Magento\QuoteGraphQl\Model\CartItem\DataProvider\CustomizableOptionValue\Dropdown</item>
                 <item name="radio" xsi:type="string">Magento\QuoteGraphQl\Model\CartItem\DataProvider\CustomizableOptionValue\Dropdown</item>
