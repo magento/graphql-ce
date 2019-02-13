@@ -174,7 +174,7 @@ input SimpleProductCartItemInput {
 
 input CustomizableOptionInput {
     id: Int!
-    value: String!
+    value: Int!
 }
 
 type AddSimpleProductsToCartOutput {
