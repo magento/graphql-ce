@@ -8,8 +8,7 @@ declare(strict_types=1);
 namespace Magento\QuoteGraphQl\Model\Cart;
 
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
-use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
-use Magento\Quote\Model\Quote;
+use Magento\Quote\Api\Data\CartInterface;
 
 /**
  */
@@ -17,9 +16,9 @@ interface AddToCartHandlerInterface
 {
     /**
      * @param CartInterface $cart
-     * @param ContextInterface $context
+     * @param array $cartItemData
      * @return void
      * @throws GraphQlInputException
      */
-    public function execute(Quote $cart, array $cartItemData): void;
+    public function execute(CartInterface $cart, array $cartItemData): void;
 }
