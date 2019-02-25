@@ -7,18 +7,18 @@ declare(strict_types=1);
 
 namespace Magento\QuoteGraphQl\Model\Cart;
 
-use Magento\Framework\GraphQl\Exception\GraphQlInputException;
-use Magento\Quote\Api\Data\CartInterface;
+use Magento\Quote\Model\Quote;
 
 /**
+ * All product types should extend this interface
+ * TODO: comment should be updated
  */
 interface AddToCartHandlerInterface
 {
     /**
-     * @param CartInterface $cart
+     * @param Quote $cart
      * @param array $cartItemData
      * @return void
-     * @throws GraphQlInputException
      */
-    public function execute(CartInterface $cart, array $cartItemData): void;
+    public function execute(Quote $cart, array $cartItemData): void;
 }
