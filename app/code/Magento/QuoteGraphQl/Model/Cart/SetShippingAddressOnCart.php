@@ -67,6 +67,11 @@ class SetShippingAddressOnCart implements SetShippingAddressesOnCartInterface
      */
     public function execute(ContextInterface $context, CartInterface $cart, array $shippingAddresses): void
     {
+        if ($cart->getIsVirtual()) {
+            throw new GraphQlInputException(
+                __('The Cart includes virtual product(s) only, so a shipping address is not used.')
+            );
+        }
         if (count($shippingAddresses) > 1) {
             throw new GraphQlInputException(
                 __('You cannot specify multiple shipping addresses.')
@@ -94,10 +99,6 @@ class SetShippingAddressOnCart implements SetShippingAddressesOnCartInterface
             $shippingAddress = $this->addressModel->importCustomerAddressData($customerAddress);
         }
 
-        try {
-            $this->shippingAddressManagement->assign($cart->getId(), $shippingAddress);
-        } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
-            throw new GraphQlInputException(__($e->getMessage()));
-        }
+        $this->shippingAddressManagement->assign($cart->getId(), $shippingAddress);
     }
 }
