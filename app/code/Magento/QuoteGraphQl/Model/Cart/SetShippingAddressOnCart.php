@@ -94,6 +94,10 @@ class SetShippingAddressOnCart implements SetShippingAddressesOnCartInterface
             $shippingAddress = $this->addressModel->importCustomerAddressData($customerAddress);
         }
 
-        $this->shippingAddressManagement->assign($cart->getId(), $shippingAddress);
+        try {
+            $this->shippingAddressManagement->assign($cart->getId(), $shippingAddress);
+        } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
+            throw new GraphQlInputException(__($e->getMessage()));
+        }
     }
 }
