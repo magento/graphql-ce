@@ -67,11 +67,6 @@ class SetShippingAddressOnCart implements SetShippingAddressesOnCartInterface
      */
     public function execute(ContextInterface $context, CartInterface $cart, array $shippingAddresses): void
     {
-        if ($cart->getIsVirtual()) {
-            throw new GraphQlInputException(
-                __('The Cart includes virtual product(s) only, so a shipping address is not used.')
-            );
-        }
         if (count($shippingAddresses) > 1) {
             throw new GraphQlInputException(
                 __('You cannot specify multiple shipping addresses.')

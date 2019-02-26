@@ -15,6 +15,7 @@ use Magento\Framework\Stdlib\ArrayManager;
 use Magento\Quote\Model\ShippingAddressManagementInterface;
 use Magento\QuoteGraphQl\Model\Cart\GetCartForUser;
 use Magento\QuoteGraphQl\Model\Cart\SetShippingAddressesOnCartInterface;
+use Magento\Framework\Exception\LocalizedException;
 
 /**
  * Class SetShippingAddressesOnCart
@@ -79,7 +80,11 @@ class SetShippingAddressesOnCart implements ResolverInterface
 
         $cart = $this->getCartForUser->execute($maskedCartId, $context->getUserId());
 
-        $this->setShippingAddressesOnCart->execute($context, $cart, $shippingAddresses);
+        try {
+            $this->setShippingAddressesOnCart->execute($context, $cart, $shippingAddresses);
+        } catch (LocalizedException $e) {
+            throw new GraphQlInputException(__($e->getMessage()));
+        }
 
         return [
             'cart' => [
