@@ -9,7 +9,6 @@
     <module name="Magento_WishlistGraphQl">
         <sequence>
             <module name="Magento_Wishlist"/>
-            <module name="Magento_Catalog"/>
         </sequence>
     </module>
 </config>
