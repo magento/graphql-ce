@@ -80,7 +80,7 @@ class AddSimpleProductToCartCusOptionTest extends GraphQlAbstract
      * @magentoApiDataFixture Magento/Catalog/_files/product_with_not_req_custom_options.php
      * @magentoAppIsolation enabled
      */
-    public function testAddSimpleProductWithOneCOCheckboxDropDown()
+    public function testAddSimpleProductWithCOCheckboxDropDown()
     {
         $sku = "simple_not_req_custom_option_2";
         $quote = $this->getQuote();
@@ -103,7 +103,7 @@ class AddSimpleProductToCartCusOptionTest extends GraphQlAbstract
      * @magentoApiDataFixture Magento/Catalog/_files/product_with_not_req_custom_options.php
      * @magentoAppIsolation enabled
      */
-    public function testAddSimpleProductWithOneCOCheckboxDropDownRadio()
+    public function testAddSimpleProductWithCOCheckboxDropDownRadio()
     {
         $sku = "simple_not_req_custom_option_2";
         $quote = $this->getQuote();
@@ -185,7 +185,7 @@ class AddSimpleProductToCartCusOptionTest extends GraphQlAbstract
             /** @var \Magento\Catalog\Model\Product\Option $values */
             $values = $option->getValues();
             if (is_array($values)) {
-                /** @var \Magento\Catalog\Model\Product\Option|Value $optionValues */
+                /** @var \Magento\Catalog\Model\Product\Option\Value $optionValues */
                 foreach ($values as $optionValues) {
                     $optV = $optionValues->getOptionTypeId();
                     $optId = $option->getOptionId();
