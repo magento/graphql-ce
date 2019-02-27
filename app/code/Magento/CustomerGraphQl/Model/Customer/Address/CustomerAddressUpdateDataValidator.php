@@ -11,9 +11,9 @@ use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\CustomerGraphQl\Model\Customer\Address\Validator as CustomerAddressValidator;
 
 /**
- * Customer address create data validator
+ * Customer address update data validator. Patch update is allowed
  */
-class CustomerAddressCreateDataValidator
+class CustomerAddressUpdateDataValidator
 {
     /**
      * @var CustomerAddressValidator
@@ -21,18 +21,20 @@ class CustomerAddressCreateDataValidator
     private $customerAddressValidator;
 
     /**
-     * @param CustomerAddressValidator $customerAddressValidator
+     * @param CustomerAddressValidator $addressValidator
      */
     public function __construct(
-        CustomerAddressValidator $customerAddressValidator
+        CustomerAddressValidator $addressValidator
     ) {
-        $this->customerAddressValidator = $customerAddressValidator;
+        $this->customerAddressValidator = $addressValidator;
     }
 
     /**
+     * Validate customer address update data
+     *
      * @param array $addressData
+     * @return void
      * @throws GraphQlInputException
-     * @throws \Exception
      */
     public function validate(array $addressData): void
     {
@@ -40,13 +42,8 @@ class CustomerAddressCreateDataValidator
 
         $errorInput = [];
 
-<<<<<<< HEAD
         if ($errors !== true) {
             foreach ($errors as $messageText) {
-=======
-        if (!empty($messages)) {
-            foreach ($messages as $messageText) {
->>>>>>> GraphQL-272: [My Account] Removed temporary allowed attribute logic. Added logic for the Update customer address methog
                 $errorInput[] = $messageText;
             }
         }
