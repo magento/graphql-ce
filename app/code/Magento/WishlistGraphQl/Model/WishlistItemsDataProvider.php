@@ -14,7 +14,6 @@ use Magento\Wishlist\Model\ResourceModel\Item\CollectionFactory as WishlistItemC
 
 class WishlistItemsDataProvider
 {
-
     /**
      * @var WishlistItemCollectionFactory
      */
@@ -24,11 +23,15 @@ class WishlistItemsDataProvider
      */
     private $storeManager;
 
+    /**
+     * @param WishlistItemCollectionFactory $collectionFactory
+     * @param StoreManagerInterface $storeManager
+     */
     public function __construct(
-        WishlistItemCollectionFactory $wishlistItemCollectionFactory,
+        WishlistItemCollectionFactory $collectionFactory,
         StoreManagerInterface $storeManager
     ) {
-        $this->wishlistItemCollectionFactory = $wishlistItemCollectionFactory;
+        $this->wishlistItemCollectionFactory = $collectionFactory;
         $this->storeManager = $storeManager;
     }
 

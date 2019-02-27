@@ -49,22 +49,22 @@ class AddItemToWishlist implements ResolverInterface
     /**
      * @param WishlistDataProvider $wishlistDataProvider
      * @param SearchCriteriaInterface $searchCriteria
-     * @param Visibility $catalogProductVisibility
+     * @param Visibility $productVisibility
      * @param StockProcessor $stockProcessor
-     * @param CollectionFactory $productCollectionFactory
+     * @param CollectionFactory $collectionFactory
      */
     public function __construct(
         WishlistDataProvider $wishlistDataProvider,
         SearchCriteriaInterface $searchCriteria,
-        Visibility $catalogProductVisibility,
+        Visibility $productVisibility,
         StockProcessor $stockProcessor,
-        CollectionFactory $productCollectionFactory
+        CollectionFactory $collectionFactory
     ) {
         $this->wishlistDataProvider = $wishlistDataProvider;
         $this->searchCriteria = $searchCriteria;
-        $this->catalogProductVisibility = $catalogProductVisibility;
+        $this->catalogProductVisibility = $productVisibility;
         $this->stockProcessor = $stockProcessor;
-        $this->productCollectionFactory = $productCollectionFactory;
+        $this->productCollectionFactory = $collectionFactory;
     }
 
     /**
