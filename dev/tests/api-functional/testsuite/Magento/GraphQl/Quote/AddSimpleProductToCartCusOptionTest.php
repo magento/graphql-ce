@@ -9,7 +9,6 @@ namespace Magento\GraphQl\Quote;
 
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\QuoteIdToMaskedQuoteIdInterface;
-use Magento\Robots\Model\Config\Value;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\GraphQlAbstract;
 use Magento\TestFramework\ObjectManager;
