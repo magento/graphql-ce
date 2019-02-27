@@ -50,7 +50,7 @@ class AddSimpleProductToCartCusOptionTest extends GraphQlAbstract
         $response = $this->graphQlQuery($query);
         self::assertArrayHasKey("addSimpleProductsToCart", $response);
         $responseOptionDetails = $this->processResponseForCustomOption($response);
-        self::assertTrue(count(array_diff_key($responseOptionDetails, $checkWithResponse["checkbox"])) === 0);
+        self::assertEquals($checkWithResponse, $responseOptionDetails, "\$canonicalize = true", 0.0, 10, true);
     }
 
     /**
@@ -73,7 +73,7 @@ class AddSimpleProductToCartCusOptionTest extends GraphQlAbstract
         $response = $this->graphQlQuery($query);
         self::assertArrayHasKey("addSimpleProductsToCart", $response);
         $responseOptionDetails = $this->processResponseForCustomOption($response);
-        self::assertTrue(count(array_diff_key($responseOptionDetails, $checkWithResponse["checkbox"])) === 0);
+        self::assertEquals($checkWithResponse, $responseOptionDetails, "\$canonicalize = true", 0.0, 10, true);
     }
 
     /**
@@ -96,7 +96,7 @@ class AddSimpleProductToCartCusOptionTest extends GraphQlAbstract
         $response = $this->graphQlQuery($query);
         self::assertArrayHasKey("addSimpleProductsToCart", $response);
         $responseOptionDetails = $this->processResponseForCustomOption($response);
-        self::assertTrue(count(array_diff_key($responseOptionDetails, $checkWithResponse["checkbox_drop_down"])) === 0);
+        self::assertEquals($checkWithResponse, $responseOptionDetails, "\$canonicalize = true", 0.0, 10, true);
     }
 
     /**
@@ -119,7 +119,7 @@ class AddSimpleProductToCartCusOptionTest extends GraphQlAbstract
         $response = $this->graphQlQuery($query);
         self::assertArrayHasKey("addSimpleProductsToCart", $response);
         $responseOptionDetails = $this->processResponseForCustomOption($response);
-        self::assertTrue(count(array_diff_key($responseOptionDetails, $checkWithResponse["checkbox_drop_down"])) === 0);
+        self::assertEquals($checkWithResponse, $responseOptionDetails, "\$canonicalize = true", 0.0, 10, true);
     }
 
     /**
@@ -131,14 +131,13 @@ class AddSimpleProductToCartCusOptionTest extends GraphQlAbstract
     {
         $optionIds = $this->getOptionDetails($product);
         $checkWithResponse = $selectedOption = [];
-        $keyString = implode("_", array_keys($selectedTypes));
         foreach ($selectedTypes as $type => $selectCount) {
             foreach ($optionIds[$type] as $optId => $optVArr) {
                 $count = 0;
                 foreach ($optVArr as $optVId => $optString) {
                     if ($count < $selectCount) {
                         $selectedOption[] = $optString;
-                        $checkWithResponse[$keyString][$optId][] = $optVId;
+                        $checkWithResponse[$optId][] = $optVId;
                         $count++;
                     }
                 }
