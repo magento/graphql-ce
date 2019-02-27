@@ -49,7 +49,7 @@ class AddSimpleProductToCartCusOptionTest extends GraphQlAbstract
         $response = $this->graphQlQuery($query);
         self::assertArrayHasKey("addSimpleProductsToCart", $response);
         $responseOptionDetails = $this->processResponseForCustomOption($response);
-        self::assertEquals($checkWithResponse, $responseOptionDetails, "\$canonicalize = true", 0.0, 10, true);
+        self::assertEquals($checkWithResponse, $responseOptionDetails, "", 0.0, 10, true);
     }
 
     /**
@@ -72,7 +72,7 @@ class AddSimpleProductToCartCusOptionTest extends GraphQlAbstract
         $response = $this->graphQlQuery($query);
         self::assertArrayHasKey("addSimpleProductsToCart", $response);
         $responseOptionDetails = $this->processResponseForCustomOption($response);
-        self::assertEquals($checkWithResponse, $responseOptionDetails, "\$canonicalize = true", 0.0, 10, true);
+        self::assertEquals($checkWithResponse, $responseOptionDetails, "", 0.0, 10, true);
     }
 
     /**
@@ -95,7 +95,7 @@ class AddSimpleProductToCartCusOptionTest extends GraphQlAbstract
         $response = $this->graphQlQuery($query);
         self::assertArrayHasKey("addSimpleProductsToCart", $response);
         $responseOptionDetails = $this->processResponseForCustomOption($response);
-        self::assertEquals($checkWithResponse, $responseOptionDetails, "\$canonicalize = true", 0.0, 10, true);
+        self::assertEquals($checkWithResponse, $responseOptionDetails, "", 0.0, 10, true);
     }
 
     /**
@@ -118,7 +118,7 @@ class AddSimpleProductToCartCusOptionTest extends GraphQlAbstract
         $response = $this->graphQlQuery($query);
         self::assertArrayHasKey("addSimpleProductsToCart", $response);
         $responseOptionDetails = $this->processResponseForCustomOption($response);
-        self::assertEquals($checkWithResponse, $responseOptionDetails, "\$canonicalize = true", 0.0, 10, true);
+        self::assertEquals($checkWithResponse, $responseOptionDetails, "", 0.0, 10, true);
     }
 
     /**
