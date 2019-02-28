@@ -18,7 +18,7 @@ $product->setTypeId(
 )->setName(
     'Simple Product With not required Custom Options 3'
 )->setSku(
-    'simple_not_req_custom_option_2'
+    'simple_not_req_custom_option'
 )->setPrice(
     10
 )->setMetaTitle(
@@ -42,6 +42,16 @@ $product->setTypeId(
 )->setHasOptions(true);
 
 $options = [
+    [
+        'title' => 'test_option_code_1',
+        'type' => 'field',
+        'is_require' => false,
+        'sort_order' => 1,
+        'price' => -10.0,
+        'price_type' => 'fixed',
+        'sku' => 'sku1',
+        'max_characters' => 10,
+    ],
     [
         'title' => 'drop_down option',
         'type' => 'drop_down',
@@ -104,6 +114,28 @@ $options = [
                 'price' => 20,
                 'price_type' => 'fixed',
                 'sku' => 'checkbox option 2 sku',
+                'sort_order' => 2,
+            ],
+        ],
+    ],
+    [
+        'title' => 'multiple option',
+        'type' => 'multiple',
+        'is_require' => false,
+        'sort_order' => 7,
+        'values' => [
+            [
+                'title' => 'multiple option 1',
+                'price' => 10,
+                'price_type' => 'fixed',
+                'sku' => 'multiple option 1 sku',
+                'sort_order' => 1,
+            ],
+            [
+                'title' => 'multiple option 2',
+                'price' => 20,
+                'price_type' => 'fixed',
+                'sku' => 'multiple option 2 sku',
                 'sort_order' => 2,
             ],
         ],

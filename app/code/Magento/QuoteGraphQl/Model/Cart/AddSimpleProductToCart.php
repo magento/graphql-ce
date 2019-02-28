@@ -66,14 +66,13 @@ class AddSimpleProductToCart
     {
         $sku = $this->extractSku($cartItemData);
         $qty = $this->extractQty($cartItemData);
-        $customizableOptions = $this->extractCustomizableOptions($cartItemData);
 
         try {
             $product = $this->productRepository->get($sku);
         } catch (NoSuchEntityException $e) {
             throw new GraphQlNoSuchEntityException(__('Could not find a product with SKU "%sku"', ['sku' => $sku]));
         }
-
+        $customizableOptions = $this->extractCustomizableOptions($product, $cartItemData);
         $result = $cart->addProduct($product, $this->createBuyRequest($qty, $customizableOptions));
 
         if (is_string($result)) {
@@ -116,35 +115,49 @@ class AddSimpleProductToCart
     /**
      * Extract Customizable Options from cart item data
      *
+     * @param \Magento\Catalog\Model\Product $product
      * @param array $cartItemData
      * @return array
      * @throws GraphQlInputException
      */
-    private function extractCustomizableOptions(array $cartItemData): array
+    private function extractCustomizableOptions(\Magento\Catalog\Model\Product $product, array $cartItemData): array
     {
         $customizableOptions = $this->arrayManager->get('customizable_options', $cartItemData, []);
-        $customOptionGroup = [];
+        $optionTypeDetails = $this->getOptionTypeDetails($product);
+        $customizableOptionsData = [];
 
-        foreach ($customizableOptions as $optionItem) {
+        foreach ($customizableOptions as $key => $optionItem) {
             if (!isset($optionItem['value'])) {
                 throw new GraphQlInputException(__('Value is required for Option Id %1', $optionItem['id']));
             }
 
-            $customOptionGroup[$optionItem['id']][] = $optionItem['value'];
-        }
-
-        $customizableOptionsData = [];
-        foreach ($customizableOptions as $customizableOption) {
-            if (count($customOptionGroup[$customizableOption['id']]) > 1) {
+            $optId = $optionItem['id'];
+            if (in_array($optionTypeDetails[$optId], ["checkbox", "multiple"])) {
+                $customizableOptionsData[$optionItem['id']][] = $optionItem['value'];
                 //Sort needed to prevent add option twice with same options different ways
                 //Eg. {id: 1, value: "1"},{id: 1, value: "2"} and {id: 1, value: "2"},{id: 1, value: "1"}
-                arsort($customOptionGroup[$customizableOption['id']]);
-                $customizableOptionsData[$customizableOption['id']] = $customOptionGroup[$customizableOption['id']];
+                arsort($customizableOptionsData[$optionItem['id']]);
             } else {
-                $customizableOptionsData[$customizableOption['id']] = $customizableOption['value'];
+                $customizableOptionsData[$optionItem['id']] = $optionItem['value'];
             }
         }
+
         return $customizableOptionsData;
+    }
+
+    /**
+     * @param \Magento\Catalog\Model\Product $product
+     * @return array
+     */
+    public function getOptionTypeDetails(\Magento\Catalog\Model\Product $product): array
+    {
+        $customOptions = $product->getOptions();
+        $optionTypes = [];
+        foreach ($customOptions as $option) {
+            $optionTypes[$option->getOptionId()] = $option->getType();
+        }
+
+        return $optionTypes;
     }
 
     /**
