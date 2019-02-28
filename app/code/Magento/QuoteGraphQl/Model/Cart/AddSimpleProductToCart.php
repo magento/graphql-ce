@@ -72,8 +72,18 @@ class AddSimpleProductToCart
         } catch (NoSuchEntityException $e) {
             throw new GraphQlNoSuchEntityException(__('Could not find a product with SKU "%sku"', ['sku' => $sku]));
         }
-        $customizableOptions = $this->extractCustomizableOptions($product, $cartItemData);
-        $result = $cart->addProduct($product, $this->createBuyRequest($qty, $customizableOptions));
+      
+        try {
+            $customizableOptions = $this->extractCustomizableOptions($product, $cartItemData);
+            $result = $cart->addProduct($product, $this->createBuyRequest($qty, $customizableOptions));
+        } catch (\Exception $e) {
+            throw new GraphQlInputException(
+                __(
+                    'Could not add the product with SKU %sku to the shopping cart: %message',
+                    ['sku' => $sku, 'message' => $e->getMessage()]
+                )
+            );
+        }
 
         if (is_string($result)) {
             throw new GraphQlInputException(__($result));
