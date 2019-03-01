@@ -167,7 +167,7 @@ MUTATION;
      *
      * @magentoApiDataFixture Magento/Customer/_files/customer_without_addresses.php
      * @expectedException \Exception
-     * @expectedExceptionMessage Required parameters are missing: firstname
+     * @expectedExceptionMessage Required parameters are missing: "First Name" is a required value.
      */
     public function testCreateCustomerAddressWithMissingAttribute()
     {

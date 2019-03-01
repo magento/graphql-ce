@@ -21,12 +21,12 @@ class CustomerAddressCreateDataValidator
     private $customerAddressValidator;
 
     /**
-     * @param CustomerAddressValidator $customerAddressValidator
+     * @param CustomerAddressValidator $addressValidator
      */
     public function __construct(
-        CustomerAddressValidator $customerAddressValidator
+        CustomerAddressValidator $addressValidator
     ) {
-        $this->customerAddressValidator = $customerAddressValidator;
+        $this->customerAddressValidator = $addressValidator;
     }
 
     /**
@@ -40,13 +40,8 @@ class CustomerAddressCreateDataValidator
 
         $errorInput = [];
 
-<<<<<<< HEAD
         if ($errors !== true) {
             foreach ($errors as $messageText) {
-=======
-        if (!empty($messages)) {
-            foreach ($messages as $messageText) {
->>>>>>> GraphQL-272: [My Account] Removed temporary allowed attribute logic. Added logic for the Update customer address methog
                 $errorInput[] = $messageText;
             }
         }

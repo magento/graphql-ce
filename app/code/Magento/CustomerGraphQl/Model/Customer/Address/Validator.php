@@ -48,10 +48,18 @@ class Validator
         /** @var Form $addressForm */
         $addressForm = $this->formFactory->create(
             'customer_address',
-            'customer_address_edit'
+            'customer_address_edit',
+            [],
+            false,
+            false
         );
 
         $addressData = $addressForm->extractData($request);
+        //$addressData = $addressForm->compactData($addressData);
+
+        $addressData['region'] = $addressData['region']['region'] ?? null;
+        $addressData['region_id'] = $addressData['region']['region_id'] ?? null;
+        $addressData['region_code'] = $addressData['region']['region_code'] ?? null;
 
         $errors = $addressForm->validateData($addressData);
         if ($errors !== true) {

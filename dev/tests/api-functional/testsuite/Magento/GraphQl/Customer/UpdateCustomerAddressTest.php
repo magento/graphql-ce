@@ -168,7 +168,7 @@ MUTATION;
      * @magentoApiDataFixture Magento/Customer/_files/customer.php
      * @magentoApiDataFixture Magento/Customer/_files/customer_address.php
      * @expectedException \Exception
-     * @expectedExceptionMessage Required parameters are missing: firstname
+     * @expectedExceptionMessage Required parameters are missing: "First Name" is a required value., "Street Address" is a required value., "City" is a required value., "Country" is a required value., "Zip/Postal Code" is a required value., "Phone Number" is a required value.
      */
     public function testUpdateCustomerAddressWithMissingAttribute()
     {
