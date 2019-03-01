@@ -33,7 +33,7 @@ class AddSimpleProductToCartCusOptionTest extends GraphQlAbstract
      * @magentoApiDataFixture Magento/Catalog/_files/product_with_not_req_custom_options.php
      * @magentoAppIsolation enabled
      */
-    public function _testAddSimpleProductWithMultiCOCheckbox()
+    public function testAddSimpleProductWithMultiCOCheckbox()
     {
         $sku = "simple_not_req_custom_option";
         $quote = $this->getQuote();
@@ -134,6 +134,30 @@ class AddSimpleProductToCartCusOptionTest extends GraphQlAbstract
         $productRepository = ObjectManager::getInstance()->get(ProductRepositoryInterface::class);
         $product = $productRepository->get($sku, false, null, true);
         $selectedDetails = $this->getSelectedOptionDetails($product, ["checkbox" => 2,"drop_down" => 1, "radio" => 1, "field" => "test"]);
+        $selectedJsonString = $selectedDetails["jsonString"];
+        $checkWithResponse = $selectedDetails["checkWithResponse"];
+        $maskedQuoteId = $quoteIdToMaskedId->execute((int)$quote->getId());
+        $query = $this->prepareAddProductRequestQuery($maskedQuoteId, $sku, $selectedJsonString);
+        $response = $this->graphQlQuery($query);
+        self::assertArrayHasKey("addSimpleProductsToCart", $response);
+        $resOptDetails = $this->processResponseForCustomOption($response);
+        self::assertEquals($checkWithResponse, $resOptDetails, "", 0.0, 10, true);
+    }
+
+    /**
+     * @magentoApiDataFixture Magento/Catalog/_files/product_with_not_req_custom_options.php
+     * @magentoAppIsolation enabled
+     */
+    public function testAddSimpleProductWithCOCheckboxDropDownRadioFiledMulti()
+    {
+        $sku = "simple_not_req_custom_option";
+        $quote = $this->getQuote();
+        $quoteIdToMaskedId = $this->objectManager->create(QuoteIdToMaskedQuoteIdInterface::class);
+        /** @var ProductRepositoryInterface $productRepository */
+        $productRepository = ObjectManager::getInstance()->get(ProductRepositoryInterface::class);
+        $product = $productRepository->get($sku, false, null, true);
+        $selectedItems = ["checkbox" => 2,"drop_down" => 1, "radio" => 1, "field" => "test", "multiple" => 1];
+        $selectedDetails = $this->getSelectedOptionDetails($product, $selectedItems);
         $selectedJsonString = $selectedDetails["jsonString"];
         $checkWithResponse = $selectedDetails["checkWithResponse"];
         $maskedQuoteId = $quoteIdToMaskedId->execute((int)$quote->getId());
