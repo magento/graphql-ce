@@ -136,7 +136,7 @@ class AddSimpleProductToCart
         $optionTypeDetails = $this->getOptionTypeDetails($product);
         $customizableOptionsData = [];
 
-        foreach ($customizableOptions as $key => $optionItem) {
+        foreach ($customizableOptions as $optionItem) {
             if (!isset($optionItem['value'])) {
                 throw new GraphQlInputException(__('Value is required for Option Id %1', $optionItem['id']));
             }
