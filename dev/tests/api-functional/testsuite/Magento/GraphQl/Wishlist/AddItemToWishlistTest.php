@@ -9,14 +9,12 @@ namespace Magento\GraphQl\Wishlist;
 
 use Magento\Integration\Api\CustomerTokenServiceInterface;
 use Magento\TestFramework\TestCase\GraphQlAbstract;
+use Magento\Wishlist\Model\Wishlist;
 use Magento\Wishlist\Model\Item;
+use Magento\TestFramework\Helper\Bootstrap;
 
 class AddItemToWishlistTest extends GraphQlAbstract
 {
-    /**
-     * @var \Magento\TestFramework\ObjectManager
-     */
-    private $objectManager;
     /**
      * @var CustomerTokenServiceInterface
      */
@@ -24,8 +22,9 @@ class AddItemToWishlistTest extends GraphQlAbstract
 
     protected function setUp()
     {
-        $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
-        $this->customerTokenService = $this->objectManager->get(CustomerTokenServiceInterface::class);
+        parent::setUp();
+
+        $this->customerTokenService = Bootstrap::getObjectManager()->get(CustomerTokenServiceInterface::class);
     }
 
     /**
@@ -37,9 +36,9 @@ class AddItemToWishlistTest extends GraphQlAbstract
      */
     public function testAddItemToWishlist(): void
     {
-        /** @var \Magento\Wishlist\Model\Wishlist $wishlist */
-        $wishlist = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
-            \Magento\Wishlist\Model\Wishlist::class
+        /** @var Wishlist $wishlist */
+        $wishlist = Bootstrap::getObjectManager()->create(
+            Wishlist::class
         );
         $wishlist->loadByCustomerId(1, true);
         /** @var Item $wishlistItem */

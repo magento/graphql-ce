@@ -11,6 +11,7 @@ use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Wishlist\Model\Item;
 use Magento\Wishlist\Model\ResourceModel\Item\CollectionFactory as WishlistItemCollectionFactory;
+use Magento\Wishlist\Model\ResourceModel\Item\Collection as WishlistItemCollection;
 
 class WishlistItemsDataProvider
 {
@@ -41,13 +42,14 @@ class WishlistItemsDataProvider
      */
     public function getWishlistItemsForCustomer(int $customerId): array
     {
-        $wishlistItemCollection = $this->wishlistItemCollectionFactory->create();
-        $wishlistItemCollection->addCustomerIdFilter($customerId);
-        $wishlistItemCollection->addStoreFilter(array_map(function (StoreInterface $store) {
+        /** @var WishlistItemCollection $itemCollection */
+        $itemCollection = $this->wishlistItemCollectionFactory->create();
+        $itemCollection->addCustomerIdFilter($customerId);
+        $itemCollection->addStoreFilter(array_map(function (StoreInterface $store) {
             return $store->getId();
         }, $this->storeManager->getStores()));
-        $wishlistItemCollection->setVisibilityFilter();
-        $wishlistItemCollection->load();
-        return $wishlistItemCollection->getItems();
+        $itemCollection->setVisibilityFilter();
+        $itemCollection->load();
+        return $itemCollection->getItems();
     }
 }
