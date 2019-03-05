@@ -87,8 +87,7 @@ class AddSimpleProductToCart
         }
 
         if (is_string($result)) {
-            $uniqueMessqges = array_unique(explode("\n", $result));
-            throw new GraphQlInputException(__(implode("\n", $uniqueMessqges)));
+            throw new GraphQlInputException(__($result));
         }
     }
 
