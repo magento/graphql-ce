@@ -20,6 +20,7 @@ use Magento\Catalog\Model\Product\Visibility;
 use Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\Product\CollectionProcessor\StockProcessor;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\Catalog\Model\ResourceModel\Product\Collection;
+use Magento\CatalogInventory\Helper\Stock as StockHelper;
 
 /**
  * @inheritdoc
@@ -46,6 +47,10 @@ class AddItemToWishlist implements ResolverInterface
      * @var CollectionFactory
      */
     private $productCollectionFactory;
+    /**
+     * @var StockHelper
+     */
+    private $stockHelper;
 
     /**
      * @param WishlistDataProvider $wishlistDataProvider
@@ -53,19 +58,22 @@ class AddItemToWishlist implements ResolverInterface
      * @param Visibility $productVisibility
      * @param StockProcessor $stockProcessor
      * @param CollectionFactory $collectionFactory
+     * @param StockHelper $stockHelper
      */
     public function __construct(
         WishlistDataProvider $wishlistDataProvider,
         SearchCriteriaInterface $searchCriteria,
         Visibility $productVisibility,
         StockProcessor $stockProcessor,
-        CollectionFactory $collectionFactory
+        CollectionFactory $collectionFactory,
+        StockHelper $stockHelper
     ) {
         $this->wishlistDataProvider = $wishlistDataProvider;
         $this->searchCriteria = $searchCriteria;
         $this->catalogProductVisibility = $productVisibility;
         $this->stockProcessor = $stockProcessor;
         $this->productCollectionFactory = $collectionFactory;
+        $this->stockHelper = $stockHelper;
     }
 
     /**
@@ -137,7 +145,10 @@ class AddItemToWishlist implements ResolverInterface
         /** @var Collection $productsCollection */
         $productsCollection = $this->productCollectionFactory->create();
         $productsCollection->setVisibility($this->catalogProductVisibility->getVisibleInSiteIds());
+        $this->stockHelper->addIsInStockFilterToCollection($productsCollection);
         $productsCollection->addAttributeToFilter('sku', ['in' => $skus]);
+        $productsCollection->addStoreFilter();
+        $productsCollection->distinct(true);
         return $productsCollection;
     }
 }
