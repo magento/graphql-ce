@@ -428,6 +428,51 @@ QUERY;
     }
 
     /**
+     * @magentoApiDataFixture Magento/Checkout/_files/quote_with_multiple_addresses_saved.php
+     * @magentoApiDataFixture Magento/Customer/_files/customer.php
+     * @magentoApiDataFixture Magento/Customer/_files/customer_two_addresses.php
+     * @throws \Exception
+     */
+    public function testSetBillingAddressWithUseForShippingOptionForMultipleAddresses()
+    {
+        $maskedQuoteId = $this->getMaskedQuoteIdByReversedQuoteId('test_order_1');
+
+        $query = <<<QUERY
+mutation {
+  setBillingAddressOnCart(
+    input: {
+      cart_id: "$maskedQuoteId"
+      billing_address: {
+          customer_address_id: 2
+          use_for_shipping: true
+       }
+    }
+  ) {
+    cart {
+      billing_address {
+        firstname
+        lastname
+        company
+        street
+        city
+        postcode
+        telephone
+        country {
+          code
+          label
+        }
+      }
+    }
+  }
+}
+QUERY;
+        $this->expectExceptionMessage(
+            "Using the \"use_for_shipping\" option with multishipping is not possible."
+        );
+        $this->graphQlQuery($query, [], '', $this->getHeaderMap());
+    }
+
+    /**
      * @magentoApiDataFixture Magento/Customer/_files/customer.php
      * @expectedException \Exception
      * @expectedExceptionMessage Could not find a cart with ID "non_existent_masked_id"
