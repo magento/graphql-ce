@@ -12,6 +12,7 @@ use Magento\WishlistGraphQl\Model\WishlistDataProvider;
 use Magento\Wishlist\Model\Wishlist;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\Api\SearchCriteriaInterface;
@@ -80,11 +81,11 @@ class AddItemToWishlist implements ResolverInterface
         if (!isset($args['input']['skus'])) {
             throw new GraphQlInputException(__('You must specify at least one "sku" value'));
         }
+
         $wishlist = $this->wishlistDataProvider->getWishlistForCustomer($context->getUserId());
-        if (!$wishlist || !$wishlist->getId()) {
-            throw new GraphQlInputException(__('Cannot get a wish list for the specified Customer ID'));
-        }
+
         $this->addMultipleProducts($args['input']['skus'], $wishlist);
+
         return [
             'wishlist' => [
                 'sharing_code' => $wishlist->getSharingCode(),
@@ -101,17 +102,29 @@ class AddItemToWishlist implements ResolverInterface
      * @param Wishlist $wishList
      *
      * @return Wishlist
-     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws LocalizedException
      */
     public function addMultipleProducts($skus, Wishlist $wishList)
     {
+        $errors = [];
         $productCollection = $this->getProductCollectionBySkus($skus);
         if ($productCollection->getSize()) {
             foreach ($productCollection as $product) {
                 /** @var Product $product */
-                $wishList->addNewItem($product);
+                $result = $wishList->addNewItem($product);
+
+                if (is_string($result)) {
+                    $errors[] = $result;
+                }
             }
         }
+
+        if (!empty($errors)) {
+            throw new LocalizedException(
+                __(implode("\n", $errors))
+            );
+        }
+
         return $wishList;
     }
 
