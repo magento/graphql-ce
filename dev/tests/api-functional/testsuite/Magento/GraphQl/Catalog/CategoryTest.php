@@ -117,8 +117,8 @@ QUERY;
 }
 QUERY;
         $response = $this->graphQlQuery($query);
-        self::assertEquals('Category 1.2', $response['category/name']);
-        self::assertEquals(13, $response['category/id']);
+        self::assertEquals('Category 1.2', $response['category']['name']);
+        self::assertEquals(13, $response['category']['id']);
     }
 
     /**
