@@ -25,7 +25,7 @@ class ProductEntityAttributesForAst implements FieldEntityAttributesInterface
     /**
      * @var array
      */
-    private $additionalAttributes = ['min_price', 'max_price', 'category_id'];
+    private $additionalAttributes = ['entity_id','min_price', 'max_price', 'category_id'];
 
     /**
      * @param ConfigInterface $config

@@ -430,6 +430,7 @@ type CategoryProducts @doc(description: "The category products object returned i
 
 input ProductFilterInput @doc(description: "ProductFilterInput defines the filters to be used in the search. A filter contains at least one attribute, a comparison operator, and the value that is being searched for.") {
     name: FilterTypeInput @doc(description: "The product name. Customers use this name to identify the product.")
+    entity_id: FilterTypeInput @doc(description: "The product entity id. Customers use this id to identify the product.")
     sku: FilterTypeInput @doc(description: "A number or code assigned to a product to identify the product, options, price, and manufacturer")
     description: FilterTypeInput @doc(description: "Detailed information about the product. The value can include simple HTML tags.")
     short_description: FilterTypeInput @doc(description: "A short description of the product. Its use depends on the theme.")
