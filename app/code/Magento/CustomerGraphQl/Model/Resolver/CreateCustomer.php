@@ -17,7 +17,7 @@ use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\Validator\Exception as ValidatorException;
-use Magento\Framework\Exception\InputException;
+use Magento\Framework\Exception\LocalizedException;
 
 /**
  * Create customer account resolver
@@ -89,8 +89,8 @@ class CreateCustomer implements ResolverInterface
             throw new GraphQlInputException(__($e->getMessage()));
         } catch (InputMismatchException $e) {
             throw new GraphQlInputException(__($e->getMessage()));
-        } catch (InputException $e) {
-            throw new GraphQlInputException(__($e->getMessage()));
+        } catch (LocalizedException $e) {
+            throw new GraphQlInputException(__($e->getMessage()), $e);
         }
 
         return ['customer' => $data];
