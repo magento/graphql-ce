@@ -7,13 +7,11 @@ declare(strict_types=1);
 
 namespace Magento\GraphQl\Wishlist;
 
-use Magento\Catalog\Model\Product;
 use Magento\Integration\Api\CustomerTokenServiceInterface;
 use Magento\TestFramework\TestCase\GraphQlAbstract;
 use Magento\Wishlist\Model\Wishlist;
 use Magento\Wishlist\Model\Item;
 use Magento\TestFramework\Helper\Bootstrap;
-use Magento\Catalog\Api\ProductRepositoryInterface;
 
 class AddItemToWishlistTest extends GraphQlAbstract
 {
@@ -21,17 +19,12 @@ class AddItemToWishlistTest extends GraphQlAbstract
      * @var CustomerTokenServiceInterface
      */
     private $customerTokenService;
-    /**
-     * @var ProductRepositoryInterface
-     */
-    private $productRepository;
 
     protected function setUp()
     {
         parent::setUp();
 
         $this->customerTokenService = Bootstrap::getObjectManager()->get(CustomerTokenServiceInterface::class);
-        $this->productRepository = Bootstrap::getObjectManager()->get(ProductRepositoryInterface::class);
     }
 
     /**
@@ -227,52 +220,6 @@ mutation {
 }
 MUTATION;
 
-        $response = $this->graphQlQuery($mutation, [], '', $this->getCustomerAuthHeaders('customer@example.com', 'password'));
-        $this->assertEquals($wishlist->getItemsCount(), $response['addItemsToWishlist']['wishlist']['items_count']);
-        $this->assertEquals($wishlistItem->getData('qty') + 1, $response['addItemsToWishlist']['wishlist']['items'][0]['qty']);
-    }
-
-    /**
-     * @magentoApiDataFixture Magento/Wishlist/_files/wishlist.php
-     * @magentoApiDataFixture Magento/Catalog/_files/products_in_different_stores.php
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @throws \Exception
-     */
-    public function testAddProductsToWishListFromDifferentStores()
-    {
-        /** @var Wishlist $wishlist */
-        $wishlist = Bootstrap::getObjectManager()->create(
-            Wishlist::class
-        );
-        $wishlist->loadByCustomerId(1, true);
-        /** @var Item $wishlistItem */
-        $wishlistItem = $wishlist->getItemCollection()->getFirstItem();
-
-        /** @var Product $productSimple1 */
-        $productSimple1 = $this->productRepository->get('simple_1');
-
-        /** @var Product $productSimple2 */
-        $productSimple2 = $this->productRepository->get('simple_2');
-
-        $wishlist->addNewItem($productSimple1);
-        $wishlist->addNewItem($productSimple2);
-        $mutation =
-            <<<MUTATION
-mutation {
-  addItemsToWishlist (
-    input: {
-      skus: ["simple_1", "simple_2"]
-    }
-  ) {
-    wishlist {
-      items {
-        qty
-      }
-      items_count
-    }
-  }
-}
-MUTATION;
         $response = $this->graphQlQuery($mutation, [], '', $this->getCustomerAuthHeaders('customer@example.com', 'password'));
         $this->assertEquals($wishlist->getItemsCount(), $response['addItemsToWishlist']['wishlist']['items_count']);
         $this->assertEquals($wishlistItem->getData('qty') + 1, $response['addItemsToWishlist']['wishlist']['items'][0]['qty']);
