@@ -60,6 +60,8 @@ class SetBillingAddressOnCartTest extends GraphQlAbstract
      * @magentoApiDataFixture Magento/Catalog/_files/product_simple.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/customer/create_empty_cart.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/add_simple_product.php
+     *
+     * @throws \Exception
      */
     public function testSetNewBillingAddress()
     {
@@ -119,6 +121,8 @@ QUERY;
      * @magentoApiDataFixture Magento/Catalog/_files/product_simple.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/customer/create_empty_cart.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/add_simple_product.php
+     *
+     * @throws \Exception
      */
     public function testSetNewBillingAddressWithUseForShippingParameter()
     {
@@ -197,6 +201,8 @@ QUERY;
      * @magentoApiDataFixture Magento/Catalog/_files/product_simple.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/customer/create_empty_cart.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/add_simple_product.php
+     *
+     * @throws \Exception
      */
     public function testSetBillingAddressFromAddressBook()
     {
@@ -279,6 +285,8 @@ QUERY;
      * @magentoApiDataFixture Magento/Catalog/_files/product_simple.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/customer/create_empty_cart.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/add_simple_product.php
+     *
+     * @throws \Exception
      */
     public function testSetNewBillingAddressAndFromAddressBookAtSameTime()
     {
@@ -429,13 +437,12 @@ QUERY;
 
     /**
      * @magentoApiDataFixture Magento/Checkout/_files/quote_with_multiple_addresses_saved.php
-     * @magentoApiDataFixture Magento/Customer/_files/customer.php
-     * @magentoApiDataFixture Magento/Customer/_files/customer_two_addresses.php
+     *
      * @throws \Exception
      */
     public function testSetBillingAddressWithUseForShippingOptionForMultipleAddresses()
     {
-        $maskedQuoteId = $this->getMaskedQuoteIdByReversedQuoteId('test_order_1');
+        $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_order_1');
 
         $query = <<<QUERY
 mutation {

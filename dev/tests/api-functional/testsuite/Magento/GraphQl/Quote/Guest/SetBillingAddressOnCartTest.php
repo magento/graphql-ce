@@ -31,6 +31,8 @@ class SetBillingAddressOnCartTest extends GraphQlAbstract
      * @magentoApiDataFixture Magento/Catalog/_files/product_simple.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/guest/create_empty_cart.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/add_simple_product.php
+     *
+     * @throws \Exception
      */
     public function testSetNewBillingAddress()
     {
@@ -86,13 +88,13 @@ QUERY;
     }
 
     /**
-     * @magentoApiDataFixture Magento/Catalog/_files/product_simple.php
-     * @magentoApiDataFixture Magento/GraphQl/Quote/_files/guest/create_empty_cart.php
-     * @magentoApiDataFixture Magento/GraphQl/Quote/_files/add_simple_product.php
+     * @magentoApiDataFixture Magento/Checkout/_files/quote_with_simple_product_saved.php
+     *
+     * @throws \Exception
      */
     public function testSetNewBillingAddressWithUseForShippingParameter()
     {
-        $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_quote');
+        $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_order_with_simple_product_without_address');
 
         $query = <<<QUERY
 mutation {
@@ -165,6 +167,9 @@ QUERY;
      * _security
      * @magentoApiDataFixture Magento/Customer/_files/customer.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/customer/create_empty_cart.php
+     *
+     * @throws \Exception
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function testSetBillingAddressToCustomerCart()
     {

@@ -5,6 +5,7 @@
  */
 
 require 'quote_with_address_saved.php';
+require __DIR__ . '/../../Customer/_files/customer_two_addresses.php';
 
 $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 
