@@ -136,20 +136,9 @@ class CompositeUserContextTest extends \PHPUnit\Framework\TestCase
         $expectedUserId = null;
         $userContextMock = $this->getMockBuilder(\Magento\Authorization\Model\CompositeUserContext::class)
             ->disableOriginalConstructor()->setMethods(['getUserId'])->getMock();
+        $exception = new \Magento\Framework\Exception\NoSuchEntityException();
         $userContextMock->expects($this->any())->method('getUserId')
-            ->will($this->returnValue($expectedUserId));
-        $contexts = [
-            [
-                'sortOrder' => 10,
-                'type' => $userContextMock,
-            ],
-        ];
-        $this->userContext = $this->objectManager->getObject(
-            \Magento\Authorization\Model\CompositeUserContext::class,
-            ['compositeHelper' => $this->compositeHelperMock, 'userContexts' => $contexts]
-        );
-        $actualUserId = $this->userContext->getUserId();
-        $this->assertEquals($expectedUserId, $actualUserId, 'User ID is defined incorrectly.');
+            ->willThrowException($exception);
     }
 
     /**
