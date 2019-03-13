@@ -126,7 +126,7 @@ QUERY;
      */
     public function testSetNewBillingAddressWithUseForShippingParameter()
     {
-        $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_quote');
+        $maskedQuoteId = $this->getMaskedQuoteIdByReversedQuoteId->execute('test_quote');
 
         $query = <<<QUERY
 mutation {

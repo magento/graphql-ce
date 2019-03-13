@@ -169,7 +169,56 @@ QUERY;
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/customer/create_empty_cart.php
      *
      * @throws \Exception
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function testSetBillingAddressWithUseForShippingOptionForMultipleAddresses()
+    {
+        $maskedQuoteId = $this->getMaskedQuoteIdByReversedQuoteId('test_order_with_simple_product_multiple_addresses');
+
+        $query = <<<QUERY
+mutation {
+  setBillingAddressOnCart(
+    input: {
+      cart_id: "$maskedQuoteId"
+      billing_address: {
+         address: {
+          firstname: "test firstname"
+          lastname: "test lastname"
+          company: "test company"
+          street: ["test street 1", "test street 2"]
+          city: "test city"
+          region: "test region"
+          postcode: "887766"
+          country_code: "US"
+          telephone: "88776655"
+          save_in_address_book: false
+         }
+         use_for_shipping: true
+      }
+    }
+  ) {
+    cart {
+      billing_address {
+        firstname
+        lastname
+        address_type
+      }
+      shipping_addresses {
+        firstname
+        lastname
+        address_type
+      }
+    }
+  }
+}
+QUERY;
+        $this->expectExceptionMessage(
+            "Using the \"use_for_shipping\" option with multishipping is not possible."
+        );
+        $this->graphQlQuery($query);
+    }
+
+    /**
+     * @magentoApiDataFixture Magento/Checkout/_files/quote_with_address_saved.php
      */
     public function testSetBillingAddressToCustomerCart()
     {
