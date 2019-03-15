@@ -61,6 +61,29 @@ class AddProductToCartTest extends GraphQlAbstract
     /**
      * @magentoApiDataFixture Magento/Catalog/_files/products.php
      * @magentoApiDataFixture Magento/Checkout/_files/active_quote.php
+     * @expectedException \Exception
+     * @expectedExceptionMessage Some of the products are out of stock.
+     */
+    public function testUpdateProductOutOfStockInCart()
+    {
+        $sku = 'simple';
+        $qty = 1;
+        $maskedQuoteId = $this->getMaskedQuoteId();
+
+        $query = $this->getAddSimpleProductQuery($maskedQuoteId, $sku, $qty);
+        $this->graphQlQuery($query);
+
+        $product = Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Product::class);
+        $productId = $product->getIdBySku($sku);
+        $product->load($productId);
+        $product->setStockData(['is_in_stock' => 0]);
+        $product->save();
+
+        $this->graphQlQuery($query);
+    }
+    /**
+     * @magentoApiDataFixture Magento/Catalog/_files/products.php
+     * @magentoApiDataFixture Magento/Checkout/_files/active_quote.php
      * @magentoConfigFixture default cataloginventory/item_options/max_sale_qty 5
      * @expectedException \Exception
      * @expectedExceptionMessage The most you may purchase is 5.
