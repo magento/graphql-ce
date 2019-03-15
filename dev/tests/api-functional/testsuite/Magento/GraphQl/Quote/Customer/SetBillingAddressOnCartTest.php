@@ -440,9 +440,9 @@ QUERY;
      *
      * @throws \Exception
      */
-    public function testSetBillingAddressWithUseForShippingOptionForMultipleAddresses()
+    public function testSetBillingAddressWithUseForShippingOption()
     {
-        $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_order_1');
+        $maskedQuoteId = $this->getMaskedQuoteIdByReversedQuoteId()->execute('test_order_1');
 
         $query = <<<QUERY
 mutation {

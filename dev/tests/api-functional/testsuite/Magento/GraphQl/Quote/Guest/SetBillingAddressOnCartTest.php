@@ -170,9 +170,9 @@ QUERY;
      *
      * @throws \Exception
      */
-    public function testSetBillingAddressWithUseForShippingOptionForMultipleAddresses()
+    public function testSetBillingAddressWithUseForShippingOption()
     {
-        $maskedQuoteId = $this->getMaskedQuoteIdByReversedQuoteId('test_order_with_simple_product_multiple_addresses');
+        $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_order_with_simple_product_multiple_addresses');
 
         $query = <<<QUERY
 mutation {
