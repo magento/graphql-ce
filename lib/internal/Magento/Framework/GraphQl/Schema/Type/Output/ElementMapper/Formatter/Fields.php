@@ -146,6 +146,10 @@ class Fields implements FormatterInterface
             /** @var ResolverInterface $resolver */
             $resolver = $this->objectManager->get($field->getResolver());
 
+            // TODO: Here the new resolver interface will be substituted.
+            // TODO: For backward compatibility we could use a condition that will check
+            // TODO: resolver instance type and pass the correct set of arguments
+
             $fieldConfig['resolve'] =
                 function ($value, $args, $context, $info) use ($resolver, $field) {
                     $wrapperInfo = $this->resolveInfoFactory->create($info);
