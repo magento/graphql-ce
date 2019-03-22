@@ -29,18 +29,23 @@ class QuoteItemQtyList
     public function getQty($productId, $quoteItemId, $quoteId, $itemQty)
     {
         $qty = $itemQty;
-        if (isset(
-            $this->_checkedQuoteItems[$quoteId][$productId]['qty']
-        ) && !in_array(
-            $quoteItemId,
-            $this->_checkedQuoteItems[$quoteId][$productId]['items']
-        )
-        ) {
-            $qty += $this->_checkedQuoteItems[$quoteId][$productId]['qty'];
-        }
 
-        $this->_checkedQuoteItems[$quoteId][$productId]['qty'] = $qty;
-        $this->_checkedQuoteItems[$quoteId][$productId]['items'][] = $quoteItemId;
+        if (isset($this->_checkedQuoteItems[$quoteId][$productId]['qty']) &&
+            in_array($quoteItemId, $this->_checkedQuoteItems[$quoteId][$productId]['items'])
+        ) {
+            $this->_checkedQuoteItems[$quoteId][$productId]['qty'] += $itemQty;
+
+            $qty = $this->_checkedQuoteItems[$quoteId][$productId]['qty'];
+        } else {
+            if (isset($this->_checkedQuoteItems[$quoteId][$productId]['qty']) &&
+                !in_array($quoteItemId, $this->_checkedQuoteItems[$quoteId][$productId]['items'])
+            ) {
+                $qty += $this->_checkedQuoteItems[$quoteId][$productId]['qty'];
+            }
+
+            $this->_checkedQuoteItems[$quoteId][$productId]['qty'] = $itemQty;
+            $this->_checkedQuoteItems[$quoteId][$productId]['items'][] = $quoteItemId;
+        }
 
         return $qty;
     }
