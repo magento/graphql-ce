@@ -59,7 +59,6 @@ class StockItem
         $qty
     ) {
         $product = $quoteItem->getProduct();
-        $addToCartQty = ($quoteItem->getQtyToAdd() ? $quoteItem->getQtyToAdd() : $qty);
         /**
          * When we work with subitem
          */
@@ -71,12 +70,13 @@ class StockItem
             $qtyForCheck = $this->quoteItemQtyList
                 ->getQty($product->getId(), $quoteItem->getId(), $quoteItem->getQuoteId(), 0);
         } else {
+            $increaseQty = $quoteItem->getQtyToAdd() ? $quoteItem->getQtyToAdd() : $qty;
             $rowQty = $qty;
             $qtyForCheck = $this->quoteItemQtyList->getQty(
                 $product->getId(),
                 $quoteItem->getId(),
                 $quoteItem->getQuoteId(),
-                $addToCartQty
+                $increaseQty
             );
         }
 
@@ -90,13 +90,11 @@ class StockItem
 
         $stockItem->setProductName($product->getName());
 
-        $origQty = ($qtyForCheck == $addToCartQty ? $rowQty : ($qtyForCheck - $addToCartQty));
-
         $result = $this->stockState->checkQuoteItemQty(
             $product->getId(),
-            $addToCartQty,
             $qtyForCheck,
-            $origQty,
+            $rowQty,
+            ($quoteItem->getQtyToAdd() ? $quoteItem->getQty() - $quoteItem->getQtyToAdd() : $quoteItem->getQty()),
             $product->getStore()->getWebsiteId()
         );
 
