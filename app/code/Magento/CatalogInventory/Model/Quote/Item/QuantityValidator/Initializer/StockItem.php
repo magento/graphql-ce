@@ -59,6 +59,7 @@ class StockItem
         $qty
     ) {
         $product = $quoteItem->getProduct();
+        $addToCartQty = $quoteItem->getQtyToAdd();
         /**
          * When we work with subitem
          */
@@ -70,7 +71,7 @@ class StockItem
             $qtyForCheck = $this->quoteItemQtyList
                 ->getQty($product->getId(), $quoteItem->getId(), $quoteItem->getQuoteId(), 0);
         } else {
-            $increaseQty = $quoteItem->getQtyToAdd() ? $quoteItem->getQtyToAdd() : $qty;
+            $increaseQty = $addToCartQty ? $addToCartQty : $qty;
             $rowQty = $qty;
             $qtyForCheck = $this->quoteItemQtyList->getQty(
                 $product->getId(),
@@ -89,8 +90,6 @@ class StockItem
         }
 
         $stockItem->setProductName($product->getName());
-
-        $addToCartQty = $quoteItem->getQtyToAdd();
 
         $result = $this->stockState->checkQuoteItemQty(
             $product->getId(),
