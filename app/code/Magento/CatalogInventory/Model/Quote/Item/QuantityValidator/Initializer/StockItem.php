@@ -59,7 +59,6 @@ class StockItem
         $qty
     ) {
         $product = $quoteItem->getProduct();
-        $addToCartQty = $quoteItem->getQtyToAdd();
         /**
          * When we work with subitem
          */
@@ -71,7 +70,7 @@ class StockItem
             $qtyForCheck = $this->quoteItemQtyList
                 ->getQty($product->getId(), $quoteItem->getId(), $quoteItem->getQuoteId(), 0);
         } else {
-            $increaseQty = $addToCartQty ? $addToCartQty : $qty;
+            $increaseQty = $quoteItem->getQtyToAdd() ? $quoteItem->getQtyToAdd() : $qty;
             $rowQty = $qty;
             $qtyForCheck = $this->quoteItemQtyList->getQty(
                 $product->getId(),
@@ -94,8 +93,8 @@ class StockItem
         $result = $this->stockState->checkQuoteItemQty(
             $product->getId(),
             $qtyForCheck,
-            $rowQty,
-            is_null($addToCartQty) ? $quoteItem->getQty() : ($quoteItem->getQty() - $addToCartQty),
+            $qty,         
+            (is_object($quoteItem->getStockStateResult()) ? $quoteItem->getStockStateResult()->getOrigQty() : $quoteItem->getQty()),
             $product->getStore()->getWebsiteId()
         );
 
@@ -119,12 +118,12 @@ class StockItem
          * qty of child products are declared just during add process
          * exception for updating also managed by product type
          */
-//        $parentItem = $quoteItem->getParentItem();
-//        if ((bool)$parentItem == false ||
-//            (is_object($parentItem) && $parentItem->getProduct()->getTypeInstance()->getForceChildItemQtyChanges($parentItem->getProduct()))
-//        ) {
-//            $quoteItem->setData('qty', $result->getOrigQty());
-//        }
+        $parentItem = $quoteItem->getParentItem();
+        if (is_object($parentItem) &&
+            $parentItem->getProduct()->getTypeInstance()->getForceChildItemQtyChanges($parentItem->getProduct())
+        ) {
+            $quoteItem->setData('qty', $result->getOrigQty());
+        }
 
         if ($result->getItemUseOldQty() !== null) {
             $quoteItem->setUseOldQty($result->getItemUseOldQty());
