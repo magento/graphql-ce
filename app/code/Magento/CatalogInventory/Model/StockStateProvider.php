@@ -118,7 +118,6 @@ class StockStateProvider implements StockStateProviderInterface
          */
         $result->setItemIsQtyDecimal($stockItem->getIsQtyDecimal());
         if (!$stockItem->getIsQtyDecimal()) {
-            $result->setHasQtyOptionUpdate(true);
             $qty = (int) $qty;
             $summaryQty = (int) $summaryQty;
             /**
@@ -225,7 +224,7 @@ class StockStateProvider implements StockStateProviderInterface
                 }
             } else {
                 if (!$stockItem->getIsChildItem()) {
-                    $stockItem->setOrderedItems($qty + (int)$stockItem->getOrderedItems());
+                    $stockItem->setOrderedItems($summaryQty + (int)$stockItem->getOrderedItems());
                 }
             }
         }

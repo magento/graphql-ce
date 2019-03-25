@@ -110,19 +110,21 @@ class StockItem
             }
         }
 
+        if ((bool)$quoteItem->getIsQtyDecimal() == false) {
+            $quoteItem->setData('qty', $result->getItemQty());
+        }
+
         /**
          * Just base (parent) item qty can be changed
          * qty of child products are declared just during add process
          * exception for updating also managed by product type
          */
-        if ($result->getHasQtyOptionUpdate() && (!$quoteItem->getParentItem() ||
-                $quoteItem->getParentItem()->getProduct()->getTypeInstance()->getForceChildItemQtyChanges(
-                    $quoteItem->getParentItem()->getProduct()
-                )
-            )
-        ) {
-            $quoteItem->setData('qty', $result->getOrigQty());
-        }
+//        $parentItem = $quoteItem->getParentItem();
+//        if ((bool)$parentItem == false ||
+//            (is_object($parentItem) && $parentItem->getProduct()->getTypeInstance()->getForceChildItemQtyChanges($parentItem->getProduct()))
+//        ) {
+//            $quoteItem->setData('qty', $result->getOrigQty());
+//        }
 
         if ($result->getItemUseOldQty() !== null) {
             $quoteItem->setUseOldQty($result->getItemUseOldQty());
