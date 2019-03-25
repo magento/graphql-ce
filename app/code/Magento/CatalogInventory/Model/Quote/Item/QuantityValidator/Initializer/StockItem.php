@@ -90,11 +90,13 @@ class StockItem
 
         $stockItem->setProductName($product->getName());
 
+        $addToCartQty = $quoteItem->getQtyToAdd();
+
         $result = $this->stockState->checkQuoteItemQty(
             $product->getId(),
             $qtyForCheck,
             $rowQty,
-            ($quoteItem->getQtyToAdd() ? $quoteItem->getQty() - $quoteItem->getQtyToAdd() : $quoteItem->getQty()),
+            is_null($addToCartQty) ? $quoteItem->getQty() : ($quoteItem->getQty() - $addToCartQty),
             $product->getStore()->getWebsiteId()
         );
 
