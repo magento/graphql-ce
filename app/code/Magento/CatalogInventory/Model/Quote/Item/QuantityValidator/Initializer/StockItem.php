@@ -109,7 +109,7 @@ class StockItem
             }
         }
 
-        if ((bool)$quoteItem->getIsQtyDecimal() == false) {
+        if ((bool)$quoteItem->getIsQtyDecimal() == false && $result->getItemQty() !== null) {
             $quoteItem->setData('qty', $result->getItemQty());
         }
 
