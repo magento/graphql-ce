@@ -10,7 +10,7 @@ namespace Magento\QuoteGraphQl\Model\Cart;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\Message\AbstractMessage;
 use Magento\Quote\Api\CartRepositoryInterface;
-use Magento\Quote\Model\Quote;
+use Magento\Quote\Api\Data\CartInterface;
 
 /**
  * Add products to cart
@@ -42,11 +42,11 @@ class AddGroupedProductsToCart implements AddToCartHandlerInterface
     /**
      * Add products to cart
      *
-     * @param Quote $cart
+     * @param CartInterface $cart
      * @param array $cartItems
      * @throws GraphQlInputException
      */
-    public function execute(Quote $cart, array $cartItems): void
+    public function execute(CartInterface $cart, array $cartItems): void
     {
         foreach ($cartItems as $cartItemData) {
             $this->addProductToCart->execute($cart, $cartItemData);
@@ -64,10 +64,10 @@ class AddGroupedProductsToCart implements AddToCartHandlerInterface
     /**
      * Collecting cart errors
      *
-     * @param Quote $cart
+     * @param CartInterface $cart
      * @return string
      */
-    private function getCartErrors(Quote $cart): string
+    private function getCartErrors(CartInterface $cart): string
     {
         $errorMessages = [];
 
