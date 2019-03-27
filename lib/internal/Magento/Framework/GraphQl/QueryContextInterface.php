@@ -8,11 +8,15 @@ declare(strict_types=1);
 namespace Magento\Framework\GraphQl;
 
 /**
- * Interface FieldResolverContextInterface
+ * Interface QueryContextInterface
  *
- * Field resolver context
+ * Query resolver context
+ *
+ * FIXME: Do we need it? We already have a
+ * decoupled implementation: \Magento\Framework\GraphQl\Query\Resolver\ContextInterface
+ *
  */
-interface FieldResolverContextInterface
+interface QueryContextInterface
 {
     /**
      * TBP

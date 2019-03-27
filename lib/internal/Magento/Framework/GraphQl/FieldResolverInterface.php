@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\Framework\GraphQl;
 
 use Magento\Framework\GraphQl\Query\QueryInterface;
+use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 
 /**
  * Interface FieldResolverInterface
@@ -17,16 +18,16 @@ use Magento\Framework\GraphQl\Query\QueryInterface;
 interface FieldResolverInterface
 {
     /**
-     * @param FieldResolverContextInterface $resolverContext
+     * @param ContextInterface $resolverContext
      * @param QueryInterface $query
      * @param FieldConfigInterface $fieldConfig
-     * @param array $parentResolvedValue
+     * @param array|null $parentResolvedValue
      * @return array
      */
     public function resolve(
-        FieldResolverContextInterface $resolverContext,
+        ContextInterface $resolverContext,
         QueryInterface $query,
         FieldConfigInterface $fieldConfig,
-        array $parentResolvedValue
+        ?array $parentResolvedValue
     );
 }

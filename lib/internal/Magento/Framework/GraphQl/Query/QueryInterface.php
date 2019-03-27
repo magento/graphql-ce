@@ -22,10 +22,5 @@ interface QueryInterface
     /**
      * TBP
      */
-    public function getArgs();
-
-    /**
-     * TBP
-     */
-    public function getVariables();
+    public function getArguments(): ?array;
 }

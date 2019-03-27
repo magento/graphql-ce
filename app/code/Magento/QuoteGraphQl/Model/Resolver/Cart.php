@@ -7,16 +7,17 @@ declare(strict_types=1);
 
 namespace Magento\QuoteGraphQl\Model\Resolver;
 
-use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
-use Magento\Framework\GraphQl\Query\ResolverInterface;
-use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
+use Magento\Framework\GraphQl\FieldResolverInterface;
 use Magento\QuoteGraphQl\Model\Cart\GetCartForUser;
+use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
+use Magento\Framework\GraphQl\Query\QueryInterface;
+use Magento\Framework\GraphQl\FieldConfigInterface;
 
 /**
  * @inheritdoc
  */
-class Cart implements ResolverInterface
+class Cart implements FieldResolverInterface
 {
     /**
      * @var GetCartForUser
@@ -35,14 +36,18 @@ class Cart implements ResolverInterface
     /**
      * @inheritdoc
      */
-    public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
-    {
-        if (!isset($args['cart_id']) || empty($args['cart_id'])) {
+    public function resolve(
+        ContextInterface $resolverContext,
+        QueryInterface $query,
+        FieldConfigInterface $fieldConfig,
+        ?array $parentResolvedValue
+    ) {
+        if ($query->getArgument('cart_id') === null) {
             throw new GraphQlInputException(__('Required parameter "cart_id" is missing'));
         }
-        $maskedCartId = $args['cart_id'];
+        $maskedCartId = $query->getArgument('cart_id');
 
-        $currentUserId = $context->getUserId();
+        $currentUserId = $resolverContext->getUserId();
         $cart = $this->getCartForUser->execute($maskedCartId, $currentUserId);
 
         return [

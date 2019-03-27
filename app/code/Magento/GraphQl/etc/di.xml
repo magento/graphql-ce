@@ -11,6 +11,8 @@
     <preference for="Magento\Framework\GraphQl\Schema\Type\Entity\MapperInterface" type="Magento\Framework\GraphQl\Schema\Type\Entity\DefaultMapper"/>
     <preference for="Magento\Framework\GraphQl\Schema\Type\Enum\DataMapperInterface" type="Magento\Framework\GraphQl\Schema\Type\Enum\DefaultDataMapper"/>
     <preference for="Magento\Framework\GraphQlSchemaStitching\GraphQlReader\TypeMetaReaderInterface" type="Magento\Framework\GraphQlSchemaStitching\GraphQlReader\TypeReaderComposite"/>
+    <preference for="Magento\Framework\GraphQl\FieldConfigInterface" type="Magento\Framework\GraphQl\FieldConfig"/>
+    <preference for="Magento\Framework\GraphQl\Query\QueryInterface" type="Magento\Framework\GraphQl\Query\Query"/>
     <type name="Magento\Framework\App\AreaList">
         <arguments>
             <argument name="areas" xsi:type="array">

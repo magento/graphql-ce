@@ -10,20 +10,33 @@ namespace Magento\Framework\GraphQl\Schema\Type\Output\ElementMapper\Formatter;
 use Magento\Framework\GraphQl\Config\Data\WrappedTypeProcessor;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Config\Element\TypeInterface;
+use Magento\Framework\GraphQl\FieldConfigFactory;
+use Magento\Framework\GraphQl\FieldResolverInterface;
+use Magento\Framework\GraphQl\Query\Query;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\Input\InputMapper;
 use Magento\Framework\GraphQl\Schema\Type\Output\ElementMapper\FormatterInterface;
 use Magento\Framework\GraphQl\Schema\Type\Output\OutputMapper;
 use Magento\Framework\GraphQl\Schema\Type\OutputTypeInterface;
+use Magento\Framework\GraphQl\Schema\Type\ResolveInfoFactory;
 use Magento\Framework\GraphQl\Schema\Type\ScalarTypes;
 use Magento\Framework\ObjectManagerInterface;
-use Magento\Framework\GraphQl\Schema\Type\ResolveInfoFactory;
 
 /**
  * Convert fields of the given 'type' config element to the objects compatible with GraphQL schema generator.
  */
 class Fields implements FormatterInterface
 {
+    /**
+     * @var Query
+     */
+    private $query;
+
+    /**
+     * @var FieldConfigFactory
+     */
+    private $fieldConfigFactory;
+
     /**
      * @var ObjectManagerInterface
      */
@@ -61,6 +74,8 @@ class Fields implements FormatterInterface
      * @param ScalarTypes $scalarTypes
      * @param WrappedTypeProcessor $wrappedTypeProcessor
      * @param ResolveInfoFactory $resolveInfoFactory
+     * @param FieldConfigFactory $fieldConfigFactory
+     * @param Query $query
      */
     public function __construct(
         ObjectManagerInterface $objectManager,
@@ -68,7 +83,9 @@ class Fields implements FormatterInterface
         InputMapper $inputMapper,
         ScalarTypes $scalarTypes,
         WrappedTypeProcessor $wrappedTypeProcessor,
-        ResolveInfoFactory $resolveInfoFactory
+        ResolveInfoFactory $resolveInfoFactory,
+        FieldConfigFactory $fieldConfigFactory,
+        Query $query
     ) {
         $this->objectManager = $objectManager;
         $this->outputMapper = $outputMapper;
@@ -76,6 +93,8 @@ class Fields implements FormatterInterface
         $this->scalarTypes = $scalarTypes;
         $this->wrappedTypeProcessor = $wrappedTypeProcessor;
         $this->resolveInfoFactory = $resolveInfoFactory;
+        $this->fieldConfigFactory = $fieldConfigFactory;
+        $this->query = $query;
     }
 
     /**
@@ -146,15 +165,23 @@ class Fields implements FormatterInterface
             /** @var ResolverInterface $resolver */
             $resolver = $this->objectManager->get($field->getResolver());
 
-            // TODO: Here the new resolver interface will be substituted.
-            // TODO: For backward compatibility we could use a condition that will check
-            // TODO: resolver instance type and pass the correct set of arguments
+            if ($resolver instanceof FieldResolverInterface) {
+                $fieldConfiguration = $this->fieldConfigFactory->create();
+                // TODO: Fill the config using corresponding values
 
-            $fieldConfig['resolve'] =
-                function ($value, $args, $context, $info) use ($resolver, $field) {
-                    $wrapperInfo = $this->resolveInfoFactory->create($info);
-                    return $resolver->resolve($field, $context, $wrapperInfo, $value, $args);
-                };
+                $fieldConfig['resolve'] =
+                    function ($value, $args, $context, $info) use ($resolver, $fieldConfiguration) {
+                        // TODO: data from $info should go to $query->setStrucute()
+                        $this->query->setArguments($args);
+                        return $resolver->resolve($context, $this->query, $fieldConfiguration, $value);
+                    };
+            } else {
+                $fieldConfig['resolve'] =
+                    function ($value, $args, $context, $info) use ($resolver, $field) {
+                        $wrapperInfo = $this->resolveInfoFactory->create($info);
+                        return $resolver->resolve($field, $context, $wrapperInfo, $value, $args);
+                    };
+            }
         }
         return $this->formatArguments($field, $fieldConfig);
     }
