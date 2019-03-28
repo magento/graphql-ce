@@ -165,14 +165,13 @@ QUERY;
 
     /**
      * _security
-     * @magentoApiDataFixture Magento/Customer/_files/customer.php
-     * @magentoApiDataFixture Magento/GraphQl/Quote/_files/customer/create_empty_cart.php
+     * @magentoApiDataFixture Magento/Checkout/_files/quote_with_simple_product_saved.php
      *
      * @throws \Exception
      */
     public function testSetBillingAddressWithUseForShippingOption()
     {
-        $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_order_with_simple_product_multiple_addresses');
+        $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_order_with_simple_product_without_address');
 
         $query = <<<QUERY
 mutation {
@@ -211,18 +210,17 @@ mutation {
   }
 }
 QUERY;
-        $this->expectExceptionMessage(
-            "Using the \"use_for_shipping\" option with multishipping is not possible."
-        );
         $this->graphQlQuery($query);
     }
 
     /**
      * @magentoApiDataFixture Magento/Checkout/_files/quote_with_address_saved.php
+     *
+     * @throws \Exception
      */
     public function testSetBillingAddressToCustomerCart()
     {
-        $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_quote');
+        $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_order_1');
 
         $query = <<<QUERY
 mutation {

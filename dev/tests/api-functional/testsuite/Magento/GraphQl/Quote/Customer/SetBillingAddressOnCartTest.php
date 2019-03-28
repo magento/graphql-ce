@@ -126,7 +126,7 @@ QUERY;
      */
     public function testSetNewBillingAddressWithUseForShippingParameter()
     {
-        $maskedQuoteId = $this->getMaskedQuoteIdByReversedQuoteId->execute('test_quote');
+        $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_quote');
 
         $query = <<<QUERY
 mutation {
@@ -336,6 +336,8 @@ QUERY;
      * @magentoApiDataFixture Magento/Catalog/_files/product_simple.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/guest/create_empty_cart.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/add_simple_product.php
+     *
+     * @throws \Exception
      */
     public function testSetBillingAddressToGuestCart()
     {
@@ -371,6 +373,8 @@ QUERY;
      * @magentoApiDataFixture Magento/Customer/_files/three_customers.php
      * @magentoApiDataFixture Magento/Customer/_files/customer_address.php
      * @magentoApiDataFixture Magento/Checkout/_files/quote_with_simple_product_saved.php
+     *
+     * @throws \Exception
      */
     public function testSetBillingAddressToAnotherCustomerCart()
     {
@@ -436,13 +440,14 @@ QUERY;
     }
 
     /**
-     * @magentoApiDataFixture Magento/Checkout/_files/quote_with_multiple_addresses_saved.php
+     * @magentoApiDataFixture Magento/Checkout/_files/quote_with_shipping_method.php
+     * @magentoApiDataFixture Magento/Customer/_files/customer_two_addresses.php
      *
      * @throws \Exception
      */
     public function testSetBillingAddressWithUseForShippingOption()
     {
-        $maskedQuoteId = $this->getMaskedQuoteIdByReversedQuoteId()->execute('test_order_1');
+        $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_order_1');
 
         $query = <<<QUERY
 mutation {
@@ -473,9 +478,6 @@ mutation {
   }
 }
 QUERY;
-        $this->expectExceptionMessage(
-            "Using the \"use_for_shipping\" option with multishipping is not possible."
-        );
         $this->graphQlQuery($query, [], '', $this->getHeaderMap());
     }
 
