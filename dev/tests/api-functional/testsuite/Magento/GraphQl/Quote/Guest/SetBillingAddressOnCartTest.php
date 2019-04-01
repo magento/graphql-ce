@@ -164,56 +164,6 @@ QUERY;
     }
 
     /**
-     * _security
-     * @magentoApiDataFixture Magento/Checkout/_files/quote_with_simple_product_saved.php
-     *
-     * @throws \Exception
-     */
-    public function testSetBillingAddressWithUseForShippingOption()
-    {
-        $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_order_with_simple_product_without_address');
-
-        $query = <<<QUERY
-mutation {
-  setBillingAddressOnCart(
-    input: {
-      cart_id: "$maskedQuoteId"
-      billing_address: {
-         address: {
-          firstname: "test firstname"
-          lastname: "test lastname"
-          company: "test company"
-          street: ["test street 1", "test street 2"]
-          city: "test city"
-          region: "test region"
-          postcode: "887766"
-          country_code: "US"
-          telephone: "88776655"
-          save_in_address_book: false
-         }
-         use_for_shipping: true
-      }
-    }
-  ) {
-    cart {
-      billing_address {
-        firstname
-        lastname
-        address_type
-      }
-      shipping_addresses {
-        firstname
-        lastname
-        address_type
-      }
-    }
-  }
-}
-QUERY;
-        $this->graphQlQuery($query);
-    }
-
-    /**
      * @magentoApiDataFixture Magento/Checkout/_files/quote_with_address_saved.php
      *
      * @throws \Exception
