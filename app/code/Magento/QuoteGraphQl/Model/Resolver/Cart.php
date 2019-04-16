@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\QuoteGraphQl\Model\Resolver;
 
+use Magento\Checkout\Exception;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
@@ -42,7 +43,12 @@ class Cart implements ResolverInterface
         }
         $maskedCartId = $args['cart_id'];
 
-        $currentUserId = $context->getUserId();
+        try {
+            $currentUserId = $context->getUserId();
+        } catch (\Exception $exception) {
+            throw new GraphQlInputException(__($exception->getMessage()));
+        }
+
         $cart = $this->getCartForUser->execute($maskedCartId, $currentUserId);
 
         return [

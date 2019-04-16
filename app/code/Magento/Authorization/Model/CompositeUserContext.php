@@ -74,8 +74,7 @@ class CompositeUserContext implements \Magento\Authorization\Model\UserContextIn
     /**
      * Retrieve user context
      *
-     * @return UserContextInterface False if none of the registered user contexts can identify user type
-     * @throws \Magento\Framework\Exception\NoSuchEntityException The current customer isn't authorized.
+     * @return UserContextInterface|bool False if none of the registered user contexts can identify user type
      */
     protected function getUserContext()
     {
@@ -88,9 +87,7 @@ class CompositeUserContext implements \Magento\Authorization\Model\UserContextIn
                 }
             }
             if ($this->chosenUserContext === null) {
-                throw new \Magento\Framework\Exception\NoSuchEntityException(
-                    __('The current customer isn\'t authorized.')
-                );
+                $this->chosenUserContext = false;
             }
         }
         return $this->chosenUserContext;
