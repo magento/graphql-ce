@@ -47,7 +47,7 @@ input VirtualProductCartItemInput {
 
 input CartItemInput {
     sku: String!
-    qty: Float!
+    quantity: Float!
 }
 
 input CustomizableOptionInput {
@@ -62,10 +62,10 @@ input ApplyCouponToCartInput {
 
 input UpdateCartItemsInput {
     cart_id: String!
-    cart_items: [CartItemQuantityInput!]!
+    cart_items: [CartItemUpdateInput!]!
 }
 
-input CartItemQuantityInput {
+input CartItemUpdateInput {
     cart_item_id: Int!
     quantity: Float!
 }
@@ -231,8 +231,10 @@ type CartAddressCountry {
 type SelectedShippingMethod {
     carrier_code: String
     method_code: String
-    label: String
-    amount: Float
+    carrier_title: String
+    method_title: String
+    amount: Money
+    base_amount: Money
 }
 
 type AvailableShippingMethod {
@@ -249,12 +251,13 @@ type AvailableShippingMethod {
 }
 
 type AvailablePaymentMethod {
-    code: String @doc(description: "The payment method code")
-    title: String @doc(description: "The payment method title.")
+    code: String! @doc(description: "The payment method code")
+    title: String! @doc(description: "The payment method title.")
 }
 
 type SelectedPaymentMethod {
-    code: String @doc(description: "The payment method code")
+    code: String! @doc(description: "The payment method code")
+    title: String! @doc(description: "The payment method title.")
     additional_data: SelectedPaymentMethodAdditionalData @doc(description: "Additional payment data")
     purchase_order_number: String @doc(description: "The purchase order number.")
 }
@@ -304,7 +307,7 @@ type VirtualCartItem implements CartItemInterface @doc(description: "Virtual Car
 
 interface CartItemInterface @typeResolver(class: "Magento\\QuoteGraphQl\\Model\\Resolver\\CartItemTypeResolver") {
     id: String!
-    qty: Float!
+    quantity: Float!
     product: ProductInterface!
 }
 
