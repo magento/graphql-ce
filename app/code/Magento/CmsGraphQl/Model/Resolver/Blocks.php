@@ -46,8 +46,8 @@ class Blocks implements ResolverInterface
     ) {
 
         $blockIdentifiers = $this->getBlockIdentifiers($args);
-        $blocksData = $this->getBlocksData($blockIdentifiers);
-
+        $scopeIdentifiers  = $this->getScopeIdentifiers($args);
+        $blocksData = $this->getBlocksData($blockIdentifiers,$scopeIdentifiers[0]);
         $resultData = [
             'items' => $blocksData,
         ];
@@ -69,20 +69,36 @@ class Blocks implements ResolverInterface
 
         return $args['identifiers'];
     }
-
+    
+    /**
+     * Get scope identifiers
+     *
+     * @param array $args
+     * @return string[]
+     * @throws GraphQlInputException
+     */
+	private function getScopeIdentifiers(array $args): array
+    {
+        if (!isset($args['scope_code']) || !is_array($args['scope_code']) || count($args['scope_code']) === 0) {
+            throw new GraphQlInputException(__('Scope Code of CMS blocks should be specified'));
+        }
+        return $args['scope_code'];
+    }
+    
     /**
      * Get blocks data
      *
      * @param array $blockIdentifiers
+     * @param string $scopeargs
      * @return array
      * @throws GraphQlNoSuchEntityException
      */
-    private function getBlocksData(array $blockIdentifiers): array
+    private function getBlocksData(array $blockIdentifiers,$scopeargs): array
     {
         $blocksData = [];
         foreach ($blockIdentifiers as $blockIdentifier) {
             try {
-                $blocksData[$blockIdentifier] = $this->blockDataProvider->getData($blockIdentifier);
+                $blocksData[$blockIdentifier] = $this->blockDataProvider->getData($blockIdentifier,$scopeargs);
             } catch (NoSuchEntityException $e) {
                 $blocksData[$blockIdentifier] = new GraphQlNoSuchEntityException(__($e->getMessage()), $e);
             }
