@@ -71,7 +71,7 @@ class Block
         	$store = $this->store->load($scopeargs,'code');
         	if(!$store->getId()){
         		throw new NoSuchEntityException(
-        				__('Store Does Not Exist')
+        				__('Store View Does Not Exist')
         		);
         	}
         	$block = $this->blockIdentifier->execute($blockIdentifier,(int)$store->getId());
