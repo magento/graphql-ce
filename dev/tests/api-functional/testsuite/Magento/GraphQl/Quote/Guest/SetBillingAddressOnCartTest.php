@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\GraphQl\Quote\Guest;
 
+use Exception;
 use Magento\GraphQl\Quote\GetMaskedQuoteIdByReservedOrderId;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\GraphQlAbstract;
@@ -52,7 +53,6 @@ mutation {
           postcode: "887766"
           country_code: "US"
           telephone: "88776655"
-          save_in_address_book: false
         }
       }
     }
@@ -110,7 +110,6 @@ mutation {
           postcode: "887766"
           country_code: "US"
           telephone: "88776655"
-          save_in_address_book: false
          }
          use_for_shipping: true
       }
@@ -186,7 +185,6 @@ mutation {
           postcode: "887766"
           country_code: "US"
           telephone: "88776655"
-          save_in_address_book: false
         }
       }
     }
@@ -212,7 +210,7 @@ QUERY;
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/guest/create_empty_cart.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/add_simple_product.php
      *
-     * @expectedException \Exception
+     * @expectedException Exception
      * @expectedExceptionMessage The current customer isn't authorized.
      */
     public function testSetBillingAddressFromAddressBook()
@@ -241,7 +239,7 @@ QUERY;
     }
 
     /**
-     * @expectedException \Exception
+     * @expectedException Exception
      * @expectedExceptionMessage Could not find a cart with ID "non_existent_masked_id"
      */
     public function testSetBillingAddressOnNonExistentCart()
@@ -263,7 +261,6 @@ mutation {
           postcode: "887766"
           country_code: "US"
           telephone: "88776655"
-          save_in_address_book: false
         }
       }
     }
@@ -287,7 +284,7 @@ QUERY;
      * @dataProvider dataProviderSetWithoutRequiredParameters
      * @param string $input
      * @param string $message
-     * @throws \Exception
+     * @throws Exception
      */
     public function testSetBillingAddressWithoutRequiredParameters(string $input, string $message)
     {
@@ -356,7 +353,6 @@ mutation {
           postcode: "887766"
           country_code: "US"
           telephone: "88776655"
-          save_in_address_book: false
         }
       }
     }
@@ -371,6 +367,50 @@ mutation {
 QUERY;
 
         self::expectExceptionMessage('"Street Address" cannot contain more than 2 lines.');
+        $this->graphQlMutation($query);
+    }
+
+    /**
+     * @magentoApiDataFixture Magento/GraphQl/Catalog/_files/simple_product.php
+     * @magentoApiDataFixture Magento/GraphQl/Quote/_files/guest/create_empty_cart.php
+     * @magentoApiDataFixture Magento/GraphQl/Quote/_files/add_simple_product.php
+     *
+     * @expectedException Exception
+     * @expectedExceptionMessage The current customer isn't authorized.
+     */
+    public function testSetNewBillingAddressWithSaveInAddressBook()
+    {
+        $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_quote');
+
+        $query = <<<QUERY
+mutation {
+  setBillingAddressOnCart(
+    input: {
+      cart_id: "$maskedQuoteId"
+      billing_address: {
+        address: {
+          firstname: "test firstname"
+          lastname: "test lastname"
+          company: "test company"
+          street: ["test street 1", "test street 2"]
+          city: "test city"
+          region: "test region"
+          postcode: "887766"
+          country_code: "US"
+          telephone: "88776655"
+          save_in_address_book: true
+        }
+      }
+    }
+  ) {
+    cart {
+      billing_address {
+        company
+      }
+    }
+  }
+}
+QUERY;
         $this->graphQlMutation($query);
     }
 

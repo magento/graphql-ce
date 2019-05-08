@@ -8,12 +8,15 @@ declare(strict_types=1);
 namespace Magento\QuoteGraphQl\Model\Cart;
 
 use Magento\CustomerGraphQl\Model\Customer\GetCustomer;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthenticationException;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
 use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Quote\Api\Data\CartInterface;
+use Magento\Quote\Model\Quote\Address;
+use Magento\QuoteGraphQl\Model\Cart\Address\SaveQuoteAddressToAddressBook;
 
 /**
  * Set billing address for a specified shopping cart
@@ -36,18 +39,27 @@ class SetBillingAddressOnCart
     private $assignBillingAddressToCart;
 
     /**
+     * @var SaveQuoteAddressToAddressBook
+     */
+    private $saveQuoteAddressToAddressBook;
+
+    /**
      * @param QuoteAddressFactory $quoteAddressFactory
      * @param GetCustomer $getCustomer
      * @param AssignBillingAddressToCart $assignBillingAddressToCart
+     * @param SaveQuoteAddressToAddressBook $saveQuoteAddressToAddressBook
      */
     public function __construct(
         QuoteAddressFactory $quoteAddressFactory,
         GetCustomer $getCustomer,
-        AssignBillingAddressToCart $assignBillingAddressToCart
+        AssignBillingAddressToCart $assignBillingAddressToCart,
+        SaveQuoteAddressToAddressBook $saveQuoteAddressToAddressBook = null
     ) {
         $this->quoteAddressFactory = $quoteAddressFactory;
         $this->getCustomer = $getCustomer;
         $this->assignBillingAddressToCart = $assignBillingAddressToCart;
+        $this->saveQuoteAddressToAddressBook = $saveQuoteAddressToAddressBook ??
+            ObjectManager::getInstance()->get(SaveQuoteAddressToAddressBook::class);
     }
 
     /**
@@ -90,14 +102,32 @@ class SetBillingAddressOnCart
 
         if (null === $customerAddressId) {
             $billingAddress = $this->quoteAddressFactory->createBasedOnInputData($addressInput);
+            if ($billingAddress->getSaveInAddressBook()) {
+                $customer = $this->getCustomer->execute($context);
+                $customerAddress = $this->saveQuoteAddressToAddressBook->execute($billingAddress, $customer);
+                $billingAddress = $this->getSavedBillingAddress($context, (int)$customerAddress->getId());
+            }
         } else {
-            $customer = $this->getCustomer->execute($context);
-            $billingAddress = $this->quoteAddressFactory->createBasedOnCustomerAddress(
-                (int)$customerAddressId,
-                (int)$customer->getId()
-            );
+            $billingAddress = $this->getSavedBillingAddress($context, (int)$customerAddressId);
         }
 
         $this->assignBillingAddressToCart->execute($cart, $billingAddress, $useForShipping);
+    }
+
+    /**
+     * Get Saved Billing Address
+     *
+     * @param ContextInterface $context
+     * @param $customerAddressId
+     * @return Address
+     */
+    private function getSavedBillingAddress(ContextInterface $context, int $customerAddressId): Address
+    {
+        $customer = $this->getCustomer->execute($context);
+        $billingAddress = $this->quoteAddressFactory->createBasedOnCustomerAddress(
+            $customerAddressId,
+            (int)$customer->getId()
+        );
+        return $billingAddress;
     }
 }
