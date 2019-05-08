@@ -179,9 +179,7 @@ class TokenUserContext implements UserContextInterface
         if (!$token->getId() || $token->getRevoked() || $this->isTokenExpired($token)) {
             $this->isRequestProcessed = true;
 
-            throw new \Magento\Framework\Exception\NoSuchEntityException(
-                            __('The current customer isn\'t authorized.')
-                        );
+            return;
         }
 
         $this->setUserDataViaToken($token);
