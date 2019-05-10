@@ -17,7 +17,6 @@ use Magento\Framework\GraphQl\Query\Resolver\Argument\SearchCriteria\SearchFilte
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Catalog\Model\Layer\Resolver;
-use Magento\Framework\Api\Search\SearchCriteriaInterface;
 
 /**
  * Products field resolver, used for GraphQL request processing.
@@ -82,10 +81,10 @@ class Products implements ResolverInterface
         } elseif (isset($args['search'])) {
             $layerType = Resolver::CATALOG_LAYER_SEARCH;
             $this->searchFilter->add($args['search'], $searchCriteria);
-            $searchResult = $this->getSearchResult($this->searchQuery, $searchCriteria, $info);
+            $searchResult = $this->searchQuery->getResult($searchCriteria, $info);
         } else {
             $layerType = Resolver::CATALOG_LAYER_CATEGORY;
-            $searchResult = $this->getSearchResult($this->filterQuery, $searchCriteria, $info);
+            $searchResult = $this->filterQuery->getResult($searchCriteria, $info);
         }
         //possible division by 0
         if ($searchCriteria->getPageSize()) {
@@ -117,26 +116,5 @@ class Products implements ResolverInterface
         ];
 
         return $data;
-    }
-
-    /**
-     * Get search result.
-     *
-     * @param Filter|Search $query
-     * @param SearchCriteriaInterface $searchCriteria
-     * @param ResolveInfo $info
-     *
-     * @return \Magento\CatalogGraphQl\Model\Resolver\Products\SearchResult
-     * @throws GraphQlInputException
-     */
-    private function getSearchResult($query, SearchCriteriaInterface $searchCriteria, ResolveInfo $info)
-    {
-        try {
-            $searchResult = $query->getResult($searchCriteria, $info);
-        } catch (InputException $e) {
-            throw new GraphQlInputException(__($e->getMessage()));
-        }
-
-        return $searchResult;
     }
 }
