@@ -3,18 +3,18 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
+declare(strict_types = 1);
 
-namespace Magento\GraphQl\Quote\Guest;
+namespace Magento\GraphQl\Checkout\Guest;
 
 use Magento\GraphQl\Quote\GetMaskedQuoteIdByReservedOrderId;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\GraphQlAbstract;
 
 /**
- * Test for getting cart information
+ * Test for get available shipping methods
  */
-class GetAvailablePaymentMethodsTest extends GraphQlAbstract
+class GetAvailableShippingMethodsTest extends GraphQlAbstract
 {
     /**
      * @var GetMaskedQuoteIdByReservedOrderId
@@ -31,22 +31,39 @@ class GetAvailablePaymentMethodsTest extends GraphQlAbstract
     }
 
     /**
+     * Test case: get available shipping methods from current customer quote
+     *
      * @magentoApiDataFixture Magento/GraphQl/Catalog/_files/simple_product.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/guest/create_empty_cart.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/add_simple_product.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/set_new_shipping_address.php
      */
-    public function testGetAvailablePaymentMethods()
+    public function testGetAvailableShippingMethods()
     {
         $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_quote');
-        $query = $this->getQuery($maskedQuoteId);
-        $response = $this->graphQlQuery($query);
+        $response = $this->graphQlQuery($this->getQuery($maskedQuoteId));
 
         self::assertArrayHasKey('cart', $response);
-        self::assertArrayHasKey('available_payment_methods', $response['cart']);
+        self::assertArrayHasKey('shipping_addresses', $response['cart']);
+        self::assertCount(1, $response['cart']['shipping_addresses']);
+        self::assertArrayHasKey('available_shipping_methods', $response['cart']['shipping_addresses'][0]);
+        self::assertCount(1, $response['cart']['shipping_addresses'][0]['available_shipping_methods']);
 
-        self::assertEquals('checkmo', $response['cart']['available_payment_methods'][0]['code']);
-        self::assertEquals('Check / Money order', $response['cart']['available_payment_methods'][0]['title']);
+        $expectedAddressData = [
+            'amount' => 10,
+            'base_amount' => 10,
+            'carrier_code' => 'flatrate',
+            'carrier_title' => 'Flat Rate',
+            'error_message' => '',
+            'method_code' => 'flatrate',
+            'method_title' => 'Fixed',
+            'price_incl_tax' => 10,
+            'price_excl_tax' => 10,
+        ];
+        self::assertEquals(
+            $expectedAddressData,
+            $response['cart']['shipping_addresses'][0]['available_shipping_methods'][0]
+        );
     }
 
     /**
@@ -57,43 +74,44 @@ class GetAvailablePaymentMethodsTest extends GraphQlAbstract
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/add_simple_product.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/set_new_shipping_address.php
      */
-    public function testGetAvailablePaymentMethodsFromCustomerCart()
+    public function testGetAvailableShippingMethodsFromCustomerCart()
     {
         $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_quote');
-        $query = $this->getQuery($maskedQuoteId);
 
         $this->expectExceptionMessage(
             "The current user cannot perform operations on cart \"$maskedQuoteId\""
         );
-        $this->graphQlQuery($query);
+        $this->graphQlQuery($this->getQuery($maskedQuoteId));
     }
 
     /**
+     * Test case: get available shipping methods when all shipping methods are disabled
+     *
      * @magentoApiDataFixture Magento/GraphQl/Catalog/_files/simple_product.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/guest/create_empty_cart.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/add_simple_product.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/set_new_shipping_address.php
-     * @magentoApiDataFixture Magento/GraphQl/Quote/_files/disable_all_active_payment_methods.php
+     * @magentoApiDataFixture Magento/GraphQl/Quote/_files/disable_offline_shipping_methods.php
      */
-    public function testGetAvailablePaymentMethodsIfPaymentsAreNotPresent()
+    public function testGetAvailableShippingMethodsIfShippingMethodsAreNotPresent()
     {
         $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_quote');
-        $query = $this->getQuery($maskedQuoteId);
-        $response = $this->graphQlQuery($query);
+        $response = $this->graphQlQuery($this->getQuery($maskedQuoteId));
 
-        self::assertArrayHasKey('cart', $response);
-        self::assertArrayHasKey('available_payment_methods', $response['cart']);
-        self::assertEmpty($response['cart']['available_payment_methods']);
+        self::assertEmpty($response['cart']['shipping_addresses'][0]['available_shipping_methods']);
     }
 
     /**
+     * Test case: get available shipping methods from non-existent cart
+     *
      * @expectedException \Exception
      * @expectedExceptionMessage Could not find a cart with ID "non_existent_masked_id"
      */
-    public function testGetAvailablePaymentMethodsOfNonExistentCart()
+    public function testGetAvailableShippingMethodsOfNonExistentCart()
     {
         $maskedQuoteId = 'non_existent_masked_id';
         $query = $this->getQuery($maskedQuoteId);
+
         $this->graphQlQuery($query);
     }
 
@@ -104,11 +122,20 @@ class GetAvailablePaymentMethodsTest extends GraphQlAbstract
     private function getQuery(string $maskedQuoteId): string
     {
         return <<<QUERY
-{
-  cart(cart_id: "$maskedQuoteId") {
-    available_payment_methods {
-      code
-      title
+query {
+  cart (cart_id: "{$maskedQuoteId}") {
+    shipping_addresses {
+        available_shipping_methods {
+          amount
+          base_amount
+          carrier_code
+          carrier_title
+          error_message
+          method_code
+          method_title
+          price_excl_tax
+          price_incl_tax
+        }
     }
   }
 }

@@ -3,18 +3,18 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types = 1);
+declare(strict_types=1);
 
-namespace Magento\GraphQl\Quote\Guest;
+namespace Magento\GraphQl\Checkout\Guest;
 
 use Magento\GraphQl\Quote\GetMaskedQuoteIdByReservedOrderId;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\GraphQlAbstract;
 
 /**
- * Test for get available shipping methods
+ * Test for getting cart information
  */
-class GetAvailableShippingMethodsTest extends GraphQlAbstract
+class GetAvailablePaymentMethodsTest extends GraphQlAbstract
 {
     /**
      * @var GetMaskedQuoteIdByReservedOrderId
@@ -31,39 +31,22 @@ class GetAvailableShippingMethodsTest extends GraphQlAbstract
     }
 
     /**
-     * Test case: get available shipping methods from current customer quote
-     *
      * @magentoApiDataFixture Magento/GraphQl/Catalog/_files/simple_product.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/guest/create_empty_cart.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/add_simple_product.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/set_new_shipping_address.php
      */
-    public function testGetAvailableShippingMethods()
+    public function testGetAvailablePaymentMethods()
     {
         $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_quote');
-        $response = $this->graphQlQuery($this->getQuery($maskedQuoteId));
+        $query = $this->getQuery($maskedQuoteId);
+        $response = $this->graphQlQuery($query);
 
         self::assertArrayHasKey('cart', $response);
-        self::assertArrayHasKey('shipping_addresses', $response['cart']);
-        self::assertCount(1, $response['cart']['shipping_addresses']);
-        self::assertArrayHasKey('available_shipping_methods', $response['cart']['shipping_addresses'][0]);
-        self::assertCount(1, $response['cart']['shipping_addresses'][0]['available_shipping_methods']);
+        self::assertArrayHasKey('available_payment_methods', $response['cart']);
 
-        $expectedAddressData = [
-            'amount' => 10,
-            'base_amount' => 10,
-            'carrier_code' => 'flatrate',
-            'carrier_title' => 'Flat Rate',
-            'error_message' => '',
-            'method_code' => 'flatrate',
-            'method_title' => 'Fixed',
-            'price_incl_tax' => 10,
-            'price_excl_tax' => 10,
-        ];
-        self::assertEquals(
-            $expectedAddressData,
-            $response['cart']['shipping_addresses'][0]['available_shipping_methods'][0]
-        );
+        self::assertEquals('checkmo', $response['cart']['available_payment_methods'][0]['code']);
+        self::assertEquals('Check / Money order', $response['cart']['available_payment_methods'][0]['title']);
     }
 
     /**
@@ -74,44 +57,43 @@ class GetAvailableShippingMethodsTest extends GraphQlAbstract
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/add_simple_product.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/set_new_shipping_address.php
      */
-    public function testGetAvailableShippingMethodsFromCustomerCart()
+    public function testGetAvailablePaymentMethodsFromCustomerCart()
     {
         $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_quote');
+        $query = $this->getQuery($maskedQuoteId);
 
         $this->expectExceptionMessage(
             "The current user cannot perform operations on cart \"$maskedQuoteId\""
         );
-        $this->graphQlQuery($this->getQuery($maskedQuoteId));
+        $this->graphQlQuery($query);
     }
 
     /**
-     * Test case: get available shipping methods when all shipping methods are disabled
-     *
      * @magentoApiDataFixture Magento/GraphQl/Catalog/_files/simple_product.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/guest/create_empty_cart.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/add_simple_product.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/set_new_shipping_address.php
-     * @magentoApiDataFixture Magento/GraphQl/Quote/_files/disable_offline_shipping_methods.php
+     * @magentoApiDataFixture Magento/GraphQl/Quote/_files/disable_all_active_payment_methods.php
      */
-    public function testGetAvailableShippingMethodsIfShippingMethodsAreNotPresent()
+    public function testGetAvailablePaymentMethodsIfPaymentsAreNotPresent()
     {
         $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_quote');
-        $response = $this->graphQlQuery($this->getQuery($maskedQuoteId));
+        $query = $this->getQuery($maskedQuoteId);
+        $response = $this->graphQlQuery($query);
 
-        self::assertEmpty($response['cart']['shipping_addresses'][0]['available_shipping_methods']);
+        self::assertArrayHasKey('cart', $response);
+        self::assertArrayHasKey('available_payment_methods', $response['cart']);
+        self::assertEmpty($response['cart']['available_payment_methods']);
     }
 
     /**
-     * Test case: get available shipping methods from non-existent cart
-     *
      * @expectedException \Exception
      * @expectedExceptionMessage Could not find a cart with ID "non_existent_masked_id"
      */
-    public function testGetAvailableShippingMethodsOfNonExistentCart()
+    public function testGetAvailablePaymentMethodsOfNonExistentCart()
     {
         $maskedQuoteId = 'non_existent_masked_id';
         $query = $this->getQuery($maskedQuoteId);
-
         $this->graphQlQuery($query);
     }
 
@@ -122,20 +104,11 @@ class GetAvailableShippingMethodsTest extends GraphQlAbstract
     private function getQuery(string $maskedQuoteId): string
     {
         return <<<QUERY
-query {
-  cart (cart_id: "{$maskedQuoteId}") {
-    shipping_addresses {
-        available_shipping_methods {
-          amount
-          base_amount
-          carrier_code
-          carrier_title
-          error_message
-          method_code
-          method_title
-          price_excl_tax
-          price_incl_tax
-        }
+{
+  cart(cart_id: "$maskedQuoteId") {
+    available_payment_methods {
+      code
+      title
     }
   }
 }
