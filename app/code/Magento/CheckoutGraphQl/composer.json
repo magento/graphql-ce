@@ -1,5 +1,5 @@
 {
-    "name": "magento/module-quote-graph-ql",
+    "name": "magento/module-checkout-graph-ql",
     "description": "N/A",
     "type": "magento2-module",
     "require": {
@@ -10,7 +10,9 @@
         "magento/module-catalog": "*",
         "magento/module-store": "*",
         "magento/module-customer": "*",
-        "magento/module-customer-graph-ql": "*"
+        "magento/module-customer-graph-ql": "*",
+        "magento/module-quote-graph-ql": "*",
+        "magento/module-sales": "*"
     },
     "suggest": {
         "magento/module-graph-ql": "*"
@@ -24,7 +26,7 @@
             "registration.php"
         ],
         "psr-4": {
-            "Magento\\QuoteGraphQl\\": ""
+            "Magento\\CheckoutGraphQl\\": ""
         }
     }
 }

@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\QuoteGraphQl\Model\Cart;
+namespace Magento\CheckoutGraphQl\Model\Cart;
 
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -13,43 +13,41 @@ use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
 use Magento\Quote\Api\Data\AddressInterface;
 use Magento\Quote\Api\Data\CartInterface;
-use Magento\Quote\Api\BillingAddressManagementInterface;
+use Magento\Quote\Model\ShippingAddressManagementInterface;
 
 /**
- * Set billing address for a specified shopping cart
+ * Assign shipping address to cart
  */
-class AssignBillingAddressToCart
+class AssignShippingAddressToCart
 {
     /**
-     * @var BillingAddressManagementInterface
+     * @var ShippingAddressManagementInterface
      */
-    private $billingAddressManagement;
+    private $shippingAddressManagement;
 
     /**
-     * @param BillingAddressManagementInterface $billingAddressManagement
+     * @param ShippingAddressManagementInterface $shippingAddressManagement
      */
     public function __construct(
-        BillingAddressManagementInterface $billingAddressManagement
+        ShippingAddressManagementInterface $shippingAddressManagement
     ) {
-        $this->billingAddressManagement = $billingAddressManagement;
+        $this->shippingAddressManagement = $shippingAddressManagement;
     }
 
     /**
-     * Assign billing address to cart
+     * Assign shipping address to cart
      *
      * @param CartInterface $cart
-     * @param AddressInterface $billingAddress
-     * @param bool $useForShipping
+     * @param AddressInterface $shippingAddress
      * @throws GraphQlInputException
      * @throws GraphQlNoSuchEntityException
      */
     public function execute(
         CartInterface $cart,
-        AddressInterface $billingAddress,
-        bool $useForShipping
+        AddressInterface $shippingAddress
     ): void {
         try {
-            $this->billingAddressManagement->assign($cart->getId(), $billingAddress, $useForShipping);
+            $this->shippingAddressManagement->assign($cart->getId(), $shippingAddress);
         } catch (NoSuchEntityException $e) {
             throw new GraphQlNoSuchEntityException(__($e->getMessage()), $e);
         } catch (LocalizedException $e) {

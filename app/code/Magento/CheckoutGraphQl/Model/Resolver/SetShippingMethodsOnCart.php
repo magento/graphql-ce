@@ -5,19 +5,19 @@
  */
 declare(strict_types=1);
 
-namespace Magento\QuoteGraphQl\Model\Resolver;
+namespace Magento\CheckoutGraphQl\Model\Resolver;
 
-use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
+use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\QuoteGraphQl\Model\Cart\GetCartForUser;
-use Magento\QuoteGraphQl\Model\Cart\SetBillingAddressOnCart as SetBillingAddressOnCartModel;
+use Magento\CheckoutGraphQl\Model\Cart\SetShippingMethodsOnCartInterface;
 
 /**
- * Mutation resolver for setting billing address for shopping cart
+ * Mutation resolver for setting shipping methods for shopping cart
  */
-class SetBillingAddressOnCart implements ResolverInterface
+class SetShippingMethodsOnCart implements ResolverInterface
 {
     /**
      * @var GetCartForUser
@@ -25,20 +25,20 @@ class SetBillingAddressOnCart implements ResolverInterface
     private $getCartForUser;
 
     /**
-     * @var SetBillingAddressOnCartModel
+     * @var SetShippingMethodsOnCartInterface
      */
-    private $setBillingAddressOnCart;
+    private $setShippingMethodsOnCart;
 
     /**
      * @param GetCartForUser $getCartForUser
-     * @param SetBillingAddressOnCartModel $setBillingAddressOnCart
+     * @param SetShippingMethodsOnCartInterface $setShippingMethodsOnCart
      */
     public function __construct(
         GetCartForUser $getCartForUser,
-        SetBillingAddressOnCartModel $setBillingAddressOnCart
+        SetShippingMethodsOnCartInterface $setShippingMethodsOnCart
     ) {
         $this->getCartForUser = $getCartForUser;
-        $this->setBillingAddressOnCart = $setBillingAddressOnCart;
+        $this->setShippingMethodsOnCart = $setShippingMethodsOnCart;
     }
 
     /**
@@ -51,13 +51,13 @@ class SetBillingAddressOnCart implements ResolverInterface
         }
         $maskedCartId = $args['input']['cart_id'];
 
-        if (!isset($args['input']['billing_address']) || empty($args['input']['billing_address'])) {
-            throw new GraphQlInputException(__('Required parameter "billing_address" is missing'));
+        if (!isset($args['input']['shipping_methods']) || empty($args['input']['shipping_methods'])) {
+            throw new GraphQlInputException(__('Required parameter "shipping_methods" is missing'));
         }
-        $billingAddress = $args['input']['billing_address'];
+        $shippingMethods = $args['input']['shipping_methods'];
 
         $cart = $this->getCartForUser->execute($maskedCartId, $context->getUserId());
-        $this->setBillingAddressOnCart->execute($context, $cart, $billingAddress);
+        $this->setShippingMethodsOnCart->execute($context, $cart, $shippingMethods);
 
         return [
             'cart' => [

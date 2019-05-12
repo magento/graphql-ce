@@ -5,14 +5,14 @@
  */
 declare(strict_types=1);
 
-namespace Magento\QuoteGraphQl\Model\Resolver;
+namespace Magento\CheckoutGraphQl\Model\Resolver;
 
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\QuoteGraphQl\Model\Cart\GetCartForUser;
-use Magento\QuoteGraphQl\Model\Cart\SetShippingAddressesOnCartInterface;
+use Magento\CheckoutGraphQl\Model\Cart\SetShippingAddressesOnCartInterface;
 
 /**
  * Mutation resolver for setting shipping addresses for shopping cart

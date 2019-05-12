@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\QuoteGraphQl\Model\Resolver\ShippingAddress;
+namespace Magento\CheckoutGraphQl\Model\Resolver;
 
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Config\Element\Field;
@@ -15,7 +15,7 @@ use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 /**
  * @inheritdoc
  */
-class SelectedShippingMethod implements ResolverInterface
+class SelectedPaymentMethod implements ResolverInterface
 {
     /**
      * @inheritdoc
@@ -26,18 +26,17 @@ class SelectedShippingMethod implements ResolverInterface
             throw new LocalizedException(__('"model" value should be specified'));
         }
 
-        $address = $value['model'];
+        /** @var \Magento\Quote\Model\Quote $cart */
+        $cart = $value['model'];
 
-        if ($address->getShippingMethod()) {
-            list($carrierCode, $methodCode) = explode('_', $address->getShippingMethod(), 2);
-            $shippingAmount = $address->getShippingAmount();
+        $payment = $cart->getPayment();
+        if (!$payment) {
+            return [];
         }
 
         return [
-            'carrier_code' => $carrierCode ?? null,
-            'method_code' => $methodCode ?? null,
-            'label' => $address->getShippingDescription(),
-            'amount' => $shippingAmount ?? null,
+            'code' => $payment->getMethod(),
+            'purchase_order_number' => $payment->getPoNumber(),
         ];
     }
 }
