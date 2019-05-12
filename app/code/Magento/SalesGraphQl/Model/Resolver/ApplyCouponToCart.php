@@ -5,9 +5,9 @@
  */
 declare(strict_types=1);
 
-namespace Magento\QuoteGraphQl\Model\Resolver;
+namespace Magento\SalesGraphQl\Model\Resolver;
 
-use Magento\Framework\Exception\CouldNotDeleteException;
+use Magento\Framework\Exception\CouldNotSaveException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\GraphQl\Config\Element\Field;
@@ -21,7 +21,7 @@ use Magento\QuoteGraphQl\Model\Cart\GetCartForUser;
 /**
  * @inheritdoc
  */
-class RemoveCouponFromCart implements ResolverInterface
+class ApplyCouponToCart implements ResolverInterface
 {
     /**
      * @var GetCartForUser
@@ -55,19 +55,32 @@ class RemoveCouponFromCart implements ResolverInterface
         }
         $maskedCartId = $args['input']['cart_id'];
 
+        if (!isset($args['input']['coupon_code']) || empty($args['input']['coupon_code'])) {
+            throw new GraphQlInputException(__('Required parameter "coupon_code" is missing'));
+        }
+        $couponCode = $args['input']['coupon_code'];
+
         $currentUserId = $context->getUserId();
         $cart = $this->getCartForUser->execute($maskedCartId, $currentUserId);
         $cartId = $cart->getId();
 
+        /* Check current cart does not have coupon code applied */
+        $appliedCouponCode = $this->couponManagement->get($cartId);
+        if (!empty($appliedCouponCode)) {
+            throw new GraphQlInputException(
+                __('A coupon is already applied to the cart. Please remove it to apply another')
+            );
+        }
+
         try {
-            $this->couponManagement->remove($cartId);
+            $this->couponManagement->set($cartId, $couponCode);
         } catch (NoSuchEntityException $e) {
             $message = $e->getMessage();
             if (preg_match('/The "\d+" Cart doesn\'t contain products/', $message)) {
-                $message = 'Cart does not contain products';
+                $message = 'Cart does not contain products.';
             }
             throw new GraphQlNoSuchEntityException(__($message), $e);
-        } catch (CouldNotDeleteException $e) {
+        } catch (CouldNotSaveException $e) {
             throw new LocalizedException(__($e->getMessage()), $e);
         }
 

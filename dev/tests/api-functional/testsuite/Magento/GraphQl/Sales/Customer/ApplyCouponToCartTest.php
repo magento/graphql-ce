@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\GraphQl\Quote\Customer;
+namespace Magento\GraphQl\Sales\Customer;
 
 use Magento\Framework\Exception\AuthenticationException;
 use Magento\GraphQl\Quote\GetMaskedQuoteIdByReservedOrderId;

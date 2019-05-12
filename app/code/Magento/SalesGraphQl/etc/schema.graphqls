@@ -5,6 +5,24 @@ type Query {
     customerOrders: CustomerOrders @resolver(class: "Magento\\SalesGraphQl\\Model\\Resolver\\Orders") @doc(description: "List of customer orders") @cache(cacheable: false)
 }
 
+type Mutation {
+    applyCouponToCart(input: ApplyCouponToCartInput): ApplyCouponToCartOutput @resolver(class: "\\Magento\\SalesGraphQl\\Model\\Resolver\\ApplyCouponToCart")
+    removeCouponFromCart(input: RemoveCouponFromCartInput): RemoveCouponFromCartOutput @resolver(class: "\\Magento\\SalesGraphQl\\Model\\Resolver\\RemoveCouponFromCart")
+}
+
+type Cart {
+    applied_coupon: AppliedCoupon @resolver(class: "\\Magento\\SalesGraphQl\\Model\\Resolver\\AppliedCoupon")
+}
+
+input ApplyCouponToCartInput {
+    cart_id: String!
+    coupon_code: String!
+}
+
+input RemoveCouponFromCartInput {
+    cart_id: String!
+}
+
 type CustomerOrder @doc(description: "Order mapping fields") {
     id: Int
     increment_id: String
@@ -13,6 +31,14 @@ type CustomerOrder @doc(description: "Order mapping fields") {
     status: String
 }
 
+type RemoveCouponFromCartOutput {
+    cart: Cart
+}
+
 type CustomerOrders {
     items: [CustomerOrder] @doc(description: "Array of orders")
+}
+
+type ApplyCouponToCartOutput {
+    cart: Cart!
 }
