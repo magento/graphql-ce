@@ -18,24 +18,16 @@ use Magento\QuoteGraphQl\Model\Cart\GetQuoteAddress;
 class SetShippingMethodsOnCart implements SetShippingMethodsOnCartInterface
 {
     /**
-     * @var GetQuoteAddress
-     */
-    private $getQuoteAddress;
-
-    /**
      * @var AssignShippingMethodToCart
      */
     private $assignShippingMethodToCart;
 
     /**
-     * @param GetQuoteAddress $getQuoteAddress
      * @param AssignShippingMethodToCart $assignShippingMethodToCart
      */
     public function __construct(
-        GetQuoteAddress $getQuoteAddress,
         AssignShippingMethodToCart $assignShippingMethodToCart
     ) {
-        $this->getQuoteAddress = $getQuoteAddress;
         $this->assignShippingMethodToCart = $assignShippingMethodToCart;
     }
 
@@ -51,11 +43,6 @@ class SetShippingMethodsOnCart implements SetShippingMethodsOnCartInterface
         }
         $shippingMethodInput = current($shippingMethodsInput);
 
-        if (!isset($shippingMethodInput['cart_address_id']) || empty($shippingMethodInput['cart_address_id'])) {
-            throw new GraphQlInputException(__('Required parameter "cart_address_id" is missing.'));
-        }
-        $cartAddressId = $shippingMethodInput['cart_address_id'];
-
         if (!isset($shippingMethodInput['carrier_code']) || empty($shippingMethodInput['carrier_code'])) {
             throw new GraphQlInputException(__('Required parameter "carrier_code" is missing.'));
         }
@@ -66,7 +53,7 @@ class SetShippingMethodsOnCart implements SetShippingMethodsOnCartInterface
         }
         $methodCode = $shippingMethodInput['method_code'];
 
-        $quoteAddress = $this->getQuoteAddress->execute($cart, $cartAddressId, $context->getUserId());
-        $this->assignShippingMethodToCart->execute($cart, $quoteAddress, $carrierCode, $methodCode);
+        $shippingAddress = $cart->getShippingAddress();
+        $this->assignShippingMethodToCart->execute($cart, $shippingAddress, $carrierCode, $methodCode);
     }
 }

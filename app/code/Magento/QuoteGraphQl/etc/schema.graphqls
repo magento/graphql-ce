@@ -2,7 +2,7 @@
 # See COPYING.txt for license details.
 
 type Query {
-    cart(cart_id: String!): Cart @resolver (class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\Cart") @doc(description:"Returns information about shopping cart")
+    cart(cart_id: String!): Cart @resolver (class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\Cart") @doc(description:"Returns information about shopping cart") @cache(cacheable: false)
 }
 
 type Mutation {
@@ -21,7 +21,7 @@ input createEmptyCartInput {
 
 input AddSimpleProductsToCartInput {
     cart_id: String!
-    cartItems: [SimpleProductCartItemInput!]!
+    cart_items: [SimpleProductCartItemInput!]!
 }
 
 input SimpleProductCartItemInput {
@@ -31,7 +31,7 @@ input SimpleProductCartItemInput {
 
 input AddVirtualProductsToCartInput {
     cart_id: String!
-    cartItems: [VirtualProductCartItemInput!]!
+    cart_items: [VirtualProductCartItemInput!]!
 }
 
 input VirtualProductCartItemInput {
@@ -41,12 +41,12 @@ input VirtualProductCartItemInput {
 
 input CartItemInput {
     sku: String!
-    qty: Float!
+    quantity: Float!
 }
 
 input CustomizableOptionInput {
     id: Int!
-    value: String!
+    value_string: String!
 }
 
 input ApplyCouponToCartInput {
@@ -61,10 +61,10 @@ type ApplyCouponToCartOutput {
 
 input UpdateCartItemsInput {
     cart_id: String!
-    cart_items: [CartItemQuantityInput!]!
+    cart_items: [CartItemUpdateInput!]!
 }
 
-input CartItemQuantityInput {
+input CartItemUpdateInput {
     cart_item_id: Int!
     quantity: Float!
 }
@@ -74,6 +74,68 @@ input RemoveItemFromCartInput {
     cart_item_id: Int!
 }
 
+input SetShippingAddressesOnCartInput {
+    cart_id: String!
+    shipping_addresses: [ShippingAddressInput!]!
+}
+
+input ShippingAddressInput {
+    customer_address_id: Int # If provided then will be used address from address book
+    address: CartAddressInput
+}
+
+input SetBillingAddressOnCartInput {
+    cart_id: String!
+    billing_address: BillingAddressInput!
+}
+
+input BillingAddressInput {
+    customer_address_id: Int
+    address: CartAddressInput
+    use_for_shipping: Boolean
+}
+
+input CartAddressInput {
+    firstname: String!
+    lastname: String!
+    company: String
+    street: [String!]!
+    city: String!
+    region: String
+    postcode: String
+    country_code: String!
+    telephone: String!
+    save_in_address_book: Boolean!
+}
+
+input SetShippingMethodsOnCartInput {
+    cart_id: String!
+    shipping_methods: [ShippingMethodInput!]!
+}
+
+input ShippingMethodInput {
+    carrier_code: String!
+    method_code: String!
+}
+
+input PlaceOrderInput {
+    cart_id: String!
+}
+
+input SetPaymentMethodOnCartInput {
+    cart_id: String!
+    payment_method: PaymentMethodInput!
+}
+
+input PaymentMethodInput {
+    code: String! @doc(description:"Payment method code")
+    purchase_order_number: String @doc(description:"Purchase order number")
+}
+
+input SetGuestEmailOnCartInput {
+    cart_id: String!
+    email: String!
+}
 
 type CartPrices {
     grand_total: Money
@@ -95,6 +157,29 @@ type Cart {
     prices: CartPrices @resolver(class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\CartPrices")
 }
 
+interface CartAddressInterface @typeResolver(class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\CartAddressTypeResolver") {
+    firstname: String
+    lastname: String
+    company: String
+    street: [String]
+    city: String
+    region: CartAddressRegion
+    postcode: String
+    country: CartAddressCountry
+    telephone: String
+    customer_notes: String
+}
+
+type ShippingCartAddress implements CartAddressInterface {
+    available_shipping_methods: [AvailableShippingMethod] @resolver(class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\ShippingAddress\\AvailableShippingMethods")
+    selected_shipping_method: SelectedShippingMethod @resolver(class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\ShippingAddress\\SelectedShippingMethod")
+    items_weight: Float
+    cart_items: [CartItemQuantity]
+}
+
+type BillingCartAddress implements CartAddressInterface {
+}
+
 type CartItemQuantity {
     cart_item_id: Int!
     quantity: Float!
@@ -110,9 +195,37 @@ type CartAddressCountry {
     label: String
 }
 
-enum AddressTypeEnum {
-    SHIPPING
-    BILLING
+type SelectedShippingMethod {
+    carrier_code: String
+    method_code: String
+    carrier_title: String
+    method_title: String
+    amount: Money
+    base_amount: Money
+}
+
+type AvailableShippingMethod {
+    carrier_code: String!
+    carrier_title: String!
+    method_code: String @doc(description: "Could be null if method is not available")
+    method_title: String @doc(description: "Could be null if method is not available")
+    error_message: String
+    amount: Money!
+    base_amount: Money @doc(description: "Could be null if method is not available")
+    price_excl_tax: Money!
+    price_incl_tax: Money!
+    available: Boolean!
+}
+
+type AvailablePaymentMethod {
+    code: String! @doc(description: "The payment method code")
+    title: String! @doc(description: "The payment method title.")
+}
+
+type SelectedPaymentMethod {
+    code: String! @doc(description: "The payment method code")
+    title: String! @doc(description: "The payment method title.")
+    purchase_order_number: String @doc(description: "The purchase order number.")
 }
 
 type AppliedCoupon {
@@ -153,15 +266,14 @@ type VirtualCartItem implements CartItemInterface @doc(description: "Virtual Car
 
 interface CartItemInterface @typeResolver(class: "Magento\\QuoteGraphQl\\Model\\Resolver\\CartItemTypeResolver") {
     id: String!
-    qty: Float!
+    quantity: Float!
     product: ProductInterface!
 }
 
 type SelectedCustomizableOption {
     id: Int!
     label: String!
-    type: String!
-    is_required: Int!
+    is_required: Boolean!
     values: [SelectedCustomizableOptionValue!]!
     sort_order: Int!
 }
@@ -169,9 +281,8 @@ type SelectedCustomizableOption {
 type SelectedCustomizableOptionValue {
     id: Int!
     label: String!
-    value: String!
+    value: String
     price: CartItemSelectedOptionValuePrice!
-    sort_order: Int!
 }
 
 type CartItemSelectedOptionValuePrice {
