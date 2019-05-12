@@ -13,7 +13,6 @@ type Mutation {
     removeCouponFromCart(input: RemoveCouponFromCartInput): RemoveCouponFromCartOutput @resolver(class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\RemoveCouponFromCart")
     updateCartItems(input: UpdateCartItemsInput): UpdateCartItemsOutput @resolver(class: "Magento\\QuoteGraphQl\\Model\\Resolver\\UpdateCartItems")
     removeItemFromCart(input: RemoveItemFromCartInput): RemoveItemFromCartOutput @resolver(class: "Magento\\QuoteGraphQl\\Model\\Resolver\\RemoveItemFromCart")
-    setGuestEmailOnCart(input: SetGuestEmailOnCartInput): SetGuestEmailOnCartOutput @resolver(class: "Magento\\QuoteGraphQl\\Model\\Resolver\\SetGuestEmailOnCart")
 }
 
 input createEmptyCartInput {
@@ -75,10 +74,6 @@ input RemoveItemFromCartInput {
     cart_item_id: Int!
 }
 
-input SetGuestEmailOnCartInput {
-    cart_id: String!
-    email: String!
-}
 
 type CartPrices {
     grand_total: Money
@@ -145,10 +140,6 @@ type UpdateCartItemsOutput {
 }
 
 type RemoveItemFromCartOutput {
-    cart: Cart!
-}
-
-type SetGuestEmailOnCartOutput {
     cart: Cart!
 }
 

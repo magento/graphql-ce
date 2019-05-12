@@ -4,6 +4,7 @@ type Mutation {
     setShippingMethodsOnCart(input: SetShippingMethodsOnCartInput): SetShippingMethodsOnCartOutput @resolver(class: "\\Magento\\CheckoutGraphQl\\Model\\Resolver\\SetShippingMethodsOnCart")
     setPaymentMethodOnCart(input: SetPaymentMethodOnCartInput): SetPaymentMethodOnCartOutput @resolver(class: "Magento\\CheckoutGraphQl\\Model\\Resolver\\SetPaymentMethodOnCart")
     placeOrder(input: PlaceOrderInput): PlaceOrderOutput @resolver(class: "\\Magento\\CheckoutGraphQl\\Model\\Resolver\\PlaceOrder")
+    setGuestEmailOnCart(input: SetGuestEmailOnCartInput): SetGuestEmailOnCartOutput @resolver(class: "Magento\\CheckoutGraphQl\\Model\\Resolver\\SetGuestEmailOnCart")
 }
 
 type Cart {
@@ -30,6 +31,15 @@ type CartAddress {
     items_weight: Float
     customer_notes: String
     cart_items: [CartItemQuantity]
+}
+
+input SetGuestEmailOnCartInput {
+    cart_id: String!
+    email: String!
+}
+
+type SetGuestEmailOnCartOutput {
+    cart: Cart!
 }
 
 input SetShippingAddressesOnCartInput {
