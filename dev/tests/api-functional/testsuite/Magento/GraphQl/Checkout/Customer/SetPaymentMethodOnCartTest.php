@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\GraphQl\Quote\Customer;
+namespace Magento\GraphQl\Checkout\Customer;
 
 use Exception;
 use Magento\GraphQl\Quote\GetMaskedQuoteIdByReservedOrderId;
