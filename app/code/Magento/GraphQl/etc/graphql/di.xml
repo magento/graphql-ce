@@ -30,6 +30,7 @@
             <argument name="requestValidators" xsi:type="array">
                 <item name="ContentTypeValidator" xsi:type="object">Magento\GraphQl\Controller\HttpRequestValidator\ContentTypeValidator</item>
                 <item name="VerbValidator" xsi:type="object">Magento\GraphQl\Controller\HttpRequestValidator\HttpVerbValidator</item>
+                <item name="ContentAccessValidator" xsi:type="object">Magento\GraphQl\Controller\HttpAccessValidator\ContentAccessValidator</item>
             </argument>
         </arguments>
     </type>
