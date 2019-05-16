@@ -7,19 +7,33 @@ declare(strict_types=1);
 
 namespace Magento\QuoteGraphQl\Model\Cart;
 
+use Magento\CustomerGraphQl\Model\Customer\GetCustomer;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\GraphQl\Exception\GraphQlAuthenticationException;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
+use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Model\MaskedQuoteIdToQuoteIdInterface;
 use Magento\Quote\Model\Quote;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 
 /**
  * Get cart
  */
 class GetCartForUser
 {
+    /**
+     * @var ContextInterface
+     */
+    private $context;
+
+    /**
+     * @var GetCustomer
+     */
+    private $getCustomer;
+
     /**
      * @var MaskedQuoteIdToQuoteIdInterface
      */
@@ -43,11 +57,15 @@ class GetCartForUser
     public function __construct(
         MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId,
         CartRepositoryInterface $cartRepository,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface $storeManager,
+        GetCustomer $getCustomer,
+        ContextInterface $context
     ) {
         $this->maskedQuoteIdToQuoteId = $maskedQuoteIdToQuoteId;
         $this->cartRepository = $cartRepository;
         $this->storeManager = $storeManager;
+        $this->getCustomer = $getCustomer;
+        $this->context = $context;
     }
 
     /**
@@ -58,6 +76,9 @@ class GetCartForUser
      * @return Quote
      * @throws GraphQlAuthorizationException
      * @throws GraphQlNoSuchEntityException
+     * @throws NoSuchEntityException
+     * @throws GraphQlAuthenticationException
+     * @throws GraphQlInputException
      */
     public function execute(string $cartHash, ?int $customerId): Quote
     {
@@ -108,6 +129,10 @@ class GetCartForUser
                 )
             );
         }
+
+        /* verify customer is confirmed and not locked  */
+        $this->getCustomer->execute($this->context);
+
         return $cart;
     }
 }
