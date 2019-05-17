@@ -60,7 +60,7 @@ class Products implements ResolverInterface
 
         $layerType = null;
         foreach (array_reverse($this->queries) as $key => $query) {
-            if (isset($args[$key])) {
+            if (isset($args[$key]) && !empty($args[$key])) {
                 $layerType = $query->getLayerType();
                 $searchResult = $this->getSearchResult($query, $searchCriteria, $info, $args);
                 break;
