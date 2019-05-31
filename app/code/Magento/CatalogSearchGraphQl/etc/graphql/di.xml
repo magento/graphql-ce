@@ -13,4 +13,6 @@
             </argument>
         </arguments>
     </type>
+    <preference for="Magento\Framework\Search\Adapter\Mysql\Query\Builder\Match"
+                type="Magento\CatalogSearchGraphQl\Model\Search\Adapter\Mysql\Query\Builder\Match" />
 </config>

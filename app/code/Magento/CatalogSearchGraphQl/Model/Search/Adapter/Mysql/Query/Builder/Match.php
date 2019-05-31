@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\CatalogGraphQl\Model\Search\Adapter\Mysql\Query\Builder;
+namespace Magento\CatalogSearchGraphQl\Model\Search\Adapter\Mysql\Query\Builder;
 
 use Magento\Framework\DB\Helper\Mysql\Fulltext;
 use Magento\Framework\Search\Adapter\Mysql\Field\ResolverInterface;
