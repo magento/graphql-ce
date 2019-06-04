@@ -381,8 +381,9 @@ QUERY;
 }
 QUERY;
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('GraphQL response contains errors: currentPage value 2 specified is greater ' .
-            'than the 1 page(s) available');
+        $this->expectExceptionMessage(
+            'GraphQL response contains errors: currentPage value 2 specified is greater than the 1 page(s) available'
+        );
         $this->graphQlQuery($query);
     }
 
@@ -1043,8 +1044,9 @@ QUERY;
 QUERY;
 
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('GraphQL response contains errors: currentPage value 2 specified is greater ' .
-            'than the 1 page(s) available.');
+        $this->expectExceptionMessage(
+            'GraphQL response contains errors: currentPage value 2 specified is greater than the 1 page(s) available.'
+        );
         $this->graphQlQuery($query);
     }
 

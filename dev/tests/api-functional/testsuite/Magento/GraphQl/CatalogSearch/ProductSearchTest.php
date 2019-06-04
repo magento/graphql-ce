@@ -9,6 +9,9 @@ namespace Magento\GraphQl\CatalogSearch;
 
 use Magento\TestFramework\TestCase\GraphQlAbstract;
 
+/**
+ * Test for catalog search related queries
+ */
 class ProductSearchTest extends GraphQlAbstract
 {
     /**

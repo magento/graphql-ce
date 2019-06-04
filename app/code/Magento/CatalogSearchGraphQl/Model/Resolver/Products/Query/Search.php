@@ -149,6 +149,9 @@ class Search implements \Magento\CatalogGraphQl\Model\Resolver\Products\Query\Qu
         return $this->searchResultFactory->create($searchResult->getTotalCount(), $products);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getLayerType(): string
     {
         return \Magento\Catalog\Model\Layer\Resolver::CATALOG_LAYER_SEARCH;

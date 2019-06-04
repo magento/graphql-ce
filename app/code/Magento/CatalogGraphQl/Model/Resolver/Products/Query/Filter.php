@@ -84,6 +84,9 @@ class Filter implements QueryInterface
         return $this->searchResultFactory->create($products->getTotalCount(), $productArray);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getLayerType(): string
     {
         return \Magento\Catalog\Model\Layer\Resolver::CATALOG_LAYER_CATEGORY;

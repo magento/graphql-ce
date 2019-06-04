@@ -67,7 +67,7 @@ class Products implements ResolverInterface
             }
         }
 
-        if (is_null($layerType)) {
+        if ($layerType === null) {
             throw new GraphQlInputException(
                 __("%1 input argument is required.", implode(' or ', array_keys($this->queries)))
             );

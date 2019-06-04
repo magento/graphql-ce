@@ -16,6 +16,14 @@ use Magento\CatalogGraphQl\Model\Resolver\Products\SearchResult;
  */
 interface QueryInterface
 {
+    /**
+     * Get search results for a given resolver input
+     * @param SearchCriteriaInterface $searchCriteria
+     * @param ResolveInfo $info
+     * @param array $arguments
+     * @param bool $isSearch
+     * @return SearchResult
+     */
     public function getResult(
         SearchCriteriaInterface $searchCriteria,
         ResolveInfo $info,
@@ -23,5 +31,9 @@ interface QueryInterface
         bool $isSearch = false
     ): SearchResult;
 
+    /**
+     * Get layer type of query for generating query filters
+     * @return string
+     */
     public function getLayerType(): string;
 }
