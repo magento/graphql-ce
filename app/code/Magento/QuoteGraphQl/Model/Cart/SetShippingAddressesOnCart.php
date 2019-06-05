@@ -103,7 +103,7 @@ class SetShippingAddressesOnCart implements SetShippingAddressesOnCartInterface
      * Get Saved Shipping Address
      *
      * @param ContextInterface $context
-     * @param $customerAddressId
+     * @param int $customerAddressId
      * @return Address
      */
     private function getSavedShippingAddress(ContextInterface $context, int $customerAddressId): Address

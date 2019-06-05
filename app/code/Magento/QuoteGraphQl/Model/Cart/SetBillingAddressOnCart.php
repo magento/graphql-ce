@@ -100,25 +100,43 @@ class SetBillingAddressOnCart
             );
         }
 
+        $billingAddress = $this->getBillingAddress($context, $customerAddressId, $addressInput);
+        $this->assignBillingAddressToCart->execute($cart, $billingAddress, $useForShipping);
+    }
+
+    /**
+     * Get Billing Address Based on Customer Input
+     *
+     * @param ContextInterface $context
+     * @param $customerAddressId
+     * @param $addressInput
+     * @return Address
+     * @throws GraphQlAuthenticationException
+     * @throws GraphQlAuthorizationException
+     * @throws GraphQlInputException
+     * @throws GraphQlNoSuchEntityException
+     */
+    private function getBillingAddress(ContextInterface $context, $customerAddressId, $addressInput): Address
+    {
         if (null === $customerAddressId) {
             $billingAddress = $this->quoteAddressFactory->createBasedOnInputData($addressInput);
-            if ($billingAddress->getSaveInAddressBook()) {
-                $customer = $this->getCustomer->execute($context);
-                $customerAddress = $this->saveQuoteAddressToAddressBook->execute($billingAddress, $customer);
-                $billingAddress = $this->getSavedBillingAddress($context, (int)$customerAddress->getId());
+            if (!$billingAddress->getSaveInAddressBook()) {
+                return $billingAddress;
             }
-        } else {
-            $billingAddress = $this->getSavedBillingAddress($context, (int)$customerAddressId);
+            $customer = $this->getCustomer->execute($context);
+            $customerAddress = $this->saveQuoteAddressToAddressBook->execute($billingAddress, $customer);
+
+            return $this->getSavedBillingAddress($context, (int)$customerAddress->getId());
         }
 
-        $this->assignBillingAddressToCart->execute($cart, $billingAddress, $useForShipping);
+        return $this->getSavedBillingAddress($context, (int)$customerAddressId);
     }
 
     /**
      * Get Saved Billing Address
      *
      * @param ContextInterface $context
-     * @param $customerAddressId
+     * @param int $customerAddressId
      * @return Address
      */
     private function getSavedBillingAddress(ContextInterface $context, int $customerAddressId): Address
