@@ -11,7 +11,6 @@ use Magento\Framework\GraphQl\Exception\GraphQlAuthenticationException;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
-use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Quote\Api\Data\CartInterface;
 
 /**
@@ -25,7 +24,6 @@ interface SetShippingAddressesOnCartInterface
     /**
      * Set shipping addresses for a specified shopping cart
      *
-     * @param ContextInterface $context
      * @param CartInterface $cart
      * @param array $shippingAddressesInput
      * @return void
@@ -34,5 +32,5 @@ interface SetShippingAddressesOnCartInterface
      * @throws GraphQlAuthenticationException
      * @throws GraphQlNoSuchEntityException
      */
-    public function execute(ContextInterface $context, CartInterface $cart, array $shippingAddressesInput): void;
+    public function execute(CartInterface $cart, array $shippingAddressesInput): void;
 }

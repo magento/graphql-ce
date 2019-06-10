@@ -12,8 +12,8 @@ use Magento\Customer\Api\Data\AddressInterface;
 use Magento\Customer\Api\Data\AddressInterfaceFactory;
 use Magento\Customer\Api\Data\RegionInterface;
 use Magento\Customer\Api\Data\RegionInterfaceFactory;
-use Magento\Customer\Model\Address as CustomerAddress;
-use Magento\Customer\Model\Data\Customer;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Quote\Model\Quote\Address as QuoteAddress;
 
 /**
@@ -34,53 +34,57 @@ class SaveQuoteAddressToAddressBook
     /**
      * @var RegionInterfaceFactory
      */
-    private $regionInterfaceFactory;
+    private $regionFactory;
 
     /**
      * @param AddressInterfaceFactory $addressFactory
      * @param AddressRepositoryInterface $addressRepository
-     * @param RegionInterfaceFactory $regionInterfaceFactory
+     * @param RegionInterfaceFactory $regionFactory
      */
     public function __construct(
         AddressInterfaceFactory $addressFactory,
         AddressRepositoryInterface $addressRepository,
-        RegionInterfaceFactory $regionInterfaceFactory
+        RegionInterfaceFactory $regionFactory
     ) {
         $this->addressFactory = $addressFactory;
         $this->addressRepository = $addressRepository;
-        $this->regionInterfaceFactory = $regionInterfaceFactory;
+        $this->regionFactory = $regionFactory;
     }
 
     /**
-     * Saves Quote Address to Address Book
+     * Save Quote Address to Address Book
      *
      * @param QuoteAddress $quoteAddress
-     * @param Customer $customerData
-     * @return CustomerAddress
+     * @param int $customerId
+     * @return void
+     * @throws GraphQlInputException
      */
-    public function execute(QuoteAddress $quoteAddress, Customer $customerData): AddressInterface
+    public function execute(QuoteAddress $quoteAddress, int $customerId): void
     {
-        /** @var AddressInterface $customerAddress */
-        $customerAddress = $this->addressFactory->create();
-        $customerAddress->setFirstname($quoteAddress->getFirstname())
-            ->setLastname($quoteAddress->getLastname())
-            ->setCountryId($quoteAddress->getCountryId())
-            ->setCompany($quoteAddress->getCompany())
-            ->setRegionId($quoteAddress->getRegionId())
-            ->setCity($quoteAddress->getCity())
-            ->setPostcode($quoteAddress->getPostcode())
-            ->setStreet($quoteAddress->getStreet())
-            ->setTelephone($quoteAddress->getTelephone())
-            ->setCustomerId($customerData->getId());
+        try {
+            /** @var AddressInterface $customerAddress */
+            $customerAddress = $this->addressFactory->create();
+            $customerAddress->setFirstname($quoteAddress->getFirstname())
+                ->setLastname($quoteAddress->getLastname())
+                ->setCountryId($quoteAddress->getCountryId())
+                ->setCompany($quoteAddress->getCompany())
+                ->setRegionId($quoteAddress->getRegionId())
+                ->setCity($quoteAddress->getCity())
+                ->setPostcode($quoteAddress->getPostcode())
+                ->setStreet($quoteAddress->getStreet())
+                ->setTelephone($quoteAddress->getTelephone())
+                ->setCustomerId($customerId);
 
-        /** @var RegionInterface $region */
-        $region = $this->regionInterfaceFactory->create();
-        $region->setRegionCode($quoteAddress->getRegionCode())
-            ->setRegion($quoteAddress->getRegion())
-            ->setRegionId($quoteAddress->getRegionId());
-        $customerAddress->setRegion($region);
+            /** @var RegionInterface $region */
+            $region = $this->regionFactory->create();
+            $region->setRegionCode($quoteAddress->getRegionCode())
+                ->setRegion($quoteAddress->getRegion())
+                ->setRegionId($quoteAddress->getRegionId());
+            $customerAddress->setRegion($region);
 
-        $this->addressRepository->save($customerAddress);
-        return $customerAddress;
+            $this->addressRepository->save($customerAddress);
+        } catch (LocalizedException $e) {
+            throw new GraphQlInputException(__($e->getMessage()), $e);
+        }
     }
 }

@@ -7,12 +7,8 @@ declare(strict_types=1);
 
 namespace Magento\QuoteGraphQl\Model\Cart;
 
-use Magento\CustomerGraphQl\Model\Customer\GetCustomer;
-use Magento\Framework\App\ObjectManager;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
-use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Quote\Api\Data\CartInterface;
-use Magento\Quote\Model\Quote\Address;
 use Magento\QuoteGraphQl\Model\Cart\Address\SaveQuoteAddressToAddressBook;
 
 /**
@@ -26,11 +22,6 @@ class SetShippingAddressesOnCart implements SetShippingAddressesOnCartInterface
     private $quoteAddressFactory;
 
     /**
-     * @var GetCustomer
-     */
-    private $getCustomer;
-
-    /**
      * @var AssignShippingAddressToCart
      */
     private $assignShippingAddressToCart;
@@ -42,27 +33,23 @@ class SetShippingAddressesOnCart implements SetShippingAddressesOnCartInterface
 
     /**
      * @param QuoteAddressFactory $quoteAddressFactory
-     * @param GetCustomer $getCustomer
      * @param AssignShippingAddressToCart $assignShippingAddressToCart
-     * @param SaveQuoteAddressToAddressBook|null $saveQuoteAddressToAddressBook
+     * @param SaveQuoteAddressToAddressBook $saveQuoteAddressToAddressBook
      */
     public function __construct(
         QuoteAddressFactory $quoteAddressFactory,
-        GetCustomer $getCustomer,
         AssignShippingAddressToCart $assignShippingAddressToCart,
-        SaveQuoteAddressToAddressBook $saveQuoteAddressToAddressBook = null
+        SaveQuoteAddressToAddressBook $saveQuoteAddressToAddressBook
     ) {
         $this->quoteAddressFactory = $quoteAddressFactory;
-        $this->getCustomer = $getCustomer;
         $this->assignShippingAddressToCart = $assignShippingAddressToCart;
-        $this->saveQuoteAddressToAddressBook = $saveQuoteAddressToAddressBook ??
-            ObjectManager::getInstance()->get(SaveQuoteAddressToAddressBook::class);
+        $this->saveQuoteAddressToAddressBook = $saveQuoteAddressToAddressBook;
     }
 
     /**
      * @inheritdoc
      */
-    public function execute(ContextInterface $context, CartInterface $cart, array $shippingAddressesInput): void
+    public function execute(CartInterface $cart, array $shippingAddressesInput): void
     {
         if (count($shippingAddressesInput) > 1) {
             throw new GraphQlInputException(
@@ -85,34 +72,19 @@ class SetShippingAddressesOnCart implements SetShippingAddressesOnCartInterface
             );
         }
 
+        $customerId = (int)$cart->getCustomerId();
         if (null === $customerAddressId) {
             $shippingAddress = $this->quoteAddressFactory->createBasedOnInputData($addressInput);
-            if ($shippingAddress->getSaveInAddressBook()) {
-                $customer = $this->getCustomer->execute($context);
-                $customerAddress = $this->saveQuoteAddressToAddressBook->execute($shippingAddress, $customer);
-                $shippingAddress = $this->getSavedShippingAddress($context, (int)$customerAddress->getId());
-            }
         } else {
-            $shippingAddress = $this->getSavedShippingAddress($context, (int)$customerAddressId);
+            $shippingAddress = $this->quoteAddressFactory->createBasedOnCustomerAddress(
+                (int)$customerAddressId,
+                $customerId
+            );
         }
-
         $this->assignShippingAddressToCart->execute($cart, $shippingAddress);
-    }
 
-    /**
-     * Get Saved Shipping Address
-     *
-     * @param ContextInterface $context
-     * @param int $customerAddressId
-     * @return Address
-     */
-    private function getSavedShippingAddress(ContextInterface $context, int $customerAddressId): Address
-    {
-        $customer = $this->getCustomer->execute($context);
-        $billingAddress = $this->quoteAddressFactory->createBasedOnCustomerAddress(
-            $customerAddressId,
-            (int)$customer->getId()
-        );
-        return $billingAddress;
+        if (!empty($addressInput) && !empty($addressInput['save_in_address_book']) && 0 !== $customerId) {
+            $this->saveQuoteAddressToAddressBook->execute($shippingAddress, $customerId);
+        }
     }
 }
