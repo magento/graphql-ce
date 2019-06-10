@@ -12,7 +12,6 @@ use Magento\Customer\Model\CustomerAuthUpdate;
 use Magento\Customer\Model\CustomerRegistry;
 use Magento\Config\Model\ResourceModel\Config;
 use Magento\Framework\App\Config\ReinitableConfigInterface;
-use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\GraphQl\Quote\GetMaskedQuoteIdByReservedOrderId;
 use Magento\Integration\Api\CustomerTokenServiceInterface;
 use Magento\TestFramework\Helper\Bootstrap;
@@ -131,11 +130,14 @@ class GetCartTest extends GraphQlAbstract
     }
 
     /**
-     * _security
+     * Locked customer account validation in Quote operations.
+     *
      * @magentoApiDataFixture Magento/Customer/_files/customer.php
      * @magentoApiDataFixture Magento/GraphQl/Catalog/_files/simple_product.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/customer/create_empty_cart.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/add_simple_product.php
+     * @expectedException \Exception
+     * @expectedExceptionMessage The account is locked.
      */
     public function testGetCartForLockedCustomer()
     {
@@ -147,26 +149,24 @@ class GetCartTest extends GraphQlAbstract
         $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_quote');
         $query = $this->getQuery($maskedQuoteId);
 
-        $this->expectExceptionMessage(
-            "The account is locked"
-        );
         $this->graphQlQuery($query, [], '', $this->getHeaderMap());
     }
 
     /**
-     * _security
+     * Not confirmed customer account validation in Quote operations.
+     *
      * @magentoApiDataFixture Magento/Customer/_files/customer.php
      * @magentoApiDataFixture Magento/GraphQl/Catalog/_files/simple_product.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/customer/create_empty_cart.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/add_simple_product.php
+     * @expectedException \Exception
+     * @expectedExceptionMessage This account isn't confirmed. Verify and try again.
      */
     public function testGetCartForNotConfirmedCustomer()
     {
         $this->resourceConfig->saveConfig(
             \Magento\Customer\Model\AccountConfirmation::XML_PATH_IS_CONFIRM,
-            1,
-            ScopeConfigInterface::SCOPE_TYPE_DEFAULT,
-            0
+            1
         );
         $this->reinitConfig->reinit();
 
@@ -180,10 +180,6 @@ class GetCartTest extends GraphQlAbstract
 
         $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_quote');
         $query = $this->getQuery($maskedQuoteId);
-
-        $this->expectExceptionMessage(
-            "This account isn't confirmed. Verify and try again."
-        );
         $this->graphQlQuery($query, [], '', $headerMap);
     }
 
