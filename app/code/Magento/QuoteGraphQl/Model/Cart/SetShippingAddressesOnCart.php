@@ -73,8 +73,17 @@ class SetShippingAddressesOnCart implements SetShippingAddressesOnCartInterface
         }
 
         $customerId = (int)$cart->getCustomerId();
+        // customer, customer_address_id = null, save_in_address_book = true - positive
+        // customer, customer_address_id = Int, save_in_address_book = true - negative
+        // guest, customer_address_id = Int - negative
+        // guest, customer_address_id = null, save_in_address_book = true - negative
+
         if (null === $customerAddressId) {
             $shippingAddress = $this->quoteAddressFactory->createBasedOnInputData($addressInput);
+
+            if (!empty($addressInput['save_in_address_book'])) {
+                $this->saveQuoteAddressToAddressBook->execute($shippingAddress, $customerId);
+            }
         } else {
             $shippingAddress = $this->quoteAddressFactory->createBasedOnCustomerAddress(
                 (int)$customerAddressId,
@@ -82,9 +91,5 @@ class SetShippingAddressesOnCart implements SetShippingAddressesOnCartInterface
             );
         }
         $this->assignShippingAddressToCart->execute($cart, $shippingAddress);
-
-        if (!empty($addressInput) && !empty($addressInput['save_in_address_book']) && 0 !== $customerId) {
-            $this->saveQuoteAddressToAddressBook->execute($shippingAddress, $customerId);
-        }
     }
 }

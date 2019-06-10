@@ -53,7 +53,6 @@ class SetBillingAddressOnCart
     /**
      * Set billing address for a specified shopping cart
      *
-     * @param ContextInterface $context
      * @param CartInterface $cart
      * @param array $billingAddressInput
      * @return void
@@ -89,8 +88,17 @@ class SetBillingAddressOnCart
         }
 
         $customerId = (int)$cart->getCustomerId();
+        // customer, customer_address_id = null, save_in_address_book = true - positive
+        // customer, customer_address_id = Int, save_in_address_book = true - negative
+        // guest, customer_address_id = Int - negative
+        // guest, customer_address_id = null, save_in_address_book = true - negative
+
         if (null === $customerAddressId) {
             $billingAddress = $this->quoteAddressFactory->createBasedOnInputData($addressInput);
+
+            if (!empty($addressInput['save_in_address_book'])) {
+                $this->saveQuoteAddressToAddressBook->execute($billingAddress, $customerId);
+            }
         } else {
             $billingAddress = $this->quoteAddressFactory->createBasedOnCustomerAddress(
                 (int)$customerAddressId,
@@ -98,9 +106,5 @@ class SetBillingAddressOnCart
             );
         }
         $this->assignBillingAddressToCart->execute($cart, $billingAddress, $useForShipping);
-
-        if (!empty($addressInput) && !empty($addressInput['save_in_address_book']) && 0 !== $customerId) {
-            $this->saveQuoteAddressToAddressBook->execute($billingAddress, $customerId);
-        }
     }
 }
