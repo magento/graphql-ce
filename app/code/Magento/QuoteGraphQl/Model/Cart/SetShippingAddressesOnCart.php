@@ -76,7 +76,7 @@ class SetShippingAddressesOnCart implements SetShippingAddressesOnCartInterface
         if (null === $customerAddressId) {
             $shippingAddress = $this->quoteAddressFactory->createBasedOnInputData($addressInput);
         } else {
-            $customer = $this->getCustomer->execute($context);
+            $customer = $this->getCustomer->execute($context->getUserId());
             $shippingAddress = $this->quoteAddressFactory->createBasedOnCustomerAddress(
                 (int)$customerAddressId,
                 (int)$customer->getId()

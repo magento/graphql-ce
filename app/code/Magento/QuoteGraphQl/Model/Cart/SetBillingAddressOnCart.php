@@ -91,7 +91,7 @@ class SetBillingAddressOnCart
         if (null === $customerAddressId) {
             $billingAddress = $this->quoteAddressFactory->createBasedOnInputData($addressInput);
         } else {
-            $customer = $this->getCustomer->execute($context);
+            $customer = $this->getCustomer->execute($context->getUserId());
             $billingAddress = $this->quoteAddressFactory->createBasedOnCustomerAddress(
                 (int)$customerAddressId,
                 (int)$customer->getId()

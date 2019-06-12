@@ -10,7 +10,7 @@ namespace Magento\CustomerGraphQl\Model\Resolver;
 use Magento\CustomerGraphQl\Model\Customer\Address\ExtractCustomerAddressData;
 use Magento\CustomerGraphQl\Model\Customer\Address\GetCustomerAddress;
 use Magento\CustomerGraphQl\Model\Customer\Address\UpdateCustomerAddress as UpdateCustomerAddressModel;
-use Magento\CustomerGraphQl\Model\Customer\GetCustomer;
+use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\GraphQl\Config\Element\Field;
@@ -21,11 +21,6 @@ use Magento\Framework\GraphQl\Query\ResolverInterface;
  */
 class UpdateCustomerAddress implements ResolverInterface
 {
-    /**
-     * @var GetCustomer
-     */
-    private $getCustomer;
-
     /**
      * @var GetCustomerAddress
      */
@@ -42,18 +37,15 @@ class UpdateCustomerAddress implements ResolverInterface
     private $extractCustomerAddressData;
 
     /**
-     * @param GetCustomer $getCustomer
      * @param GetCustomerAddress $getCustomerAddress
      * @param UpdateCustomerAddressModel $updateCustomerAddress
      * @param ExtractCustomerAddressData $extractCustomerAddressData
      */
     public function __construct(
-        GetCustomer $getCustomer,
         GetCustomerAddress $getCustomerAddress,
         UpdateCustomerAddressModel $updateCustomerAddress,
         ExtractCustomerAddressData $extractCustomerAddressData
     ) {
-        $this->getCustomer = $getCustomer;
         $this->getCustomerAddress = $getCustomerAddress;
         $this->updateCustomerAddress = $updateCustomerAddress;
         $this->extractCustomerAddressData = $extractCustomerAddressData;
@@ -69,6 +61,10 @@ class UpdateCustomerAddress implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
+        if (true === $context->isGuest()) {
+            throw new GraphQlAuthorizationException(__('The current customer isn\'t authorized.'));
+        }
+
         if (!isset($args['id']) || empty($args['id'])) {
             throw new GraphQlInputException(__('Address "id" value must be specified'));
         }
@@ -77,10 +73,9 @@ class UpdateCustomerAddress implements ResolverInterface
             throw new GraphQlInputException(__('"input" value must be specified'));
         }
 
-        $customer = $this->getCustomer->execute($context);
-        $address = $this->getCustomerAddress->execute((int)$args['id'], (int)$customer->getId());
-
+        $address = $this->getCustomerAddress->execute((int)$args['id'], (int)$context->getUserId());
         $this->updateCustomerAddress->execute($address, $args['input']);
+
         return $this->extractCustomerAddressData->execute($address);
     }
 }

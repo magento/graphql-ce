@@ -10,6 +10,7 @@ namespace Magento\CustomerGraphQl\Model\Customer;
 use Magento\Framework\GraphQl\Exception\GraphQlAlreadyExistsException;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthenticationException;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
+use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Framework\Api\DataObjectHelper;
@@ -82,6 +83,7 @@ class UpdateCustomerAccount
      * @throws GraphQlAlreadyExistsException
      * @throws GraphQlAuthenticationException
      * @throws GraphQlInputException
+     * @throws GraphQlNoSuchEntityException
      */
     public function execute(CustomerInterface $customer, array $data): void
     {

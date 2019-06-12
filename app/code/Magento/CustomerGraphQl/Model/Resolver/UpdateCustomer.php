@@ -9,6 +9,7 @@ namespace Magento\CustomerGraphQl\Model\Resolver;
 
 use Magento\CustomerGraphQl\Model\Customer\GetCustomer;
 use Magento\CustomerGraphQl\Model\Customer\UpdateCustomerAccount;
+use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\CustomerGraphQl\Model\Customer\ExtractCustomerData;
@@ -60,11 +61,15 @@ class UpdateCustomer implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
+        if (true === $context->isGuest()) {
+            throw new GraphQlAuthorizationException(__('The current customer isn\'t authorized.'));
+        }
+
         if (!isset($args['input']) || !is_array($args['input']) || empty($args['input'])) {
             throw new GraphQlInputException(__('"input" value should be specified'));
         }
 
-        $customer = $this->getCustomer->execute($context);
+        $customer = $this->getCustomer->execute($context->getUserId());
         $this->updateCustomerAccount->execute($customer, $args['input']);
 
         $data = $this->extractCustomerData->execute($customer);

@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\DownloadableGraphQl\Model\Resolver;
 
 use Magento\DownloadableGraphQl\Model\ResourceModel\GetPurchasedDownloadableProducts;
+use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\GraphQl\Config\Element\Field;
@@ -53,6 +54,10 @@ class CustomerDownloadableProducts implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
+        if (true === $context->isGuest()) {
+            throw new GraphQlAuthorizationException(__('The current customer isn\'t authorized.'));
+        }
+
         $currentUserId = $context->getUserId();
         $purchasedProducts = $this->getPurchasedDownloadableProducts->execute($currentUserId);
         $productsData = [];

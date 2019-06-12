@@ -33,11 +33,17 @@ class Context extends \Magento\Framework\Model\AbstractExtensibleModel implement
     private $userContext;
 
     /**
+     * @var \Magento\GraphQl\Model\CheckCustomerAccount
+     */
+    private $checkCustomerAccount;
+
+    /**
      * @param \Magento\Framework\Model\Context $context
      * @param \Magento\Framework\Registry $registry
      * @param ExtensionAttributesFactory $extensionFactory
      * @param AttributeValueFactory $customAttributeFactory
      * @param UserContextInterface|null $userContext
+     * @param \Magento\GraphQl\Model\CheckCustomerAccount $checkCustomerAccount
      * @param array $data
      */
     public function __construct(
@@ -46,6 +52,7 @@ class Context extends \Magento\Framework\Model\AbstractExtensibleModel implement
         ExtensionAttributesFactory $extensionFactory,
         AttributeValueFactory $customAttributeFactory,
         UserContextInterface $userContext,
+        \Magento\GraphQl\Model\CheckCustomerAccount $checkCustomerAccount,
         array $data = []
     ) {
         parent::__construct(
@@ -61,6 +68,7 @@ class Context extends \Magento\Framework\Model\AbstractExtensibleModel implement
             $this->setId($data['type']);
         }
         $this->userContext = $userContext;
+        $this->checkCustomerAccount = $checkCustomerAccount;
     }
 
     /**
@@ -68,7 +76,7 @@ class Context extends \Magento\Framework\Model\AbstractExtensibleModel implement
      *
      * @return \Magento\Framework\GraphQl\Query\Resolver\ContextExtensionInterface
      */
-    public function getExtensionAttributes() : \Magento\Framework\GraphQl\Query\Resolver\ContextExtensionInterface
+    public function getExtensionAttributes(): \Magento\Framework\GraphQl\Query\Resolver\ContextExtensionInterface
     {
         return $this->_getExtensionAttributes();
     }
@@ -81,17 +89,21 @@ class Context extends \Magento\Framework\Model\AbstractExtensibleModel implement
      */
     public function setExtensionAttributes(
         \Magento\Framework\GraphQl\Query\Resolver\ContextExtensionInterface $extensionAttributes
-    ) : ContextInterface {
+    ): ContextInterface {
         return $this->_setExtensionAttributes($extensionAttributes);
     }
 
     /**
      * @inheritDoc
      */
-    public function getUserId() : int
+    public function getUserId(): int
     {
         if (!$this->getData(self::USER_ID)) {
-            $this->setUserId((int) $this->userContext->getUserId());
+            $userId = (int)$this->userContext->getUserId();
+            $userType = (int)$this->userContext->getUserType();
+            $this->checkCustomerAccount->execute($userId, $userType);
+
+            $this->setUserId($userId);
         }
         return (int) $this->getData(self::USER_ID);
     }
@@ -99,7 +111,7 @@ class Context extends \Magento\Framework\Model\AbstractExtensibleModel implement
     /**
      * @inheritDoc
      */
-    public function setUserId(int $userId) : ContextInterface
+    public function setUserId(int $userId): ContextInterface
     {
         return $this->setData(self::USER_ID, $userId);
     }
@@ -107,7 +119,7 @@ class Context extends \Magento\Framework\Model\AbstractExtensibleModel implement
     /**
      * @inheritDoc
      */
-    public function getUserType() : int
+    public function getUserType(): int
     {
         if (!$this->getData(self::USER_TYPE_ID)) {
             $this->setUserType($this->userContext->getUserType());
@@ -118,8 +130,21 @@ class Context extends \Magento\Framework\Model\AbstractExtensibleModel implement
     /**
      * @inheritDoc
      */
-    public function setUserType(int $typeId) : ContextInterface
+    public function setUserType(int $typeId): ContextInterface
     {
         return $this->setData(self::USER_TYPE_ID, $typeId);
+    }
+
+    /**
+     * Checking if current customer is guest
+     *
+     * @return bool
+     */
+    public function isGuest(): bool
+    {
+        $userId = $this->getUserId();
+        $userType = $this->getUserType();
+
+        return 0 === $userId || $userType === UserContextInterface::USER_TYPE_GUEST;
     }
 }

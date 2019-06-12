@@ -7,11 +7,8 @@ declare(strict_types=1);
 
 namespace Magento\QuoteGraphQl\Model\Cart;
 
-use Magento\CustomerGraphQl\Model\Customer\GetCustomer;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\GraphQl\Exception\GraphQlAuthenticationException;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
-use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Model\MaskedQuoteIdToQuoteIdInterface;
@@ -28,11 +25,6 @@ class GetCartForUser
      * @var ContextInterface
      */
     private $context;
-
-    /**
-     * @var GetCustomer
-     */
-    private $getCustomer;
 
     /**
      * @var MaskedQuoteIdToQuoteIdInterface
@@ -53,20 +45,17 @@ class GetCartForUser
      * @param MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId
      * @param CartRepositoryInterface $cartRepository
      * @param StoreManagerInterface $storeManager
-     * @param GetCustomer $getCustomer
      * @param ContextInterface $context
      */
     public function __construct(
         MaskedQuoteIdToQuoteIdInterface $maskedQuoteIdToQuoteId,
         CartRepositoryInterface $cartRepository,
         StoreManagerInterface $storeManager,
-        GetCustomer $getCustomer,
         ContextInterface $context
     ) {
         $this->maskedQuoteIdToQuoteId = $maskedQuoteIdToQuoteId;
         $this->cartRepository = $cartRepository;
         $this->storeManager = $storeManager;
-        $this->getCustomer = $getCustomer;
         $this->context = $context;
     }
 
@@ -79,14 +68,9 @@ class GetCartForUser
      * @throws GraphQlAuthorizationException
      * @throws GraphQlNoSuchEntityException
      * @throws NoSuchEntityException
-     * @throws GraphQlAuthenticationException
-     * @throws GraphQlInputException
      */
     public function execute(string $cartHash, ?int $customerId): Quote
     {
-        /* verify customer is confirmed and not locked  */
-        $this->getCustomer->execute($this->context);
-
         try {
             $cartId = $this->maskedQuoteIdToQuoteId->execute($cartHash);
         } catch (NoSuchEntityException $exception) {
@@ -122,7 +106,7 @@ class GetCartForUser
         $cartCustomerId = (int)$cart->getCustomerId();
 
         /* Guest cart, allow operations */
-        if (!$cartCustomerId && null === $customerId) {
+        if (!$cartCustomerId && (null === $customerId || 0 === $customerId)) {
             return $cart;
         }
 

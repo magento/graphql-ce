@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\CustomerGraphQl\Model\Resolver;
 
 use Magento\CustomerGraphQl\Model\Customer\GetCustomer;
+use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\CustomerGraphQl\Model\Customer\ExtractCustomerData;
 use Magento\Framework\GraphQl\Config\Element\Field;
@@ -50,7 +51,11 @@ class Customer implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
-        $customer = $this->getCustomer->execute($context);
+        if (true === $context->isGuest()) {
+            throw new GraphQlAuthorizationException(__('The current customer isn\'t authorized.'));
+        }
+
+        $customer = $this->getCustomer->execute($context->getUserId());
 
         return $this->extractCustomerData->execute($customer);
     }

@@ -8,8 +8,8 @@ declare(strict_types=1);
 namespace Magento\CustomerGraphQl\Model\Resolver;
 
 use Magento\Customer\Model\Customer;
-use Magento\CustomerGraphQl\Model\Customer\GetCustomer;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
@@ -21,24 +21,16 @@ use Magento\CustomerGraphQl\Model\Customer\Address\ExtractCustomerAddressData;
 class CustomerAddresses implements ResolverInterface
 {
     /**
-     * @var GetCustomer
-     */
-    private $getCustomer;
-
-    /**
      * @var ExtractCustomerAddressData
      */
     private $extractCustomerAddressData;
 
     /**
-     * @param GetCustomer $getCustomer
      * @param ExtractCustomerAddressData $extractCustomerAddressData
      */
     public function __construct(
-        GetCustomer $getCustomer,
         ExtractCustomerAddressData $extractCustomerAddressData
     ) {
-        $this->getCustomer = $getCustomer;
         $this->extractCustomerAddressData = $extractCustomerAddressData;
     }
 
@@ -52,6 +44,10 @@ class CustomerAddresses implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
+        if (true === $context->isGuest()) {
+            throw new GraphQlAuthorizationException(__('The current customer isn\'t authorized.'));
+        }
+
         if (!isset($value['model'])) {
             throw new LocalizedException(__('"model" value should be specified'));
         }
