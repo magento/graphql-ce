@@ -185,6 +185,36 @@ class GetCartTest extends GraphQlAbstract
     }
 
     /**
+     * Unlock locked customer and try Quote operations.
+     *
+     * @magentoApiDataFixture Magento/Customer/_files/customer.php
+     * @magentoApiDataFixture Magento/GraphQl/Catalog/_files/simple_product.php
+     * @magentoApiDataFixture Magento/GraphQl/Quote/_files/customer/create_empty_cart.php
+     * @magentoApiDataFixture Magento/GraphQl/Quote/_files/add_simple_product.php
+     */
+    public function testGetCartForUnlockedCustomer()
+    {
+        /* lock customer */
+        $customerSecure = $this->customerRegistry->retrieveSecureData(1);
+        $customerSecure->setLockExpires('2030-12-31 00:00:00');
+        $this->customerAuthUpdate->saveAuth(1);
+
+        /* unlock customer */
+        $customerSecure->setFailuresNum(0);
+        $customerSecure->setFirstFailure(null);
+        $customerSecure->setLockExpires(null);
+        $this->customerAuthUpdate->saveAuth(1);
+
+        $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_quote');
+        $query = $this->getQuery($maskedQuoteId);
+
+        $response = $this->graphQlQuery($query, [], '', $this->getHeaderMap());
+
+        self::assertArrayHasKey('cart', $response);
+        self::assertArrayHasKey('items', $response['cart']);
+    }
+
+    /**
      * @magentoApiDataFixture Magento/Customer/_files/customer.php
      * @expectedException Exception
      * @expectedExceptionMessage Required parameter "cart_id" is missing
