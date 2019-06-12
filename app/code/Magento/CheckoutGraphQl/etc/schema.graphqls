@@ -17,17 +17,6 @@ input ShippingAddressInput {
     address: CartAddressInput
 }
 
-input SetBillingAddressOnCartInput {
-    cart_id: String!
-    billing_address: BillingAddressInput!
-}
-
-input BillingAddressInput {
-    customer_address_id: Int
-    address: CartAddressInput
-    use_for_shipping: Boolean
-}
-
 input CartAddressInput {
     firstname: String!
     lastname: String!
@@ -41,6 +30,25 @@ input CartAddressInput {
     save_in_address_book: Boolean!
 }
 
+type SetShippingAddressesOnCartOutput {
+    cart: Cart!
+}
+
+input SetBillingAddressOnCartInput {
+    cart_id: String!
+    billing_address: BillingAddressInput!
+}
+
+input BillingAddressInput {
+    customer_address_id: Int
+    address: CartAddressInput
+    use_for_shipping: Boolean
+}
+
+type SetBillingAddressOnCartOutput {
+    cart: Cart!
+}
+
 input SetShippingMethodsOnCartInput {
     cart_id: String!
     shipping_methods: [ShippingMethodInput!]!
@@ -49,6 +57,10 @@ input SetShippingMethodsOnCartInput {
 input ShippingMethodInput {
     carrier_code: String!
     method_code: String!
+}
+
+type SetShippingMethodsOnCartOutput {
+    cart: Cart!
 }
 
 input SetPaymentMethodOnCartInput {
@@ -61,13 +73,25 @@ input PaymentMethodInput {
     purchase_order_number: String @doc(description:"Purchase order number")
 }
 
+type SetPaymentMethodOnCartOutput {
+    cart: Cart!
+}
+
 input SetGuestEmailOnCartInput {
     cart_id: String!
     email: String!
 }
 
+type SetGuestEmailOnCartOutput {
+    cart: Cart!
+}
+
 input PlaceOrderInput {
     cart_id: String!
+}
+
+type PlaceOrderOutput {
+    order: Order!
 }
 
 type Cart {
@@ -105,6 +129,11 @@ type ShippingCartAddress implements CartAddressInterface {
     selected_shipping_method: SelectedShippingMethod @resolver(class: "\\Magento\\CheckoutGraphQl\\Model\\Resolver\\ShippingAddress\\SelectedShippingMethod")
     items_weight: Float
     cart_items: [CartItemQuantity]
+}
+
+type CartItemQuantity {
+    cart_item_id: Int!
+    quantity: Float!
 }
 
 type BillingCartAddress implements CartAddressInterface {
@@ -145,28 +174,4 @@ type SelectedPaymentMethod {
 
 type Order {
     order_id: String
-}
-
-type SetShippingAddressesOnCartOutput {
-    cart: Cart!
-}
-
-type SetBillingAddressOnCartOutput {
-    cart: Cart!
-}
-
-type SetShippingMethodsOnCartOutput {
-    cart: Cart!
-}
-
-type SetPaymentMethodOnCartOutput {
-    cart: Cart!
-}
-
-type SetGuestEmailOnCartOutput {
-    cart: Cart!
-}
-
-type PlaceOrderOutput {
-    order: Order!
 }

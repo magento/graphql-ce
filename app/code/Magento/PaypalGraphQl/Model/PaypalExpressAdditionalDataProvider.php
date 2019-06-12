@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace Magento\PaypalGraphQl\Model;
 
 use Magento\Framework\Stdlib\ArrayManager;
-use Magento\QuoteGraphQl\Model\Cart\Payment\AdditionalDataProviderInterface;
+use Magento\CheckoutGraphQl\Model\Cart\Payment\AdditionalDataProviderInterface;
 
 /**
  * Get payment additional data for Paypal Express payment

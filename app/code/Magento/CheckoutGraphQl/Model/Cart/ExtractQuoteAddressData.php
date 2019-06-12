@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\QuoteGraphQl\Model\Cart;
+namespace Magento\CheckoutGraphQl\Model\Cart;
 
 use Magento\Customer\Model\Address\AbstractAddress;
 use Magento\Framework\Api\ExtensibleDataObjectConverter;

@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\QuoteGraphQl\Model\Cart;
+namespace Magento\CheckoutGraphQl\Model\Cart;
 
 use Magento\Customer\Helper\Address as AddressHelper;
 use Magento\CustomerGraphQl\Model\Customer\Address\GetCustomerAddress;

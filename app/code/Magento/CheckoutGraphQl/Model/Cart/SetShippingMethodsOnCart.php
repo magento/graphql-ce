@@ -10,7 +10,6 @@ namespace Magento\CheckoutGraphQl\Model\Cart;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Quote\Api\Data\CartInterface;
-use Magento\QuoteGraphQl\Model\Cart\GetQuoteAddress;
 
 /**
  * Set single shipping method for a specified shopping cart

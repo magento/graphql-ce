@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\QuoteGraphQl\Model\Cart\Payment;
+namespace Magento\CheckoutGraphQl\Model\Cart\Payment;
 
 /**
  * Pool model for AdditionalDataProvider

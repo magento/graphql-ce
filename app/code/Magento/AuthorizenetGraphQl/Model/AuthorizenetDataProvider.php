@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\AuthorizenetGraphQl\Model;
 
-use Magento\QuoteGraphQl\Model\Cart\Payment\AdditionalDataProviderInterface;
+use Magento\CheckoutGraphQl\Model\Cart\Payment\AdditionalDataProviderInterface;
 use Magento\Framework\Stdlib\ArrayManager;
 use Magento\Framework\GraphQL\DataObjectConverter;
 

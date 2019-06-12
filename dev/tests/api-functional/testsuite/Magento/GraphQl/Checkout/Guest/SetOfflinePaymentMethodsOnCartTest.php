@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Magento\GraphQl\Quote\Guest;
+namespace Magento\GraphQl\Checkout\Guest;
 
 use Magento\GraphQl\Quote\GetMaskedQuoteIdByReservedOrderId;
 use Magento\OfflinePayments\Model\Banktransfer;

@@ -18,7 +18,7 @@ use Magento\Quote\Api\Data\PaymentInterface;
 use Magento\QuoteGraphQl\Model\Cart\GetCartForUser;
 use Magento\Quote\Api\Data\PaymentInterfaceFactory;
 use Magento\Quote\Api\PaymentMethodManagementInterface;
-use Magento\QuoteGraphQl\Model\Cart\Payment\AdditionalDataProviderPool;
+use Magento\CheckoutGraphQl\Model\Cart\Payment\AdditionalDataProviderPool;
 use Magento\Framework\App\ObjectManager;
 
 /**

@@ -130,6 +130,7 @@
         "magento/module-checkout": "*",
         "magento/module-checkout-agreements": "*",
         "magento/module-checkout-agreements-graph-ql": "*",
+        "magento/module-checkout-graph-ql": "*",
         "magento/module-cms": "*",
         "magento/module-cms-url-rewrite": "*",
         "magento/module-config": "*",
