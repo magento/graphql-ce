@@ -47,7 +47,6 @@ input CustomizableOptionInput {
     value_string: String!
 }
 
-
 input UpdateCartItemsInput {
     cart_id: String!
     cart_items: [CartItemUpdateInput!]!
@@ -85,18 +84,6 @@ type Cart {
 type CartItemQuantity {
     cart_item_id: Int!
     quantity: Float!
-}
-
-type AppliedCoupon {
-    code: String!
-}
-
-input RemoveCouponFromCartInput {
-    cart_id: String!
-}
-
-type RemoveCouponFromCartOutput {
-    cart: Cart
 }
 
 type AddSimpleProductsToCartOutput {

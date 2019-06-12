@@ -3,8 +3,71 @@ type Mutation {
     setBillingAddressOnCart(input: SetBillingAddressOnCartInput): SetBillingAddressOnCartOutput @resolver(class: "\\Magento\\CheckoutGraphQl\\Model\\Resolver\\SetBillingAddressOnCart")
     setShippingMethodsOnCart(input: SetShippingMethodsOnCartInput): SetShippingMethodsOnCartOutput @resolver(class: "\\Magento\\CheckoutGraphQl\\Model\\Resolver\\SetShippingMethodsOnCart")
     setPaymentMethodOnCart(input: SetPaymentMethodOnCartInput): SetPaymentMethodOnCartOutput @resolver(class: "Magento\\CheckoutGraphQl\\Model\\Resolver\\SetPaymentMethodOnCart")
-    placeOrder(input: PlaceOrderInput): PlaceOrderOutput @resolver(class: "\\Magento\\CheckoutGraphQl\\Model\\Resolver\\PlaceOrder")
     setGuestEmailOnCart(input: SetGuestEmailOnCartInput): SetGuestEmailOnCartOutput @resolver(class: "Magento\\CheckoutGraphQl\\Model\\Resolver\\SetGuestEmailOnCart")
+    placeOrder(input: PlaceOrderInput): PlaceOrderOutput @resolver(class: "\\Magento\\CheckoutGraphQl\\Model\\Resolver\\PlaceOrder")
+}
+
+input SetShippingAddressesOnCartInput {
+    cart_id: String!
+    shipping_addresses: [ShippingAddressInput!]!
+}
+
+input ShippingAddressInput {
+    customer_address_id: Int # If provided then will be used address from address book
+    address: CartAddressInput
+}
+
+input SetBillingAddressOnCartInput {
+    cart_id: String!
+    billing_address: BillingAddressInput!
+}
+
+input BillingAddressInput {
+    customer_address_id: Int
+    address: CartAddressInput
+    use_for_shipping: Boolean
+}
+
+input CartAddressInput {
+    firstname: String!
+    lastname: String!
+    company: String
+    street: [String!]!
+    city: String!
+    region: String
+    postcode: String
+    country_code: String!
+    telephone: String!
+    save_in_address_book: Boolean!
+}
+
+input SetShippingMethodsOnCartInput {
+    cart_id: String!
+    shipping_methods: [ShippingMethodInput!]!
+}
+
+input ShippingMethodInput {
+    carrier_code: String!
+    method_code: String!
+}
+
+input SetPaymentMethodOnCartInput {
+    cart_id: String!
+    payment_method: PaymentMethodInput!
+}
+
+input PaymentMethodInput {
+    code: String! @doc(description:"Payment method code")
+    purchase_order_number: String @doc(description:"Purchase order number")
+}
+
+input SetGuestEmailOnCartInput {
+    cart_id: String!
+    email: String!
+}
+
+input PlaceOrderInput {
+    cart_id: String!
 }
 
 type Cart {
@@ -14,7 +77,7 @@ type Cart {
     selected_payment_method: SelectedPaymentMethod @resolver(class: "\\Magento\\CheckoutGraphQl\\Model\\Resolver\\SelectedPaymentMethod")
 }
 
-interface CartAddressInterface @typeResolver(class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\CartAddressTypeResolver") {
+interface CartAddressInterface @typeResolver(class: "\\Magento\\CheckoutGraphQl\\Model\\Resolver\\CartAddressTypeResolver") {
     firstname: String
     lastname: String
     company: String
@@ -82,70 +145,6 @@ type SelectedPaymentMethod {
 
 type Order {
     order_id: String
-}
-
-input SetShippingAddressesOnCartInput {
-    cart_id: String!
-    shipping_addresses: [ShippingAddressInput!]!
-}
-
-input ShippingAddressInput {
-    customer_address_id: Int # If provided then will be used address from address book
-    address: CartAddressInput
-}
-
-input SetBillingAddressOnCartInput {
-    cart_id: String!
-    billing_address: BillingAddressInput!
-}
-
-input BillingAddressInput {
-    customer_address_id: Int
-    address: CartAddressInput
-    use_for_shipping: Boolean
-}
-
-input CartAddressInput {
-    firstname: String!
-    lastname: String!
-    company: String
-    street: [String!]!
-    city: String!
-    region: String
-    postcode: String
-    country_code: String!
-    telephone: String!
-    save_in_address_book: Boolean!
-}
-
-input SetShippingMethodsOnCartInput {
-    cart_id: String!
-    shipping_methods: [ShippingMethodInput!]!
-}
-
-input ShippingMethodInput {
-    carrier_code: String!
-    method_code: String!
-}
-
-
-input SetPaymentMethodOnCartInput {
-    cart_id: String!
-    payment_method: PaymentMethodInput!
-}
-
-input PaymentMethodInput {
-    code: String! @doc(description:"Payment method code")
-    purchase_order_number: String @doc(description:"Purchase order number")
-}
-
-input SetGuestEmailOnCartInput {
-    cart_id: String!
-    email: String!
-}
-
-input PlaceOrderInput {
-    cart_id: String!
 }
 
 type SetShippingAddressesOnCartOutput {

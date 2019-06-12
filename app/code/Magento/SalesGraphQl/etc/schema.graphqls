@@ -10,17 +10,33 @@ type Mutation {
     removeCouponFromCart(input: RemoveCouponFromCartInput): RemoveCouponFromCartOutput @resolver(class: "\\Magento\\SalesGraphQl\\Model\\Resolver\\RemoveCouponFromCart")
 }
 
-type Cart {
-    applied_coupon: AppliedCoupon @resolver(class: "\\Magento\\SalesGraphQl\\Model\\Resolver\\AppliedCoupon")
-}
-
 input ApplyCouponToCartInput {
     cart_id: String!
     coupon_code: String!
 }
 
+type ApplyCouponToCartOutput {
+    cart: Cart!
+}
+
 input RemoveCouponFromCartInput {
     cart_id: String!
+}
+
+type RemoveCouponFromCartOutput {
+    cart: Cart
+}
+
+type Cart {
+    applied_coupon: AppliedCoupon @resolver(class: "\\Magento\\SalesGraphQl\\Model\\Resolver\\AppliedCoupon")
+}
+
+type AppliedCoupon {
+    code: String!
+}
+
+type CustomerOrders {
+    items: [CustomerOrder] @doc(description: "Array of orders")
 }
 
 type CustomerOrder @doc(description: "Order mapping fields") {
@@ -29,16 +45,4 @@ type CustomerOrder @doc(description: "Order mapping fields") {
     created_at: String
     grand_total: Float
     status: String
-}
-
-type RemoveCouponFromCartOutput {
-    cart: Cart
-}
-
-type CustomerOrders {
-    items: [CustomerOrder] @doc(description: "Array of orders")
-}
-
-type ApplyCouponToCartOutput {
-    cart: Cart!
 }
