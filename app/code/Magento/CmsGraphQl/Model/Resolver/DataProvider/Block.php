@@ -20,12 +20,12 @@ class Block
     /**
      * @var BlockRepositoryInterface
      */
-    private $blockRepository;
+    protected $blockRepository;
 
     /**
      * @var FilterEmulate
      */
-    private $widgetFilter;
+    protected $widgetFilter;
 
     /**
      * @param BlockRepositoryInterface $blockRepository

@@ -23,17 +23,17 @@ class Products implements ResolverInterface
     /**
      * @var \Magento\Catalog\Api\ProductRepositoryInterface
      */
-    private $productRepository;
+    protected $productRepository;
 
     /**
      * @var Builder
      */
-    private $searchCriteriaBuilder;
+    protected $searchCriteriaBuilder;
 
     /**
      * @var Filter
      */
-    private $filterQuery;
+    protected $filterQuery;
 
     /**
      * @param ProductRepositoryInterface $productRepository

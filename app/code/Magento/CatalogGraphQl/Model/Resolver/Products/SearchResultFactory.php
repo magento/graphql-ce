@@ -17,7 +17,7 @@ class SearchResultFactory
     /**
      * @var ObjectManagerInterface
      */
-    private $objectManager;
+    protected $objectManager;
 
     /**
      * @param ObjectManagerInterface $objectManager

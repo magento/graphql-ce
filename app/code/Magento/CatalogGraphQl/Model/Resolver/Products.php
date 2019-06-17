@@ -25,22 +25,22 @@ class Products implements ResolverInterface
     /**
      * @var Builder
      */
-    private $searchCriteriaBuilder;
+    protected $searchCriteriaBuilder;
 
     /**
      * @var Search
      */
-    private $searchQuery;
+    protected $searchQuery;
 
     /**
      * @var Filter
      */
-    private $filterQuery;
+    protected $filterQuery;
 
     /**
      * @var SearchFilter
      */
-    private $searchFilter;
+    protected $searchFilter;
 
     /**
      * @param Builder $searchCriteriaBuilder

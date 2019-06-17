@@ -22,22 +22,22 @@ class Page
     /**
      * @var GetPageByIdentifierInterface
      */
-    private $pageByIdentifier;
+    protected $pageByIdentifier;
 
     /**
      * @var PageRepositoryInterface
      */
-    private $pageRepository;
+    protected $pageRepository;
 
     /**
      * @var StoreManagerInterface
      */
-    private $storeManager;
+    protected $storeManager;
 
     /**
      * @var FilterEmulate
      */
-    private $widgetFilter;
+    protected $widgetFilter;
 
     /**
      * @param PageRepositoryInterface $pageRepository
@@ -94,7 +94,7 @@ class Page
      * @return array
      * @throws NoSuchEntityException
      */
-    private function convertPageData(PageInterface $page)
+    protected function convertPageData(PageInterface $page)
     {
         if (false === $page->isActive()) {
             throw new NoSuchEntityException();

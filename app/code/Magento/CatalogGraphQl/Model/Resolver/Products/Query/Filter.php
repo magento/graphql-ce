@@ -22,22 +22,22 @@ class Filter
     /**
      * @var SearchResultFactory
      */
-    private $searchResultFactory;
+    protected $searchResultFactory;
 
     /**
      * @var \Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\Product
      */
-    private $productDataProvider;
+    protected $productDataProvider;
 
     /**
      * @var FieldTranslator
      */
-    private $fieldTranslator;
+    protected $fieldTranslator;
 
     /**
      * @var \Magento\Catalog\Model\Layer\Resolver
      */
-    private $layerResolver;
+    protected $layerResolver;
 
     /**
      * @param SearchResultFactory $searchResultFactory
@@ -88,7 +88,7 @@ class Filter
      * @param ResolveInfo $info
      * @return string[]
      */
-    private function getProductFields(ResolveInfo $info) : array
+    protected function getProductFields(ResolveInfo $info) : array
     {
         $fieldNames = [];
         foreach ($info->fieldNodes as $node) {

@@ -23,7 +23,7 @@ class Blocks implements ResolverInterface
     /**
      * @var BlockDataProvider
      */
-    private $blockDataProvider;
+    protected $blockDataProvider;
 
     /**
      * @param BlockDataProvider $blockDataProvider
@@ -61,7 +61,7 @@ class Blocks implements ResolverInterface
      * @return string[]
      * @throws GraphQlInputException
      */
-    private function getBlockIdentifiers(array $args): array
+    protected function getBlockIdentifiers(array $args): array
     {
         if (!isset($args['identifiers']) || !is_array($args['identifiers']) || count($args['identifiers']) === 0) {
             throw new GraphQlInputException(__('"identifiers" of CMS blocks should be specified'));
@@ -77,7 +77,7 @@ class Blocks implements ResolverInterface
      * @return array
      * @throws GraphQlNoSuchEntityException
      */
-    private function getBlocksData(array $blockIdentifiers): array
+    protected function getBlocksData(array $blockIdentifiers): array
     {
         $blocksData = [];
         foreach ($blockIdentifiers as $blockIdentifier) {

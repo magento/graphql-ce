@@ -31,27 +31,27 @@ class CategoryTree
     /**
      * @var CollectionFactory
      */
-    private $collectionFactory;
+    protected $collectionFactory;
 
     /**
      * @var AttributesJoiner
      */
-    private $attributesJoiner;
+    protected $attributesJoiner;
 
     /**
      * @var DepthCalculator
      */
-    private $depthCalculator;
+    protected $depthCalculator;
 
     /**
      * @var LevelCalculator
      */
-    private $levelCalculator;
+    protected $levelCalculator;
 
     /**
      * @var MetadataPool
      */
-    private $metadata;
+    protected $metadata;
 
     /**
      * @param CollectionFactory $collectionFactory
@@ -126,7 +126,7 @@ class CategoryTree
      * @param FieldNode $fieldNode
      * @return void
      */
-    private function joinAttributesRecursively(Collection $collection, FieldNode $fieldNode) : void
+    protected function joinAttributesRecursively(Collection $collection, FieldNode $fieldNode) : void
     {
         if (!isset($fieldNode->selectionSet->selections)) {
             return;

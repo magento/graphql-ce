@@ -22,32 +22,32 @@ class Search
     /**
      * @var SearchInterface
      */
-    private $search;
+    protected $search;
 
     /**
      * @var FilterHelper
      */
-    private $filterHelper;
+    protected $filterHelper;
 
     /**
      * @var Filter
      */
-    private $filterQuery;
+    protected $filterQuery;
 
     /**
      * @var SearchResultFactory
      */
-    private $searchResultFactory;
+    protected $searchResultFactory;
 
     /**
      * @var \Magento\Framework\EntityManager\MetadataPool
      */
-    private $metadataPool;
+    protected $metadataPool;
 
     /**
      * @var \Magento\Search\Model\Search\PageSizeProvider
      */
-    private $pageSizeProvider;
+    protected $pageSizeProvider;
 
     /**
      * @param SearchInterface $search
@@ -137,7 +137,7 @@ class Search
      * @param SearchCriteriaInterface $searchCriteria
      * @return int[]
      */
-    private function paginateList(SearchResult $searchResult, SearchCriteriaInterface $searchCriteria) : array
+    protected function paginateList(SearchResult $searchResult, SearchCriteriaInterface $searchCriteria) : array
     {
         $length = $searchCriteria->getPageSize();
         // Search starts pages from 0

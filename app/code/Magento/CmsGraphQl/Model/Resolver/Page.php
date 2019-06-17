@@ -23,7 +23,7 @@ class Page implements ResolverInterface
     /**
      * @var PageDataProvider
      */
-    private $pageDataProvider;
+    protected $pageDataProvider;
 
     /**
      *

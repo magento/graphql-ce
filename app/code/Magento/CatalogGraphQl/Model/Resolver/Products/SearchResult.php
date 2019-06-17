@@ -17,12 +17,12 @@ class SearchResult
     /**
      * @var SearchResultsInterface
      */
-    private $totalCount;
+    protected $totalCount;
 
     /**
      * @var array
      */
-    private $productsSearchResult;
+    protected $productsSearchResult;
 
     /**
      * @param int $totalCount

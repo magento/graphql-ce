@@ -22,22 +22,22 @@ class Product
     /**
      * @var CollectionFactory
      */
-    private $collectionFactory;
+    protected $collectionFactory;
 
     /**
      * @var ProductSearchResultsInterfaceFactory
      */
-    private $searchResultsFactory;
+    protected $searchResultsFactory;
 
     /**
      * @var CollectionProcessorInterface
      */
-    private $collectionProcessor;
+    protected $collectionProcessor;
 
     /**
      * @var Visibility
      */
-    private $visibility;
+    protected $visibility;
 
     /**
      * @param CollectionFactory $collectionFactory

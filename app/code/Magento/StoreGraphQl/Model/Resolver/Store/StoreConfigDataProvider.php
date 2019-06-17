@@ -20,22 +20,22 @@ class StoreConfigDataProvider
     /**
      * @var StoreConfigManagerInterface
      */
-    private $storeConfigManager;
+    protected $storeConfigManager;
 
     /**
      * @var StoreManagerInterface
      */
-    private $storeManager;
+    protected $storeManager;
 
     /**
      * @var ScopeConfigInterface
      */
-    private $scopeConfig;
+    protected $scopeConfig;
 
     /**
      * @var array
      */
-    private $extendedConfigData;
+    protected $extendedConfigData;
 
     /**
      * @param StoreConfigManagerInterface $storeConfigManager
@@ -74,7 +74,7 @@ class StoreConfigDataProvider
      *
      * @return array
      */
-    private function getBaseConfigData() : array
+    protected function getBaseConfigData() : array
     {
         $store = $this->storeManager->getStore();
         $storeConfig = current($this->storeConfigManager->getStoreConfigs([$store->getCode()]));
@@ -105,7 +105,7 @@ class StoreConfigDataProvider
      *
      * @return array
      */
-    private function getExtendedConfigData()
+    protected function getExtendedConfigData()
     {
         $store = $this->storeManager->getStore();
         $extendedConfigData = [];
