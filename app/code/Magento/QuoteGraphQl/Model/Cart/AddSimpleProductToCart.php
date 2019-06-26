@@ -62,6 +62,10 @@ class AddSimpleProductToCart
             throw new GraphQlNoSuchEntityException(__('Could not find a product with SKU "%sku"', ['sku' => $sku]));
         }
 
+        if ((int) $product->getVisibility() === \Magento\Catalog\Model\Product\Visibility::VISIBILITY_NOT_VISIBLE) {
+            throw new GraphQlNoSuchEntityException(__('Could not find a product with SKU "%sku"', ['sku' => $sku]));
+        }
+
         try {
             $result = $cart->addProduct($product, $this->createBuyRequest->execute($quantity, $customizableOptions));
         } catch (\Exception $e) {
