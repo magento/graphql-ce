@@ -382,7 +382,8 @@ QUERY;
 QUERY;
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage(
-            'GraphQL response contains errors: currentPage value 2 specified is greater than the 1 page(s) available'
+            'GraphQL response contains errors: currentPage value 2 specified is greater ' .
+            'than the 1 page(s) available'
         );
         $this->graphQlQuery($query);
     }
@@ -1045,7 +1046,8 @@ QUERY;
 
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage(
-            'GraphQL response contains errors: currentPage value 2 specified is greater than the 1 page(s) available.'
+            'GraphQL response contains errors: currentPage value 2 specified is greater ' .
+            'than the 1 page(s) available.'
         );
         $this->graphQlQuery($query);
     }
@@ -1077,7 +1079,10 @@ QUERY;
 QUERY;
 
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('GraphQL response contains errors: filter or search input argument is required.');
+        $this->expectExceptionMessage(
+            'GraphQL response contains errors: \'search\' or \'filter\' input argument is ' .
+            'required.'
+        );
         $this->graphQlQuery($query);
     }
 
@@ -1133,6 +1138,64 @@ QUERY;
     }
 
     /**
+     * Verify that invalid current page return an error
+     *
+     * @magentoApiDataFixture Magento/Catalog/_files/products_with_layered_navigation_attribute.php
+     * @expectedException \Exception
+     * @expectedExceptionMessage currentPage value must be greater than 0
+     */
+    public function testInvalidCurrentPage()
+    {
+        $query = <<<QUERY
+{
+  products (
+    filter: {
+      sku: {
+        like:"simple%"
+      }
+    }
+    pageSize: 4
+    currentPage: 0
+  ) {
+    items {
+      sku
+    }
+  }
+}
+QUERY;
+        $this->graphQlQuery($query);
+    }
+
+    /**
+     * Verify that invalid page size returns an error.
+     *
+     * @magentoApiDataFixture Magento/Catalog/_files/products_with_layered_navigation_attribute.php
+     * @expectedException \Exception
+     * @expectedExceptionMessage pageSize value must be greater than 0
+     */
+    public function testInvalidPageSize()
+    {
+        $query = <<<QUERY
+{
+  products (
+    filter: {
+      sku: {
+        like:"simple%"
+      }
+    }
+    pageSize: 0
+    currentPage: 1
+  ) {
+    items {
+      sku
+    }
+  }
+}
+QUERY;
+        $this->graphQlQuery($query);
+    }
+
+    /**
      * Asserts the different fields of items returned after search query is executed
      *
      * @param Product[] $filteredProducts
@@ -1141,7 +1204,7 @@ QUERY;
     private function assertProductItems(array $filteredProducts, array $actualResponse)
     {
         $productItemsInResponse = array_map(null, $actualResponse['products']['items'], $filteredProducts);
-
+        // phpcs:ignore Generic.CodeAnalysis.ForLoopWithTestFunctionCall
         for ($itemIndex = 0; $itemIndex < count($filteredProducts); $itemIndex++) {
             $this->assertNotEmpty($productItemsInResponse[$itemIndex]);
             $this->assertResponseFields(
