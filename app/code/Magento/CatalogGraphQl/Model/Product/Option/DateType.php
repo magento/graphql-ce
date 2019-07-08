@@ -17,6 +17,34 @@ use Magento\Framework\Stdlib\DateTime;
 class DateType extends ProductDateOptionType
 {
     /**
+     * @var array
+     */
+    protected $dateTypePool;
+
+    /**
+     * DateType constructor.
+     *
+     * @param \Magento\Checkout\Model\Session $checkoutSession
+     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
+     * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate
+     * @param array $data
+     * @param \Magento\Framework\Serialize\Serializer\Json|null $serializer
+     * @param \Magento\CatalogGraphQl\Model\Product\Option\DateTypePool $dateTypePool
+     */
+    public function __construct(
+        \Magento\Checkout\Model\Session $checkoutSession,
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+        \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
+        array $data = [],
+        \Magento\Framework\Serialize\Serializer\Json $serializer = null,
+        \Magento\CatalogGraphQl\Model\Product\Option\DateTypePool $dateTypePool
+    ) {
+        $this->dateTypePool = $dateTypePool;
+
+        parent::__construct($checkoutSession, $scopeConfig, $localeDate, $data, $serializer);
+    }
+
+    /**
      * Make valid string as a value of date option type for GraphQl queries
      *
      * @param array $values All product option values, i.e. array (option_id => mixed, option_id => mixed...)
@@ -42,7 +70,12 @@ class DateType extends ProductDateOptionType
     {
         if (isset($values[$this->getOption()->getId()])) {
             $value = $values[$this->getOption()->getId()];
-            $dateTime = \DateTime::createFromFormat(DateTime::DATETIME_PHP_FORMAT, $value);
+
+            $dateType = $this->getOption()->getType();
+            $dateTypePool = $this->dateTypePool->getDataTypes();
+
+            $dateTime = \DateTime::createFromFormat($dateTypePool[$dateType], $value);
+
             $values[$this->getOption()->getId()] = [
                 'date' => $value,
                 'year' => $dateTime->format('Y'),

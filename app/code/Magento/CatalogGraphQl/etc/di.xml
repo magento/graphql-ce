@@ -37,6 +37,15 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\CatalogGraphQl\Model\Product\Option\DateTypePool">
+        <arguments>
+            <argument name="dataTypes" xsi:type="array">
+                <item name="date" xsi:type="string">Y-m-d</item>
+                <item name="date_time" xsi:type="string">Y-m-d H:i:s</item>
+                <item name="time" xsi:type="string">Y-m-d H:i:s</item>
+            </argument>
+        </arguments>
+    </type>
     <type name="Magento\CatalogGraphQl\Model\Resolver\Products\DataProvider\Product\CompositeCollectionProcessor">
         <arguments>
             <argument name="collectionProcessors" xsi:type="array">
