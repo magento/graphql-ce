@@ -9,6 +9,7 @@ namespace Magento\Catalog\Model\Product\Type;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\InvalidOptionInput;
 
 /**
  * @api
@@ -572,6 +573,7 @@ abstract class AbstractType
      * @param string $processMode
      * @return array
      * @throws LocalizedException
+     * @throws InvalidOptionInput
      */
     protected function _prepareOptions(\Magento\Framework\DataObject $buyRequest, $product, $processMode)
     {
@@ -583,6 +585,7 @@ abstract class AbstractType
         }
         if ($options !== null) {
             $results = [];
+            $extendedData = [];
             foreach ($options as $option) {
                 /* @var $option \Magento\Catalog\Model\Product\Option */
                 try {
@@ -594,6 +597,7 @@ abstract class AbstractType
                         ->validateUserValue($buyRequest->getOptions());
                 } catch (LocalizedException $e) {
                     $results[] = $e->getMessage();
+                    $extendedData[] = ['sku' => $product->getSku(), 'optionId' => $option->getId()];
                     continue;
                 }
 
@@ -603,7 +607,9 @@ abstract class AbstractType
                 }
             }
             if (count($results) > 0) {
-                throw new LocalizedException(__(implode("\n", array_unique($results))));
+                throw new InvalidOptionInput(
+                    new \Magento\Framework\Phrase(__(implode("\n", $results)), $extendedData)
+                );
             }
         }
 
