@@ -43,9 +43,9 @@ class InvalidOptionInput extends LocalizedException
     {
         $exceptionTextArray = explode("\n", $this->phrase->getText());
         $extendedData = $this->phrase->getArguments();
-        foreach ($exceptionTextArray as $key => $value) {
-            $exceptionTextArray[$key] .=
-                " Please check input data: Product SKU - '{$extendedData[$key]['sku']}', Option ID - '{$extendedData[$key]['optionId']}'";
+        foreach ($exceptionTextArray as $key => &$value) {
+            // @codingStandardsIgnoreLine
+            $value .= " Please check input data: Product SKU - '{$extendedData[$key]['sku']}', Option ID - '{$extendedData[$key]['optionId']}'";
         }
 
         return __(implode("\n", $exceptionTextArray));
