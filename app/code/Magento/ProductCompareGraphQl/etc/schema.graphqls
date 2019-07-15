@@ -1,0 +1,43 @@
+# Copyright © Magento, Inc. All rights reserved.
+# See COPYING.txt for license details.
+
+type Query {
+    compareProductsList(hashed_id: String): CompareProductsList @resolver(class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\CompareProductsList") @doc(description: "Get compare products list")
+}
+
+type CompareProductsList {
+    items: [CompareItem] @resolver(class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\GetCompareListItems") @doc (description: "Compare products list which contains items as products")
+}
+
+type CompareItem {
+    item_id: Int
+    product: ProductInterface
+}
+
+type Mutation {
+    addProductToCompareList(hashed_id: String, input: addProductToCompareListInput): addProductToCompareListOutput @resolver (class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\AddProductToCompareList") @doc(description: "Add product to compare list")
+    removeProductFromCompareList(hashed_id: String, input: removeProductFromCompareListInput): removeProductFromCompareListOutput @resolver(class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\RemoveProductFromCompareList") @doc(description: "Remove product from compare list")
+    createCompareList: CreateCompareListOutput @resolver(class: "Magento\\ProductCompareGraphQl\\Model\\Resolver\\CreateCompareList") @doc(description: "Create compare list to add product to this list")
+}
+
+input addProductToCompareListInput {
+    ids: [Int!]
+}
+
+type addProductToCompareListOutput {
+    result: Boolean!
+    compareProductsList: CompareProductsList
+}
+
+input removeProductFromCompareListInput {
+    ids: [Int!]
+}
+
+type removeProductFromCompareListOutput {
+    result: Boolean!
+    compareProductsList: CompareProductsList
+}
+
+type CreateCompareListOutput {
+    hashed_id: String
+}
