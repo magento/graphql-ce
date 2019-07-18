@@ -8,7 +8,6 @@ declare(strict_types=1);
 namespace Magento\QuoteGraphQl\Model\Cart;
 
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
-use Magento\Framework\Message\AbstractMessage;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magento\Quote\Model\Quote;
 
@@ -53,31 +52,6 @@ class AddProductsToCart
         foreach ($cartItems as $cartItemData) {
             $this->addProductToCart->execute($cart, $cartItemData);
         }
-
-        if ($cart->getData('has_error')) {
-            throw new GraphQlInputException(
-                __('Shopping cart error: %message', ['message' => $this->getCartErrors($cart)])
-            );
-        }
-
         $this->cartRepository->save($cart);
-    }
-
-    /**
-     * Collecting cart errors
-     *
-     * @param Quote $cart
-     * @return string
-     */
-    private function getCartErrors(Quote $cart): string
-    {
-        $errorMessages = [];
-
-        /** @var AbstractMessage $error */
-        foreach ($cart->getErrors() as $error) {
-            $errorMessages[] = $error->getText();
-        }
-
-        return implode(PHP_EOL, $errorMessages);
     }
 }

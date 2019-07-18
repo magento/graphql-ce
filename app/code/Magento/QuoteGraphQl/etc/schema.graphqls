@@ -17,6 +17,7 @@ type Mutation {
     setBillingAddressOnCart(input: SetBillingAddressOnCartInput): SetBillingAddressOnCartOutput @resolver(class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\SetBillingAddressOnCart")
     setShippingMethodsOnCart(input: SetShippingMethodsOnCartInput): SetShippingMethodsOnCartOutput @resolver(class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\SetShippingMethodsOnCart")
     setPaymentMethodOnCart(input: SetPaymentMethodOnCartInput): SetPaymentMethodOnCartOutput @resolver(class: "Magento\\QuoteGraphQl\\Model\\Resolver\\SetPaymentMethodOnCart")
+    getCartMessages(input: GetCartMessagesInput): GetCartMessagesOutput @resolver(class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\GetCartMessages") @doc(description:"Return all shopping cart messages for a guest or logged in user")
 }
 
 input AddSimpleProductsToCartInput {
@@ -124,6 +125,10 @@ input PaymentMethodInput {
     purchase_order_number: String @doc(description:"Purchase order number")
 }
 
+input GetCartMessagesInput {
+    cart_id: String!
+}
+
 type SetPaymentMethodOnCartOutput {
     cart: Cart!
 }
@@ -142,6 +147,10 @@ type SetShippingMethodsOnCartOutput {
 
 type ApplyCouponToCartOutput {
     cart: Cart!
+}
+
+type GetCartMessagesOutput {
+     messages: [String]!
 }
 
 type Cart {

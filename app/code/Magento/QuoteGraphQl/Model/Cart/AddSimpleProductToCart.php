@@ -65,11 +65,6 @@ class AddSimpleProductToCart
      */
     public function execute(Quote $cart, array $cartItemData): void
     {
-        if ($cart->getData('has_error')) {
-            throw new GraphQlInputException(
-                __('Shopping cart error: %message', ['message' => $this->getCartErrors($cart)])
-            );
-        }
         $sku = $this->extractSku($cartItemData);
         $qty = $this->extractQty($cartItemData);
         $customizableOptions = $this->extractCustomizableOptions($cartItemData);
