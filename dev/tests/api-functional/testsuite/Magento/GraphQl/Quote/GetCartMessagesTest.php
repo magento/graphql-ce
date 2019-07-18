@@ -13,6 +13,11 @@ use Magento\Quote\Model\QuoteFactory;
 use Magento\Quote\Model\QuoteIdToMaskedQuoteIdInterface;
 use Magento\Quote\Model\ResourceModel\Quote as QuoteResource;
 
+/**
+ * Class GetCartMessagesTestTest
+ *
+ * @package Magento\GraphQl\Quote
+ */
 class GetCartMessagesTestTest extends GraphQlAbstract
 {
     /**
@@ -90,6 +95,7 @@ class GetCartMessagesTestTest extends GraphQlAbstract
 
     /**
      * @return string
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     public function getMaskedQuoteId() : string
     {
