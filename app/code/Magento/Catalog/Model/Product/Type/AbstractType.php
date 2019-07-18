@@ -607,9 +607,7 @@ abstract class AbstractType
                 }
             }
             if (count($results) > 0) {
-                throw new InvalidOptionInput(
-                    new \Magento\Framework\Phrase(__(implode("\n", $results)), $extendedData)
-                );
+                throw InvalidOptionInput::getExtendedMessage($results, $extendedData);
             }
         }
 

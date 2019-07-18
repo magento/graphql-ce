@@ -18,36 +18,45 @@ use Magento\Framework\Phrase;
 class InvalidOptionInput extends LocalizedException
 {
     /**
+     * Default message
+     */
+    private const DEFAULT_MESSAGE =
+        'The product\'s required option(s) weren\'t entered. Make sure the options are entered and try again.';
+
+    /**
      * InvalidOptionInput constructor.
      *
      * @param \Magento\Framework\Phrase $phrase
      * @param \Exception|null $cause
      * @param int $code
      */
-    public function __construct(\Magento\Framework\Phrase $phrase, \Exception $cause = null, int $code = 0)
+    public function __construct(Phrase $phrase = null, \Exception $cause = null, int $code = 0)
     {
-        $arguments = $phrase->getArguments();
-        if (isset($arguments)) {
-            $this->phrase = $phrase;
-            $phrase = new Phrase($this->getExtendedMessage());
+        if ($phrase === null) {
+            $phrase = new Phrase(__(self::DEFAULT_MESSAGE));
         }
         parent::__construct($phrase, $cause, $code);
     }
 
     /**
-     * Add more information to exception message for custom option of product
+     * @param array $messages
+     * @param array $extendedData
+     * @param \Exception|null $cause
      *
-     * @return string
+     * @return \Magento\Framework\Exception\InvalidOptionInput
      */
-    public function getExtendedMessage()
+    public static function getExtendedMessage(array $messages, array $extendedData, \Exception $cause = null)
     {
-        $exceptionTextArray = explode("\n", $this->phrase->getText());
-        $extendedData = $this->phrase->getArguments();
-        foreach ($exceptionTextArray as $key => &$value) {
+        foreach ($messages as $key => &$value) {
             // @codingStandardsIgnoreLine
             $value .= " Please check input data: Product SKU - '{$extendedData[$key]['sku']}', Option ID - '{$extendedData[$key]['optionId']}'";
         }
 
-        return __(implode("\n", $exceptionTextArray));
+        return new self(
+            new Phrase(
+                __(implode("\n", $messages))
+            ),
+            $cause
+        );
     }
 }
