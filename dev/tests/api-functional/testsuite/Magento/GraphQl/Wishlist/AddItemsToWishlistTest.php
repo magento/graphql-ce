@@ -33,33 +33,22 @@ class AddItemsToWishlistTest extends GraphQlAbstract
      */
     public function testAddItemToWishlist(): void
     {
-        $sku = 'simple_product';
-        $query = <<<QUERY
-mutation {
-  addItemsToWishlist (
-    input: {
-      sku_list: ["$sku"]
-    }
-  ) {
-    wishlist {
-      items {
-        product {
-          sku
-        }
-      }
-      items_count
-    }
-  }
-}
-QUERY;
+        $items =[
+            [
+                'sku' => 'simple_product',
+                'quantity' =>  5
+            ]
+        ];
 
+        $query = $this->getAddItemsQuery($items);
         $response = $this->graphQlMutation($query, [], '', $this->getHeaderMap());
 
         self::assertArrayHasKey('wishlist', $response['addItemsToWishlist']);
         $wishlistResponsePath = $response['addItemsToWishlist']['wishlist'];
         self::assertEquals(1, $wishlistResponsePath['items_count']);
         self::assertCount(1, $wishlistResponsePath['items']);
-        self::assertEquals($sku, $wishlistResponsePath['items'][0]['product']['sku']);
+        self::assertEquals($items[0]['quantity'], $wishlistResponsePath['items'][0]['qty']);
+        self::assertEquals($items[0]['sku'], $wishlistResponsePath['items'][0]['product']['sku']);
     }
 
     /**
@@ -71,26 +60,14 @@ QUERY;
      */
     public function testAddItemToWishlistForGuest(): void
     {
-        $sku = 'simple_product';
-        $query = <<<QUERY
-mutation {
-  addItemsToWishlist (
-    input: {
-      sku_list: ["$sku"]
-    }
-  ) {
-    wishlist {
-      items {
-        product {
-          sku
-        }
-      }
-      items_count
-    }
-  }
-}
-QUERY;
+        $items =[
+            [
+                'sku' => 'simple_product',
+                'quantity' =>  5
+            ]
+        ];
 
+        $query = $this->getAddItemsQuery($items);
         $this->graphQlMutation($query);
     }
 
@@ -102,34 +79,25 @@ QUERY;
      */
     public function testAddMultipleItemsToWishlist()
     {
-        $skuList = ['simple_product', 'virtual_product'];
-        $skuListString = '"simple_product", "virtual_product"';
-        $query = <<<QUERY
-mutation {
-  addItemsToWishlist (
-    input: {
-      sku_list: [$skuListString]
-    }
-  ) {
-    wishlist {
-      items {
-        product {
-          sku
-        }
-      }
-      items_count
-    }
-  }
-}
-QUERY;
+        $items =[
+            [
+                'sku' => 'simple_product',
+                'quantity' =>  5
+            ],
+            [
+                'sku' => 'virtual_product',
+                'quantity' =>  5
+            ]
+        ];
 
+        $query = $this->getAddItemsQuery($items);
         $response = $this->graphQlMutation($query, [], '', $this->getHeaderMap());
 
         $wishlistResponsePath = $response['addItemsToWishlist']['wishlist'];
-        self::assertEquals(count($skuList), $wishlistResponsePath['items_count']);
-        self::assertCount(count($skuList), $wishlistResponsePath['items']);
-        self::assertEquals($skuList[0], $wishlistResponsePath['items'][0]['product']['sku']);
-        self::assertEquals($skuList[1], $wishlistResponsePath['items'][1]['product']['sku']);
+        self::assertEquals(count($items), $wishlistResponsePath['items_count']);
+        self::assertCount(count($items), $wishlistResponsePath['items']);
+        self::assertEquals($items[0]['sku'], $wishlistResponsePath['items'][0]['product']['sku']);
+        self::assertEquals($items[1]['sku'], $wishlistResponsePath['items'][1]['product']['sku']);
     }
 
     /**
@@ -137,20 +105,44 @@ QUERY;
      * @magentoApiDataFixture Magento/GraphQl/Wishlist/_files/wishlist.php
      * @expectedException \Exception
      * @expectedExceptionMessage Cannot add the specified items to wishlist
-     * @group latest
      */
     public function testAddNonExistentProductToWishlist(): void
     {
-        $sku = 'non_existent_product';
-        $query = <<<QUERY
+        $items =[
+            [
+                'sku' => 'non_existent_product',
+                'quantity' =>  5
+            ]
+        ];
+
+        $query = $this->getAddItemsQuery($items);
+        $this->graphQlMutation($query, [], '', $this->getHeaderMap());
+    }
+
+    /**
+     * Returns GraphQl query for adding items to wishlist
+     *
+     * @param array $items
+     * @return string
+     */
+    private function getAddItemsQuery(array $items): string
+    {
+        $itemsFragment = '';
+        foreach ($items as $item) {
+            $itemsFragment .= "{ sku: \"{$item['sku']}\" quantity: {$item['quantity']} },";
+        }
+       // $itemsFragment = rtrim($itemsFragment, ',');
+
+        return <<<QUERY
 mutation {
   addItemsToWishlist (
     input: {
-      sku_list: ["$sku"]
+      wishlist_items: [$itemsFragment]
     }
   ) {
     wishlist {
       items {
+        qty
         product {
           sku
         }
@@ -160,8 +152,6 @@ mutation {
   }
 }
 QUERY;
-
-        $this->graphQlMutation($query, [], '', $this->getHeaderMap());
     }
 
     /**

@@ -6,7 +6,16 @@ type Query {
 }
 
 type Mutation {
-    addItemsToWishlist (input: AddItemToWishlistInput): AddItemToWishlistOutput @resolver(class: "\\Magento\\WishlistGraphQl\\Model\\Resolver\\AddItemsToWishlist") @doc(description:"Add items wishlist")
+    addItemsToWishlist (input: AddItemsToWishlistInput): AddItemToWishlistOutput @resolver(class: "\\Magento\\WishlistGraphQl\\Model\\Resolver\\AddItemsToWishlist") @doc(description:"Add items wishlist")
+}
+
+input AddItemsToWishlistInput {
+    wishlist_items: [WishlistItemInput!]!
+}
+
+input WishlistItemInput {
+    sku: String!
+    quantity: Float
 }
 
 type WishlistOutput {
@@ -23,10 +32,6 @@ type WishlistItem {
     description: String @doc(description: "The customer's comment about this item"),
     added_at: String @doc(description: "The time when the customer added the item to the wish list"),
     product: ProductInterface @resolver(class: "\\Magento\\WishlistGraphQl\\Model\\Resolver\\ProductResolver")
-}
-
-input AddItemToWishlistInput {
-    sku_list: [String!]!
 }
 
 type AddItemToWishlistOutput {

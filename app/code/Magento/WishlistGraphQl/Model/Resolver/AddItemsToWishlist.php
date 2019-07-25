@@ -7,6 +7,8 @@ declare(strict_types=1);
 
 namespace Magento\WishlistGraphQl\Model\Resolver;
 
+use Magento\Framework\DataObject;
+use Magento\Framework\DataObjectFactory;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
@@ -17,6 +19,9 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
 use Magento\Catalog\Model\Product\Visibility;
 use Magento\Catalog\Model\Product\Attribute\Source\Status;
+use Magento\Catalog\Api\Data\ProductInterface;
+
+// TODO: split resolver into smaller parts
 
 /**
  * @inheritdoc
@@ -39,17 +44,26 @@ class AddItemsToWishlist implements ResolverInterface
     private $getWishlistForCustomer;
 
     /**
+     * @var DataObjectFactory
+     */
+    private $dataObjectFactory;
+
+    /**
      * @param GetWishlistForCustomer $getWishlistForCustomer
      * @param ProductCollectionFactory $productCollectionFactory
+     * @param DataObjectFactory $dataObjectFactory
      * @param StoreManagerInterface $storeManager
      */
     public function __construct(
         GetWishlistForCustomer $getWishlistForCustomer,
         ProductCollectionFactory $productCollectionFactory,
+        DataObjectFactory $dataObjectFactory,
         StoreManagerInterface $storeManager
     ) {
         $this->getWishlistForCustomer = $getWishlistForCustomer;
         $this->productCollectionFactory = $productCollectionFactory;
+        $this->dataObjectFactory = $dataObjectFactory;
+
         // TODO: use store id from context instead when https://github.com/magento/graphql-ce/pull/493 is merged
         $this->storeManager = $storeManager;
     }
@@ -59,8 +73,8 @@ class AddItemsToWishlist implements ResolverInterface
      */
     public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
     {
-        if (!isset($args['input']['sku_list']) || count($args['input']['sku_list']) < 1) {
-            throw new GraphQlInputException(__('Required parameter "sku_list" is missing'));
+        if (!isset($args['input']['wishlist_items']) || count($args['input']['wishlist_items']) < 1) {
+            throw new GraphQlInputException(__('Required parameter "wishlist_items" is missing'));
         }
 
         $customerId = $context->getUserId();
@@ -70,15 +84,22 @@ class AddItemsToWishlist implements ResolverInterface
 
         $wishlist = $this->getWishlistForCustomer->execute($customerId);
 
-        $products = $this->getAvailableProductsBySku($args['input']['sku_list']);
+        $productsList = [];
+        foreach ($args['input']['wishlist_items'] as $wishlistItem) {
+            $productsList[$wishlistItem['sku']] = $wishlistItem['quantity'] ?? 1;
+        }
+
+        $products = $this->getAvailableProductsBySku(array_keys($productsList));
         if (count($products) === 0) {
             throw new GraphQlInputException(__('Cannot add the specified items to wishlist'));
         }
 
         $errors = [];
 
+        /** @var ProductInterface $product */
         foreach ($products as $product) {
-            $item = $wishlist->addNewItem($product);
+            $buyRequest = $this->createBuyRequest($productsList[$product->getSku()]);
+            $item = $wishlist->addNewItem($product, $buyRequest);
 
             /* The system returns string in case of an error */
             if (is_string($item)) {
@@ -118,5 +139,22 @@ class AddItemsToWishlist implements ResolverInterface
             )
             ->addAttributeToFilter('status', Status::STATUS_ENABLED)
             ->getItems();
+    }
+
+    /**
+     * Creates buy request
+     *
+     * @param float $qty
+     * @return DataObject
+     */
+    private function createBuyRequest(float $qty): DataObject
+    {
+        return $this->dataObjectFactory->create(
+            [
+                'data' => [
+                    'qty' => $qty,
+                ],
+            ]
+        );
     }
 }
