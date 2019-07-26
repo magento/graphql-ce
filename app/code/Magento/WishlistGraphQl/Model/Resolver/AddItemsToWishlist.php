@@ -7,21 +7,12 @@ declare(strict_types=1);
 
 namespace Magento\WishlistGraphQl\Model\Resolver;
 
-use Magento\Framework\DataObject;
-use Magento\Framework\DataObjectFactory;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
-use Magento\WishlistGraphQl\Model\GetWishlistForCustomer;
-use Magento\Store\Model\StoreManagerInterface;
-use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
-use Magento\Catalog\Model\Product\Visibility;
-use Magento\Catalog\Model\Product\Attribute\Source\Status;
-use Magento\Catalog\Api\Data\ProductInterface;
-
-// TODO: split resolver into smaller parts
+use Magento\WishlistGraphQl\Model\AddItemsToWIshlist as AddItemsToWishlistService;
 
 /**
  * @inheritdoc
@@ -29,43 +20,17 @@ use Magento\Catalog\Api\Data\ProductInterface;
 class AddItemsToWishlist implements ResolverInterface
 {
     /**
-     * @var ProductCollectionFactory
+     * @var AddItemsToWishlistService
      */
-    private $productCollectionFactory;
+    private $addItemsToWishlistService;
 
     /**
-     * @var StoreManagerInterface
-     */
-    private $storeManager;
-
-    /**
-     * @var GetWishlistForCustomer
-     */
-    private $getWishlistForCustomer;
-
-    /**
-     * @var DataObjectFactory
-     */
-    private $dataObjectFactory;
-
-    /**
-     * @param GetWishlistForCustomer $getWishlistForCustomer
-     * @param ProductCollectionFactory $productCollectionFactory
-     * @param DataObjectFactory $dataObjectFactory
-     * @param StoreManagerInterface $storeManager
+     * @param AddItemsToWishlistService $addItemsToWishlistService
      */
     public function __construct(
-        GetWishlistForCustomer $getWishlistForCustomer,
-        ProductCollectionFactory $productCollectionFactory,
-        DataObjectFactory $dataObjectFactory,
-        StoreManagerInterface $storeManager
+        AddItemsToWishlistService $addItemsToWishlistService
     ) {
-        $this->getWishlistForCustomer = $getWishlistForCustomer;
-        $this->productCollectionFactory = $productCollectionFactory;
-        $this->dataObjectFactory = $dataObjectFactory;
-
-        // TODO: use store id from context instead when https://github.com/magento/graphql-ce/pull/493 is merged
-        $this->storeManager = $storeManager;
+        $this->addItemsToWishlistService = $addItemsToWishlistService;
     }
 
     /**
@@ -81,35 +46,9 @@ class AddItemsToWishlist implements ResolverInterface
         if ($customerId === 0) {
             throw new GraphQlAuthorizationException(__('You must be logged in to use wishlist'));
         }
+        $storeId = (int)$context->getExtensionAttributes()->getStore()->getId();
+        $wishlist = $this->addItemsToWishlistService->execute($customerId, $args['input']['wishlist_items'], $storeId);
 
-        $wishlist = $this->getWishlistForCustomer->execute($customerId);
-
-        $productsList = [];
-        foreach ($args['input']['wishlist_items'] as $wishlistItem) {
-            $productsList[$wishlistItem['sku']] = $wishlistItem['quantity'] ?? 1;
-        }
-
-        $products = $this->getAvailableProductsBySku(array_keys($productsList));
-        if (count($products) === 0) {
-            throw new GraphQlInputException(__('Cannot add the specified items to wishlist'));
-        }
-
-        $errors = [];
-
-        /** @var ProductInterface $product */
-        foreach ($products as $product) {
-            $buyRequest = $this->createBuyRequest($productsList[$product->getSku()]);
-            $item = $wishlist->addNewItem($product, $buyRequest);
-
-            /* The system returns string in case of an error */
-            if (is_string($item)) {
-                $errors[] = $item;
-            }
-        }
-
-        if (count($errors) > 0) {
-            throw new GraphQlInputException(__(implode("\n", $errors)));
-        }
 
         return [
             'wishlist' => [
@@ -120,41 +59,5 @@ class AddItemsToWishlist implements ResolverInterface
                 'model' => $wishlist
             ]
         ];
-    }
-
-
-    /**
-     * Returns available products for current store according to the SKU list
-     *
-     * @param array $sku_list
-     * @return array
-     */
-    private function getAvailableProductsBySku(array $sku_list): array
-    {
-        return $this->productCollectionFactory->create()
-            ->addAttributeToFilter('sku', ['in' => $sku_list])
-            ->setStoreId($this->storeManager->getStore()->getId())
-            ->setVisibility(
-                [Visibility::VISIBILITY_BOTH, Visibility::VISIBILITY_IN_CATALOG, Visibility::VISIBILITY_IN_SEARCH]
-            )
-            ->addAttributeToFilter('status', Status::STATUS_ENABLED)
-            ->getItems();
-    }
-
-    /**
-     * Creates buy request
-     *
-     * @param float $qty
-     * @return DataObject
-     */
-    private function createBuyRequest(float $qty): DataObject
-    {
-        return $this->dataObjectFactory->create(
-            [
-                'data' => [
-                    'qty' => $qty,
-                ],
-            ]
-        );
     }
 }
