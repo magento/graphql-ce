@@ -12,6 +12,9 @@ use Magento\Integration\Api\CustomerTokenServiceInterface;
 use Magento\TestFramework\TestCase\GraphQlAbstract;
 use Magento\TestFramework\Helper\Bootstrap;
 
+/**
+ * Tests for adding items to wishlist
+ */
 class AddItemsToWishlistTest extends GraphQlAbstract
 {
     /**
@@ -111,6 +114,71 @@ class AddItemsToWishlistTest extends GraphQlAbstract
         $items =[
             [
                 'sku' => 'non_existent_product',
+                'quantity' =>  5
+            ]
+        ];
+
+        $query = $this->getAddItemsQuery($items);
+        $this->graphQlMutation($query, [], '', $this->getHeaderMap());
+    }
+
+    /**
+     * @magentoApiDataFixture Magento/Customer/_files/customer.php
+     * @magentoApiDataFixture Magento/GraphQl/Wishlist/_files/wishlist.php
+     * @magentoApiDataFixture Magento/GraphQl/Catalog/_files/simple_product_without_visibility.php
+     * @expectedException \Exception
+     * @expectedExceptionMessage Cannot add the specified items to wishlist
+     */
+    public function testAddNonAvailableProductToWishlist(): void
+    {
+        $items =[
+            [
+                'sku' => 'simple_product',
+                'quantity' => 5
+            ]
+        ];
+
+        $query = $this->getAddItemsQuery($items);
+        $this->graphQlMutation($query, [], '', $this->getHeaderMap());
+    }
+
+    /**
+     * @magentoApiDataFixture Magento/Customer/_files/customer.php
+     * @magentoApiDataFixture Magento/GraphQl/Wishlist/_files/wishlist.php
+     * @magentoApiDataFixture Magento/GraphQl/Catalog/_files/simple_product.php
+     * @magentoApiDataFixture Magento/Store/_files/website.php
+     * @magentoApiDataFixture Magento/GraphQl/Catalog/_files/set_simple_product_second_website.php
+     * @expectedException \Exception
+     * @expectedExceptionMessage Cannot add the specified items to wishlist
+     * @group latest
+     */
+    public function testAddProductFromAnotherStoreToWishlist(): void
+    {
+        $items =[
+            [
+                'sku' => 'simple_product',
+                'quantity' => 5
+            ]
+        ];
+
+        $query = $this->getAddItemsQuery($items);
+        $this->graphQlMutation($query, [], '', $this->getHeaderMap());
+    }
+
+    /**
+     * This case happens if the customer entity has been created programmatically
+     * without involving logic that creates an empty wishlist for customer automatically
+     *
+     * @magentoApiDataFixture Magento/Customer/_files/customer.php
+     * @magentoApiDataFixture Magento/GraphQl/Catalog/_files/simple_product.php
+     * @expectedException \Exception
+     * @expectedExceptionMessage We can't specify a wish list
+     */
+    public function testAddItemToWishlistWithNoWishlistInitialised(): void
+    {
+        $items =[
+            [
+                'sku' => 'simple_product',
                 'quantity' =>  5
             ]
         ];

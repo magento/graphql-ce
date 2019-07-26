@@ -49,7 +49,6 @@ class AddItemsToWishlist implements ResolverInterface
         $storeId = (int)$context->getExtensionAttributes()->getStore()->getId();
         $wishlist = $this->addItemsToWishlistService->execute($customerId, $args['input']['wishlist_items'], $storeId);
 
-
         return [
             'wishlist' => [
                 'sharing_code' => $wishlist->getSharingCode(),

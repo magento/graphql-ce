@@ -31,4 +31,3 @@ $wishlist->setCustomerId($customer->getId());
 $wishlist->setSharingCode('fixture_unique_code');
 $wishlist->setShared(0);
 $wishlistResource->save($wishlist);
-
