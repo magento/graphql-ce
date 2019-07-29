@@ -56,9 +56,9 @@ class AddProductToCartTest extends GraphQlAbstract
     {
         $sku = 'simple';
         $qty = 1;
-        $maskedQuoteId = $this->getMaskedQuoteId();
+        $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_order_1');
 
-        $query = $this->getAddSimpleProductQuery($maskedQuoteId, $sku, $qty);
+        $query = $this->getQuery($maskedQuoteId, $sku, $qty);
         $this->graphQlQuery($query);
 
         $product = Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Product::class);

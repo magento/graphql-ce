@@ -14,11 +14,11 @@ use Magento\Quote\Model\QuoteIdToMaskedQuoteIdInterface;
 use Magento\Quote\Model\ResourceModel\Quote as QuoteResource;
 
 /**
- * Class GetCartMessagesTestTest
+ * Class GetCartMessagesTest
  *
  * @package Magento\GraphQl\Quote
  */
-class GetCartMessagesTestTest extends GraphQlAbstract
+class GetCartMessagesTest extends GraphQlAbstract
 {
     /**
      * @var QuoteResource
