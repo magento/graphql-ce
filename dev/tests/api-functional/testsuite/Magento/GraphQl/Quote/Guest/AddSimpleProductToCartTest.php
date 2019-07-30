@@ -50,6 +50,26 @@ class AddSimpleProductToCartTest extends GraphQlAbstract
     }
 
     /**
+     * @magentoApiDataFixture Magento/GraphQl/Catalog/_files/simple_product_without_visibility.php
+     * @magentoApiDataFixture Magento/GraphQl/Quote/_files/guest/create_empty_cart.php
+     * @expectedException \Exception
+     * @expectedExceptionMessage Could not find a product with SKU
+     */
+    public function testAddNotVisibleSimpleProductToCart()
+    {
+        $sku = 'simple_product_without_visibility';
+        $quantity = 2;
+        $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_quote');
+
+        $query = $this->getQuery($maskedQuoteId, $sku, $quantity);
+        $response = $this->graphQlMutation($query);
+        self::assertArrayHasKey('cart', $response['addSimpleProductsToCart']);
+
+        self::assertEquals($quantity, $response['addSimpleProductsToCart']['cart']['items'][0]['quantity']);
+        self::assertEquals($sku, $response['addSimpleProductsToCart']['cart']['items'][0]['product']['sku']);
+    }
+
+    /**
      * @expectedException Exception
      * @expectedExceptionMessage Required parameter "cart_id" is missing
      */

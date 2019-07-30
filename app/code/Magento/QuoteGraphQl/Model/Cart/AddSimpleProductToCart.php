@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\QuoteGraphQl\Model\Cart;
 
 use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Catalog\Model\Product\Visibility;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
@@ -31,15 +32,23 @@ class AddSimpleProductToCart
     private $buyRequestBuilder;
 
     /**
+     * @var Visibility
+     */
+    private $visibility;
+
+    /**
      * @param ProductRepositoryInterface $productRepository
      * @param BuyRequestBuilder $buyRequestBuilder
+     * @param Visibility $visibility
      */
     public function __construct(
         ProductRepositoryInterface $productRepository,
-        BuyRequestBuilder $buyRequestBuilder
+        BuyRequestBuilder $buyRequestBuilder,
+        Visibility $visibility
     ) {
         $this->productRepository = $productRepository;
         $this->buyRequestBuilder = $buyRequestBuilder;
+        $this->visibility = $visibility;
     }
 
     /**
@@ -59,6 +68,14 @@ class AddSimpleProductToCart
         try {
             $product = $this->productRepository->get($sku);
         } catch (NoSuchEntityException $e) {
+            throw new GraphQlNoSuchEntityException(__('Could not find a product with SKU "%sku"', ['sku' => $sku]));
+        }
+
+        if (!in_array(
+            (int) $product->getVisibility(),
+            $this->visibility->getVisibleInSiteIds(),
+            true
+        )) {
             throw new GraphQlNoSuchEntityException(__('Could not find a product with SKU "%sku"', ['sku' => $sku]));
         }
 
