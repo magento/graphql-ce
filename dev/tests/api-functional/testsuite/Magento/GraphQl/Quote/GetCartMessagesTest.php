@@ -57,7 +57,7 @@ class GetCartMessagesTest extends GraphQlAbstract
         $maskedQuoteId = $this->getMaskedQuoteId();
 
         $queryAddProduct = $this->getAddSimpleProductQuery($maskedQuoteId, $sku, $qty);
-        $this->graphQlQuery($queryAddProduct);
+        $this->graphQlMutation($queryAddProduct);
 
         $product = Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Product::class);
         $productId = $product->getIdBySku($sku);
@@ -66,7 +66,7 @@ class GetCartMessagesTest extends GraphQlAbstract
         $product->save();
 
         $queryGetMessages = $this->getCartMessagesQuery($maskedQuoteId);
-        $response = $this->graphQlQuery($queryGetMessages);
+        $response = $this->graphQlMutation($queryGetMessages);
         self::assertEquals('Some of the products are out of stock.', $response['getCartMessages']['messages'][0]);
     }
     /**
@@ -78,7 +78,7 @@ class GetCartMessagesTest extends GraphQlAbstract
         $maskedQuoteId = '';
 
         $query = $this->getCartMessagesQuery($maskedQuoteId);
-        $this->graphQlQuery($query);
+        $this->graphQlMutation($query);
     }
 
     /**
@@ -90,7 +90,7 @@ class GetCartMessagesTest extends GraphQlAbstract
         $maskedQuoteId = $this->getMaskedQuoteId();
 
         $query = $this->getCartMessagesQuery($maskedQuoteId);
-        $this->graphQlQuery($query);
+        $this->graphQlMutation($query);
     }
 
     /**

@@ -59,7 +59,7 @@ class AddProductToCartTest extends GraphQlAbstract
         $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_order_1');
 
         $query = $this->getQuery($maskedQuoteId, $sku, $qty);
-        $this->graphQlQuery($query);
+        $this->graphQlMutation($query);
 
         $product = Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Product::class);
         $productId = $product->getIdBySku($sku);
@@ -67,22 +67,22 @@ class AddProductToCartTest extends GraphQlAbstract
         $product->setStockData(['is_in_stock' => 0]);
         $product->save();
 
-        $this->graphQlQuery($query);
+        $this->graphQlMutation($query);
     }
     /**
      * @magentoApiDataFixture Magento/Catalog/_files/products.php
      * @magentoApiDataFixture Magento/Checkout/_files/active_quote.php
      * @magentoConfigFixture default cataloginventory/item_options/max_sale_qty 5
-     * @expectedException \Exception
-     * @expectedExceptionMessage The most you may purchase is 5.
      */
     public function testAddMoreProductsThatAllowed()
     {
-        $this->markTestIncomplete('https://github.com/magento/graphql-ce/issues/167');
-
         $sku = 'custom-design-simple-product';
         $quantity = 7;
         $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_order_1');
+
+        $this->expectExceptionMessageRegExp(
+            '/The most you may purchase is 5|The requested qty exceeds the maximum qty allowed in shopping cart/'
+        );
 
         $query = $this->getQuery($maskedQuoteId, $sku, $quantity);
         $this->graphQlMutation($query);

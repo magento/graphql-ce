@@ -1,0 +1,16 @@
+Index: app/code/Magento/Catalog/Model/ResourceModel/Product/Indexer/Price/Query/BaseFinalPrice.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/code/Magento/Catalog/Model/ResourceModel/Product/Indexer/Price/Query/BaseFinalPrice.php	(date 1535143244000)
++++ app/code/Magento/Catalog/Model/ResourceModel/Product/Indexer/Price/Query/BaseFinalPrice.php	(date 1535221613000)
+@@ -190,7 +190,7 @@
+         $specialFromExpr = "{$specialFrom} IS NULL OR {$specialFromDate} <= {$currentDate}";
+         $specialToExpr = "{$specialTo} IS NULL OR {$specialToDate} >= {$currentDate}";
+         $specialPriceExpr = $connection->getCheckSql(
+-            "{$specialPrice} IS NOT NULL AND {$specialFromExpr} AND {$specialToExpr}",
++            "{$specialPrice} IS NOT NULL AND ({$specialFromExpr}) AND ({$specialToExpr})",
+             $specialPrice,
+             $maxUnsignedBigint
+         );
