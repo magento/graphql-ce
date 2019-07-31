@@ -49,30 +49,7 @@ class AddProductToCartTest extends GraphQlAbstract
     /**
      * @magentoApiDataFixture Magento/Catalog/_files/products.php
      * @magentoApiDataFixture Magento/Checkout/_files/active_quote.php
-     * @expectedException \Exception
-     * @expectedExceptionMessage Some of the products are out of stock.
-     */
-    public function testUpdateProductOutOfStockInCart()
-    {
-        $sku = 'simple';
-        $qty = 1;
-        $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_order_1');
-
-        $query = $this->getQuery($maskedQuoteId, $sku, $qty);
-        $this->graphQlMutation($query);
-
-        $product = Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Product::class);
-        $productId = $product->getIdBySku($sku);
-        $product->load($productId);
-        $product->setStockData(['is_in_stock' => 0]);
-        $product->save();
-
-        $this->graphQlMutation($query);
-    }
-    /**
-     * @magentoApiDataFixture Magento/Catalog/_files/products.php
-     * @magentoApiDataFixture Magento/Checkout/_files/active_quote.php
-     * @magentoConfigFixture default cataloginventory/item_options/max_sale_qty 5
+     * @magentoConfigFixture default_store cataloginventory/item_options/max_sale_qty 5
      */
     public function testAddMoreProductsThatAllowed()
     {
