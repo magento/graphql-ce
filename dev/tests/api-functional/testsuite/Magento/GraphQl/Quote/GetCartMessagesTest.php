@@ -47,29 +47,6 @@ class GetCartMessagesTest extends GraphQlAbstract
     }
 
     /**
-     * @magentoApiDataFixture Magento/Catalog/_files/products.php
-     * @magentoApiDataFixture Magento/Checkout/_files/active_quote.php
-     */
-    public function testGetCartMessages()
-    {
-        $sku = 'simple';
-        $qty = 1;
-        $maskedQuoteId = $this->getMaskedQuoteId();
-
-        $queryAddProduct = $this->getAddSimpleProductQuery($maskedQuoteId, $sku, $qty);
-        $this->graphQlMutation($queryAddProduct);
-
-        $product = Bootstrap::getObjectManager()->create(\Magento\Catalog\Model\Product::class);
-        $productId = $product->getIdBySku($sku);
-        $product->load($productId);
-        $product->setStockData(['is_in_stock' => 0]);
-        $product->save();
-
-        $queryGetMessages = $this->getCartMessagesQuery($maskedQuoteId);
-        $response = $this->graphQlMutation($queryGetMessages);
-        self::assertEquals('Some of the products are out of stock.', $response['getCartMessages']['messages'][0]);
-    }
-    /**
      * @magentoApiDataFixture Magento/Checkout/_files/active_quote.php
      * @expectedException \Exception
      * @expectedExceptionMessage Required parameter "cart_id" is missing.
@@ -85,7 +62,7 @@ class GetCartMessagesTest extends GraphQlAbstract
     /**
      * @magentoApiDataFixture Magento/Checkout/_files/active_quote.php
      * @expectedException \Exception
-     * @expectedExceptionMessage Requested cart hasn't errors.
+     * @expectedExceptionMessage GraphQL response contains errors: Requested cart hasn't errors.
      */
     public function testCartWithoutErrors()
     {

@@ -45,7 +45,8 @@ class GetCartMessages implements ResolverInterface
             throw new GraphQlInputException(__('Required parameter "cart_id" is missing.'));
         }
         $currentUserId = $context->getUserId();
-        $cart = $this->getCartForUser->execute($cartId, $currentUserId);
+        $storeId = (int)$context->getExtensionAttributes()->getStore()->getId();
+        $cart = $this->getCartForUser->execute($cartId, $currentUserId, $storeId);
         if (empty($cart->getData('has_error'))) {
             throw new GraphQlNoSuchEntityException(__('Requested cart hasn\'t errors.'));
         }
