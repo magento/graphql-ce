@@ -70,6 +70,7 @@ class GetCartMessagesTest extends GraphQlAbstract
         self::assertEquals('Some of the products are out of stock.', $response['getCartMessages']['messages'][0]);
     }
     /**
+     * @magentoApiDataFixture Magento/Checkout/_files/active_quote.php
      * @expectedException \Exception
      * @expectedExceptionMessage Required parameter "cart_id" is missing.
      */
@@ -82,6 +83,7 @@ class GetCartMessagesTest extends GraphQlAbstract
     }
 
     /**
+     * @magentoApiDataFixture Magento/Checkout/_files/active_quote.php
      * @expectedException \Exception
      * @expectedExceptionMessage Requested cart hasn't errors.
      */
@@ -140,7 +142,7 @@ mutation {
       cartItems: [
         {
           data: {
-            qty: $qty
+            quantity: $qty
             sku: "$sku"
           }
         }
@@ -149,7 +151,7 @@ mutation {
   ) {
     cart {
       items {
-        qty
+        quantity
       }
     }
   }
