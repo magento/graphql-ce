@@ -19,12 +19,6 @@ use Magento\Framework\Phrase;
 class InvalidOptionInput extends LocalizedException
 {
     /**
-     * Default message
-     */
-    private const DEFAULT_MESSAGE =
-        'The product\'s required option(s) weren\'t entered. Make sure the options are entered and try again.';
-
-    /**
      * InvalidOptionInput constructor.
      *
      * @param \Magento\Framework\Phrase $phrase
@@ -34,7 +28,9 @@ class InvalidOptionInput extends LocalizedException
     public function __construct(Phrase $phrase = null, \Exception $cause = null, int $code = 0)
     {
         if ($phrase === null) {
-            $phrase = new Phrase(self::DEFAULT_MESSAGE);
+            $phrase = new Phrase(
+                'The product\'s required option(s) weren\'t entered. Make sure the options are entered and try again.'
+            );
         }
         parent::__construct($phrase, $cause, $code);
     }
