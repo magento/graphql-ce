@@ -34,12 +34,14 @@ class InvalidOptionInput extends LocalizedException
     public function __construct(Phrase $phrase = null, \Exception $cause = null, int $code = 0)
     {
         if ($phrase === null) {
-            $phrase = new Phrase(__(self::DEFAULT_MESSAGE));
+            $phrase = new Phrase(self::DEFAULT_MESSAGE);
         }
         parent::__construct($phrase, $cause, $code);
     }
 
     /**
+     * Get extended message
+     *
      * @param array $messages
      * @param array $extendedData
      * @param \Exception|null $cause
