@@ -10,6 +10,7 @@ namespace Magento\CatalogGraphQl\Model\Product\Option;
 use Magento\Catalog\Model\Product\Option\Type\Date as ProductDateOptionType;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Stdlib\DateTime;
+use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 
 /**
  * @inheritdoc
@@ -75,6 +76,15 @@ class DateType extends ProductDateOptionType
             $dateTypePool = $this->dateTypePool->getDataTypes();
 
             $dateTime = \DateTime::createFromFormat($dateTypePool[$dateType], $value);
+
+            if (!$dateTime) {
+                throw new GraphQlInputException(
+                    __(
+                        'Invalid format provided. Please use \'%format\' for \'%type\' type instead of formatting.',
+                        ['format' => $dateTypePool[$dateType], 'type' => $dateType]
+                    )
+                );
+            }
 
             $values[$this->getOption()->getId()] = [
                 'date' => $value,
