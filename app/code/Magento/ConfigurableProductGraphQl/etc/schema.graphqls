@@ -50,12 +50,12 @@ type AddConfigurableProductsToCartOutput {
 
 input ConfigurableProductCartItemInput {
     data: CartItemInput!
-    variant_sku: String @deprecated(reason: "Use CartItemInput.sku instead.")
+    variant_sku: String @deprecated(reason: "Use CartItemInput.sku instead.") @doc(description: "Deprecated: use CartItemInput.sku instead.")
     parent_sku: String @doc(description: "Configurable product SKU.")
     customizable_options:[CustomizableOptionInput!]
 }
 
-type ConfigurableCartItem implements CartItemInterface {
+type ConfigurableCartItem implements CartItemInterface @doc(description: "Provides data specific to Cart Items with Configurable Product.") {
     customizable_options: [SelectedCustomizableOption]!
     configurable_options: [SelectedConfigurableOption!]! @resolver(class: "Magento\\ConfigurableProductGraphQl\\Model\\Resolver\\ConfigurableCartItemOptions")
 }
