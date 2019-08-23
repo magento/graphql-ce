@@ -302,15 +302,15 @@ type SetGuestEmailOnCartOutput {
     cart: Cart!
 }
 
-type SimpleCartItem implements CartItemInterface @doc(description: "Provides data specific to Cart Items with Simple Product.") {
+type SimpleCartItem implements CartItemInterface @doc(description: "Provides cart item options for simple product.") {
     customizable_options: [SelectedCustomizableOption] @resolver(class: "Magento\\QuoteGraphQl\\Model\\Resolver\\CustomizableOptions")
 }
 
-type VirtualCartItem implements CartItemInterface @doc(description: "Provides data specific to Cart Items with Virtual Product.") {
+type VirtualCartItem implements CartItemInterface @doc(description: "Provides cart item options for virtual product.") {
     customizable_options: [SelectedCustomizableOption] @resolver(class: "Magento\\QuoteGraphQl\\Model\\Resolver\\CustomizableOptions")
 }
 
-interface CartItemInterface @typeResolver(class: "Magento\\QuoteGraphQl\\Model\\Resolver\\CartItemTypeResolver") @doc(description: "Provides common set of cart item attributes data available for all cart item types.") {
+interface CartItemInterface @typeResolver(class: "Magento\\QuoteGraphQl\\Model\\Resolver\\CartItemTypeResolver") @doc(description: "Provides common cart item options set suitable for all product types.") {
     id: String!
     quantity: Float!
     prices: CartItemPrices @resolver(class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\CartItemPrices")

@@ -55,7 +55,7 @@ input ConfigurableProductCartItemInput {
     customizable_options:[CustomizableOptionInput!]
 }
 
-type ConfigurableCartItem implements CartItemInterface @doc(description: "Provides data specific to Cart Items with Configurable Product.") {
+type ConfigurableCartItem implements CartItemInterface @doc(description: "Provides cart item options for configurable product.") {
     customizable_options: [SelectedCustomizableOption]!
     configurable_options: [SelectedConfigurableOption!]! @resolver(class: "Magento\\ConfigurableProductGraphQl\\Model\\Resolver\\ConfigurableCartItemOptions")
 }
