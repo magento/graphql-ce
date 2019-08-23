@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\GraphQl\ConfigurableProduct;
 
+use Exception;
 use Magento\GraphQl\Quote\GetMaskedQuoteIdByReservedOrderId;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\GraphQlAbstract;
@@ -70,7 +71,7 @@ class AddConfigurableProductToCartTest extends GraphQlAbstract
     /**
      * @magentoApiDataFixture Magento/ConfigurableProduct/_files/product_configurable_sku.php
      * @magentoApiDataFixture Magento/Checkout/_files/active_quote.php
-     * @expectedException \Exception
+     * @expectedException Exception
      * @expectedExceptionMessage The requested qty is not available
      */
     public function testAddProductIfQuantityIsNotAvailable()
@@ -87,6 +88,56 @@ class AddConfigurableProductToCartTest extends GraphQlAbstract
             $parentSku,
             $sku,
             2000
+        );
+
+        $this->graphQlMutation($query);
+    }
+
+    /**
+     * @magentoApiDataFixture Magento/ConfigurableProduct/_files/product_configurable_sku_with_disabled_simple.php
+     * @magentoApiDataFixture Magento/Checkout/_files/active_quote.php
+     * @expectedException Exception
+     * @expectedExceptionMessage The product with SKU "simple_20" is disabled.
+     */
+    public function testAddProductIfVariationIsDisabled()
+    {
+        $searchResponse = $this->graphQlQuery($this->getFetchProductQuery('configurable'));
+        $product = current($searchResponse['products']['items']);
+
+        $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_order_1');
+        $parentSku = $product['sku'];
+        $sku = 'simple_20';
+
+        $query = $this->getQuery(
+            $maskedQuoteId,
+            $parentSku,
+            $sku,
+            1
+        );
+
+        $this->graphQlMutation($query);
+    }
+
+    /**
+     * @magentoApiDataFixture Magento/ConfigurableProduct/_files/product_configurable_sku_without_stock.php
+     * @magentoApiDataFixture Magento/Checkout/_files/active_quote.php
+     * @expectedException Exception
+     * @expectedExceptionMessage Could not add the product with SKU configurable to the shopping cart: This product is out of stock.
+     */
+    public function testOutOfStockVariationToCart()
+    {
+        $searchResponse = $this->graphQlQuery($this->getFetchProductQuery('configurable'));
+        $product = current($searchResponse['products']['items']);
+
+        $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_order_1');
+        $parentSku = $product['sku'];
+        $sku = 'simple_20';
+
+        $query = $this->getQuery(
+            $maskedQuoteId,
+            $parentSku,
+            $sku,
+            1
         );
 
         $this->graphQlMutation($query);

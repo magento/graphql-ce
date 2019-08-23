@@ -9,6 +9,7 @@ namespace Magento\QuoteGraphQl\Model\Cart;
 
 use Exception;
 use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Catalog\Model\Product\Attribute\Source\Status;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
@@ -58,6 +59,23 @@ class AddSimpleProductToCart
             $product = $this->productRepository->get($sku);
         } catch (NoSuchEntityException $e) {
             throw new GraphQlNoSuchEntityException(__('Could not find a product with SKU "%sku"', ['sku' => $sku]));
+        }
+
+        // Need to keep this for configurable product and backward compatibility.
+        if (!empty($cartItemData['parent_sku'])) {
+            try {
+                $childSku = $cartItemData['data']['sku'];
+                $childProduct = $this->productRepository->get($childSku);
+            } catch (NoSuchEntityException $e) {
+                throw new GraphQlNoSuchEntityException(
+                    __('Could not find a product with SKU "%sku"', ['sku' => $childSku])
+                );
+            }
+            if ($childProduct->getStatus() == Status::STATUS_DISABLED) {
+                throw new GraphQlNoSuchEntityException(
+                    __('The product with SKU "%sku" is disabled.', ['sku' => $childSku])
+                );
+            }
         }
 
         try {
