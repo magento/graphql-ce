@@ -82,6 +82,73 @@ QUERY;
     }
 
     /**
+     * @magentoApiDataFixture Magento/Store/_files/second_website_with_two_stores.php
+     * @magentoApiDataFixture Magento/Customer/_files/customer.php
+     * @magentoConfigFixture default/customer/account_share/scope 1
+     * @expectedException \Exception
+     * @expectedExceptionMessage The current customer isn't authorized.
+     */
+    public function testGetCustomerIfUserIsNotAuthorizedInCorrectScope()
+    {
+        $currentEmail = 'customer@example.com';
+        $currentPassword = 'password';
+
+        $query = <<<QUERY
+query {
+    customer {
+        firstname
+        lastname
+        email
+    }
+}
+QUERY;
+        $this->graphQlQuery(
+            $query,
+            [],
+            '',
+            array_merge(
+                ['Store' => 'fixture_second_store'],
+                $this->getCustomerAuthHeaders($currentEmail, $currentPassword)
+            )
+        );
+    }
+
+    /**
+     * @magentoApiDataFixture Magento/Store/_files/second_website_with_two_stores.php
+     * @magentoApiDataFixture Magento/Customer/_files/customer.php
+     * @magentoConfigFixture default/customer/account_share/scope 0
+     */
+    public function testGetCustomerGlobalScopeConfiguration()
+    {
+        $currentEmail = 'customer@example.com';
+        $currentPassword = 'password';
+
+        $query = <<<QUERY
+query {
+    customer {
+        firstname
+        lastname
+        email
+    }
+}
+QUERY;
+
+        $response = $this->graphQlQuery(
+            $query,
+            [],
+            '',
+            array_merge(
+                ['Store' => 'fixture_second_store'],
+                $this->getCustomerAuthHeaders($currentEmail, $currentPassword)
+            )
+        );
+
+        $this->assertEquals('John', $response['customer']['firstname']);
+        $this->assertEquals('Smith', $response['customer']['lastname']);
+        $this->assertEquals($currentEmail, $response['customer']['email']);
+    }
+
+    /**
      * @magentoApiDataFixture Magento/Customer/_files/customer.php
      * @expectedException \Exception
      * @expectedExceptionMessage The account is locked.

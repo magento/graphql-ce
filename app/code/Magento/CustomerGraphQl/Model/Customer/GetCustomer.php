@@ -14,7 +14,6 @@ use Magento\Customer\Model\AuthenticationInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthenticationException;
-use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
 use Magento\GraphQl\Model\Query\ContextInterface;
@@ -40,18 +39,26 @@ class GetCustomer
     private $accountManagement;
 
     /**
+     * @var ScopeValidate
+     */
+    private $scopeValidate;
+
+    /**
      * @param AuthenticationInterface $authentication
      * @param CustomerRepositoryInterface $customerRepository
      * @param AccountManagementInterface $accountManagement
+     * @param ScopeValidate $scopeValidate
      */
     public function __construct(
         AuthenticationInterface $authentication,
         CustomerRepositoryInterface $customerRepository,
-        AccountManagementInterface $accountManagement
+        AccountManagementInterface $accountManagement,
+        ScopeValidate $scopeValidate
     ) {
         $this->authentication = $authentication;
         $this->customerRepository = $customerRepository;
         $this->accountManagement = $accountManagement;
+        $this->scopeValidate = $scopeValidate;
     }
 
     /**
@@ -60,7 +67,6 @@ class GetCustomer
      * @param ContextInterface $context
      * @return CustomerInterface
      * @throws GraphQlAuthenticationException
-     * @throws GraphQlAuthorizationException
      * @throws GraphQlInputException
      * @throws GraphQlNoSuchEntityException
      */
@@ -77,6 +83,12 @@ class GetCustomer
             );
         } catch (LocalizedException $e) {
             throw new GraphQlInputException(__($e->getMessage()));
+        }
+
+        try {
+            $this->scopeValidate->execute($customer, $context);
+        } catch (LocalizedException $e) {
+            throw new GraphQlAuthenticationException(__('The current customer isn\'t authorized.'), $e);
         }
 
         if (true === $this->authentication->isLocked($currentUserId)) {
