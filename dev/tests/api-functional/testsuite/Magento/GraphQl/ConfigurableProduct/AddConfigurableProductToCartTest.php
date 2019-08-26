@@ -122,10 +122,12 @@ class AddConfigurableProductToCartTest extends GraphQlAbstract
      * @magentoApiDataFixture Magento/ConfigurableProduct/_files/product_configurable_sku_without_stock.php
      * @magentoApiDataFixture Magento/Checkout/_files/active_quote.php
      * @expectedException Exception
-     * @expectedExceptionMessage Could not add the product with SKU configurable to the shopping cart: This product is out of stock.
      */
     public function testOutOfStockVariationToCart()
     {
+        $this->expectExceptionMessage(
+            "Could not add the product with SKU configurable to the shopping cart: This product is out of stock."
+        );
         $searchResponse = $this->graphQlQuery($this->getFetchProductQuery('configurable'));
         $product = current($searchResponse['products']['items']);
 
