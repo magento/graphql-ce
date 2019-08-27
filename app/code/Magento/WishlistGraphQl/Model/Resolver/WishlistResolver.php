@@ -8,12 +8,11 @@ declare(strict_types=1);
 namespace Magento\WishlistGraphQl\Model\Resolver;
 
 use Magento\Framework\GraphQl\Config\Element\Field;
+use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
-use Magento\Wishlist\Model\ResourceModel\Wishlist as WishlistResourceModel;
 use Magento\Wishlist\Model\Wishlist;
-use Magento\Wishlist\Model\WishlistFactory;
-use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
+use Magento\WishlistGraphQl\Model\Wishlist\GetWishlistForUser;
 
 /**
  * Fetches the Wishlist data according to the GraphQL schema
@@ -21,23 +20,16 @@ use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
 class WishlistResolver implements ResolverInterface
 {
     /**
-     * @var WishlistResourceModel
+     * @var GetWishlistForUser
      */
-    private $wishlistResource;
+    private $getWishlistForUser;
 
     /**
-     * @var WishlistFactory
+     * @param GetWishlistForUser $getWishlistForUser
      */
-    private $wishlistFactory;
-
-    /**
-     * @param WishlistResourceModel $wishlistResource
-     * @param WishlistFactory $wishlistFactory
-     */
-    public function __construct(WishlistResourceModel $wishlistResource, WishlistFactory $wishlistFactory)
+    public function __construct(GetWishlistForUser $getWishlistForUser)
     {
-        $this->wishlistResource = $wishlistResource;
-        $this->wishlistFactory = $wishlistFactory;
+        $this->getWishlistForUser = $getWishlistForUser;
     }
 
     /**
@@ -50,18 +42,12 @@ class WishlistResolver implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
-        $customerId = $context->getUserId();
 
-        /* Guest checking */
-        if (!$customerId && 0 === $customerId) {
-            throw new GraphQlAuthorizationException(__('The current user cannot perform operations on wishlist'));
-        }
         /** @var Wishlist $wishlist */
-        $wishlist = $this->wishlistFactory->create();
-        $this->wishlistResource->load($wishlist, $customerId, 'customer_id');
+        $wishlist = $this->getWishlistForUser->execute($context);
 
         if (null === $wishlist->getId()) {
-            return [];
+            throw new GraphQlNoSuchEntityException(__('The current user does not have a wishlist'));
         }
 
         return [

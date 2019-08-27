@@ -5,6 +5,10 @@ type Query {
     wishlist: WishlistOutput @resolver(class: "\\Magento\\WishlistGraphQl\\Model\\Resolver\\WishlistResolver") @doc(description: "The wishlist query returns the contents of a customer's wish list") @cache(cacheable: false)
 }
 
+type Mutation {
+    addSimpleProductsToWishlist(input: AddSimpleProductsToWishlist): WishlistOutput @resolver(class: "Magento\\WishlistGraphQl\\Model\\Resolver\\AddSimpleProductsToWishlist") @doc(description:"Adds a product to the user's wishlist")
+}
+
 type WishlistOutput {
     items: [WishlistItem] @resolver(class: "\\Magento\\WishlistGraphQl\\Model\\Resolver\\WishlistItemsResolver") @doc(description: "An array of items in the customer's wish list"),
     items_count: Int @doc(description: "The number of items in the wish list"),
@@ -19,4 +23,23 @@ type WishlistItem {
     description: String @doc(description: "The customer's comment about this item"),
     added_at: String @doc(description: "The time when the customer added the item to the wish list"),
     product: ProductInterface @resolver(class: "\\Magento\\WishlistGraphQl\\Model\\Resolver\\ProductResolver")
+}
+
+input WishlistItemInput {
+    sku: String!
+    quantity: Float!
+}
+
+input AddSimpleProductsToWishlist {
+    wishlist_items: [SimpleProductWishlistItemInput!]!
+}
+
+input SimpleProductWishlistItemInput {
+    data: WishlistItemInput!
+    customizable_options:[CustomizableOptionInput!]
+}
+
+input CustomizableWishlistOptionInput {
+    id: Int!
+    value_string: String!
 }
