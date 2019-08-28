@@ -203,4 +203,32 @@ QUERY;
             $responseData['errors'][0]['message']
         );
     }
+
+    /**
+     * Verify the message when CMS Block exists but not available for a store view.
+     *
+     * @magentoApiDataFixture Magento/Cms/_files/blocks.php
+     * @magentoApiDataFixture Magento/Store/_files/second_store.php
+     * @expectedException \Exception
+     * @expectedExceptionMessage The CMS block with the "enabled_block" ID doesn't exist.
+     */
+    public function testGetCmsBlockByIdentifierWithDifferentStoreView()
+    {
+        $query =
+            <<<QUERY
+{
+  cmsBlocks(identifiers: "enabled_block") {
+    items {
+      identifier
+      title
+      content
+    }
+  }
+}
+QUERY;
+
+        $nonExistingStoreCode = "fixture_second_store";
+        $headerMapInvalidStoreCode = ['Store' => $nonExistingStoreCode];
+        $this->graphQlQuery($query, [], '', $headerMapInvalidStoreCode);
+    }
 }
