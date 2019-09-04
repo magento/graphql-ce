@@ -13,6 +13,7 @@ use Magento\Quote\Model\QuoteFactory;
 use Magento\Quote\Model\QuoteIdToMaskedQuoteIdInterface;
 use Magento\Quote\Model\ResourceModel\Quote as QuoteResource;
 use Magento\GraphQl\Quote\GetMaskedQuoteIdByReservedOrderId;
+use Magento\Integration\Api\CustomerTokenServiceInterface;
 
 /**
  * Class GetCartMessagesTest
@@ -42,6 +43,11 @@ class GetCartMessagesTest extends GraphQlAbstract
     private $getMaskedQuoteIdByReservedOrderId;
 
     /**
+     * @var CustomerTokenServiceInterface
+     */
+    private $customerTokenService;
+
+    /**
      * @inheritdoc
      */
     protected function setUp()
@@ -51,6 +57,7 @@ class GetCartMessagesTest extends GraphQlAbstract
         $this->quoteFactory = $objectManager->get(QuoteFactory::class);
         $this->quoteIdToMaskedId = $objectManager->get(QuoteIdToMaskedQuoteIdInterface::class);
         $this->getMaskedQuoteIdByReservedOrderId = $objectManager->get(GetMaskedQuoteIdByReservedOrderId::class);
+        $this->customerTokenService = $objectManager->get(CustomerTokenServiceInterface::class);
     }
 
     /**
@@ -80,7 +87,7 @@ class GetCartMessagesTest extends GraphQlAbstract
         $reservedOrderId = 'test_quote';
         $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute($reservedOrderId);
 
-        $query = $this->getCartMessagesQuery($maskedQuoteId);
+        $query = $this->getCartMessagesQuery($maskedQuoteId, [], '', $this->getHeaderMap());
 
         $this->graphQlMutation($query);
     }
@@ -110,5 +117,20 @@ class GetCartMessagesTest extends GraphQlAbstract
   }
 } 
 QUERY;
+    }
+
+    /**
+     * Retrieve customer authorization headers
+     *
+     * @param string $username
+     * @param string $password
+     * @return array
+     * @throws AuthenticationException
+     */
+    private function getHeaderMap(string $username = 'customer@example.com', string $password = 'password'): array
+    {
+        $customerToken = $this->customerTokenService->createCustomerAccessToken($username, $password);
+        $headerMap = ['Authorization' => 'Bearer ' . $customerToken];
+        return $headerMap;
     }
 }
