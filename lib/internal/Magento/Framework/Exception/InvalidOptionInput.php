@@ -16,7 +16,7 @@ use Magento\Framework\Phrase;
  *
  * @api
  */
-class InvalidOptionInput extends LocalizedException
+class InvalidOptionInput extends AbstractAggregateException implements AggregateExceptionInterface
 {
     /**
      * InvalidOptionInput constructor.
