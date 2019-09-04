@@ -65,6 +65,7 @@ class CartTotalsTest extends GraphQlAbstract
         $appliedTaxesResponse = $pricesResponse['applied_taxes'];
 
         self::assertEquals('US-TEST-*-Rate-1', $appliedTaxesResponse[0]['label']);
+        self::assertEquals('US-TEST-*-Rate-1', $appliedTaxesResponse[0]['code']);
         self::assertEquals(1.5, $appliedTaxesResponse[0]['amount']['value']);
         self::assertEquals('USD', $appliedTaxesResponse[0]['amount']['currency']);
     }
@@ -243,6 +244,7 @@ class CartTotalsTest extends GraphQlAbstract
         label
         amount {
           value
+          code
           currency
         }
       }

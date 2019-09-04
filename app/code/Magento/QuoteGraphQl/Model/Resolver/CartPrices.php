@@ -77,9 +77,10 @@ class CartPrices implements ResolverInterface
             return $appliedTaxesData;
         }
 
-        foreach ($appliedTaxes as $appliedTax) {
+        foreach ($appliedTaxes as $code => $appliedTax) {
             $appliedTaxesData[] = [
                 'label' => $appliedTax['id'],
+                'code' => $code,
                 'amount' => ['value' => $appliedTax['amount'], 'currency' => $currency]
             ];
         }

@@ -156,6 +156,7 @@ type CartPrices {
 
 type CartTaxItem {
     amount: Money!
+    code: String!
     label: String!
 }
 
