@@ -242,9 +242,9 @@ class CartTotalsTest extends GraphQlAbstract
       }
       applied_taxes {
         label
+        code
         amount {
           value
-          code
           currency
         }
       }
