@@ -79,8 +79,6 @@ class GetCartMessagesTest extends GraphQlAbstract
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/customer/create_empty_cart.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/add_simple_product.php
      * @magentoApiDataFixture Magento/GraphQl/Catalog/_files/set_simple_product_out_of_stock.php
-     * @expectedException \Exception
-     * @expectedExceptionMessage GraphQL response contains errors: Some of the products are out of stock.
      */
     public function testCartWithOutOfStockProduct()
     {
@@ -89,7 +87,8 @@ class GetCartMessagesTest extends GraphQlAbstract
 
         $query = $this->getCartMessagesQuery($maskedQuoteId);
 
-        $this->graphQlMutation($query, [], '', $this->getHeaderMap());
+        $response = $this->graphQlMutation($query, [], '', $this->getHeaderMap());
+        self::assertEquals('Some of the products are out of stock.', $response['cart']['messages'][0]);
     }
 
     /**
