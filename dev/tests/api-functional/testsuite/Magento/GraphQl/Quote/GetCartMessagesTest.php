@@ -87,9 +87,9 @@ class GetCartMessagesTest extends GraphQlAbstract
         $reservedOrderId = 'test_quote';
         $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute($reservedOrderId);
 
-        $query = $this->getCartMessagesQuery($maskedQuoteId, [], '', $this->getHeaderMap());
+        $query = $this->getCartMessagesQuery($maskedQuoteId);
 
-        $this->graphQlMutation($query);
+        $this->graphQlMutation($query, [], '', $this->getHeaderMap());
     }
 
     /**
