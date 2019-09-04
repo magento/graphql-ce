@@ -20,7 +20,6 @@ type Mutation {
     setGuestEmailOnCart(input: SetGuestEmailOnCartInput): SetGuestEmailOnCartOutput @resolver(class: "Magento\\QuoteGraphQl\\Model\\Resolver\\SetGuestEmailOnCart")
     setPaymentMethodAndPlaceOrder(input: SetPaymentMethodAndPlaceOrderInput): PlaceOrderOutput @resolver(class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\SetPaymentAndPlaceOrder")
     placeOrder(input: PlaceOrderInput): PlaceOrderOutput @resolver(class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\PlaceOrder")
-    getCartMessages(input: GetCartMessagesInput): GetCartMessagesOutput @resolver(class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\GetCartMessages") @doc(description:"Return all shopping cart messages for a guest or logged in user")
 }
 
 input createEmptyCartInput {
@@ -165,10 +164,6 @@ type CartDiscount {
     label: [String!]!
 }
 
-input GetCartMessagesInput {
-    cart_id: String!
-}
-
 type SetPaymentMethodOnCartOutput {
     cart: Cart!
 }
@@ -193,10 +188,6 @@ type PlaceOrderOutput {
     order: Order!
 }
 
-type GetCartMessagesOutput {
-     messages: [String]!
-}
-
 type Cart {
     items: [CartItemInterface] @resolver(class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\CartItems")
     applied_coupon: AppliedCoupon @resolver(class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\AppliedCoupon")
@@ -207,6 +198,7 @@ type Cart {
     selected_payment_method: SelectedPaymentMethod @resolver(class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\SelectedPaymentMethod")
     prices: CartPrices @resolver(class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\CartPrices")
     total_quantity: Float! @resolver(class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\CartTotalQuantity")
+    messages: [String] @resolver(class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\CartMessages") @doc(description:"Return all shopping cart messages for a guest or logged in user")
 }
 
 interface CartAddressInterface @typeResolver(class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\CartAddressTypeResolver") {

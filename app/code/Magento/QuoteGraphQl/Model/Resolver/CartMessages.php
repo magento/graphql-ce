@@ -7,50 +7,31 @@ declare(strict_types=1);
 
 namespace Magento\QuoteGraphQl\Model\Resolver;
 
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Config\Element\Field;
-use Magento\Framework\GraphQl\Exception\GraphQlInputException;
-use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
-use Magento\QuoteGraphQl\Model\Cart\GetCartForUser;
-use Magento\Framework\Message\AbstractMessage;
 use Magento\Quote\Model\Quote;
+use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
 
 /**
  * @inheritdoc
  */
-class GetCartMessages implements ResolverInterface
+class CartMessages implements ResolverInterface
 {
-    /**
-     * @var GetCartForUser
-     */
-    private $getCartForUser;
-
-    /**
-     * @param GetCartForUser $getCartForUser
-     */
-    public function __construct(
-        GetCartForUser $getCartForUser
-    ) {
-        $this->getCartForUser = $getCartForUser;
-    }
-
     /**
      * @inheritdoc
      */
     public function resolve(Field $field, $context, ResolveInfo $info, array $value = null, array $args = null)
     {
-        $cartId = $args['input']['cart_id'];
-        if (isset($cartId) === false || empty($cartId)) {
-            throw new GraphQlInputException(__('Required parameter "cart_id" is missing.'));
+        if (!isset($value['model'])) {
+            throw new LocalizedException(__('"model" value should be specified'));
         }
-        $currentUserId = $context->getUserId();
-        $storeId = (int)$context->getExtensionAttributes()->getStore()->getId();
-        $cart = $this->getCartForUser->execute($cartId, $currentUserId, $storeId);
+        $cart = $value['model'];
         if (empty($cart->getData('has_error'))) {
             throw new GraphQlNoSuchEntityException(__('Requested cart hasn\'t errors.'));
         }
-        return ['messages' => $this->getCartErrors($cart)];
+        return $this->getCartErrors($cart);
     }
 
     /**

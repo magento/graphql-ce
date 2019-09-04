@@ -12,6 +12,7 @@ use Magento\TestFramework\TestCase\GraphQlAbstract;
 use Magento\Quote\Model\QuoteFactory;
 use Magento\Quote\Model\QuoteIdToMaskedQuoteIdInterface;
 use Magento\Quote\Model\ResourceModel\Quote as QuoteResource;
+use Magento\GraphQl\Quote\GetMaskedQuoteIdByReservedOrderId;
 
 /**
  * Class GetCartMessagesTest
@@ -36,6 +37,11 @@ class GetCartMessagesTest extends GraphQlAbstract
     private $quoteIdToMaskedId;
 
     /**
+     * @var GetMaskedQuoteIdByReservedOrderId
+     */
+    private $getMaskedQuoteIdByReservedOrderId;
+
+    /**
      * @inheritdoc
      */
     protected function setUp()
@@ -44,19 +50,7 @@ class GetCartMessagesTest extends GraphQlAbstract
         $this->quoteResource = $objectManager->get(QuoteResource::class);
         $this->quoteFactory = $objectManager->get(QuoteFactory::class);
         $this->quoteIdToMaskedId = $objectManager->get(QuoteIdToMaskedQuoteIdInterface::class);
-    }
-
-    /**
-     * @magentoApiDataFixture Magento/Checkout/_files/active_quote.php
-     * @expectedException \Exception
-     * @expectedExceptionMessage Required parameter "cart_id" is missing.
-     */
-    public function testRequiredParamMissing()
-    {
-        $maskedQuoteId = '';
-
-        $query = $this->getCartMessagesQuery($maskedQuoteId);
-        $this->graphQlMutation($query);
+        $this->getMaskedQuoteIdByReservedOrderId = $objectManager->get(GetMaskedQuoteIdByReservedOrderId::class);
     }
 
     /**
@@ -69,6 +63,25 @@ class GetCartMessagesTest extends GraphQlAbstract
         $maskedQuoteId = $this->getMaskedQuoteId();
 
         $query = $this->getCartMessagesQuery($maskedQuoteId);
+        $this->graphQlMutation($query);
+    }
+
+    /**
+     * @magentoApiDataFixture Magento/Customer/_files/customer.php
+     * @magentoApiDataFixture Magento/GraphQl/Catalog/_files/simple_product.php
+     * @magentoApiDataFixture Magento/GraphQl/Quote/_files/customer/create_empty_cart.php
+     * @magentoApiDataFixture Magento/GraphQl/Quote/_files/add_simple_product.php
+     * @magentoApiDataFixture Magento/GraphQl/Catalog/_files/set_simple_product_out_of_stock.php
+     * @expectedException \Exception
+     * @expectedExceptionMessage GraphQL response contains errors: Some of the products are out of stock.
+     */
+    public function testCartWithOutOfStockProduct()
+    {
+        $reservedOrderId = 'test_quote';
+        $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute($reservedOrderId);
+
+        $query = $this->getCartMessagesQuery($maskedQuoteId);
+
         $this->graphQlMutation($query);
     }
 
@@ -91,48 +104,11 @@ class GetCartMessagesTest extends GraphQlAbstract
     public function getCartMessagesQuery(string $maskedQuoteId): string
     {
         return <<<QUERY
-mutation {  
-  getCartMessages(
-    input: {
-      cart_id: "{$maskedQuoteId}"
-    }
-  ){
-      messages
+{
+    cart(cart_id:"{$maskedQuoteId}"){
+    messages
   }
-}  
-QUERY;
-    }
-
-    /**
-     * @param string $maskedQuoteId
-     * @param string $sku
-     * @param int $qty
-     * @return string
-     */
-    public function getAddSimpleProductQuery(string $maskedQuoteId, string $sku, int $qty) : string
-    {
-        return <<<QUERY
-mutation {  
-  addSimpleProductsToCart(
-    input: {
-      cart_id: "{$maskedQuoteId}", 
-      cartItems: [
-        {
-          data: {
-            quantity: $qty
-            sku: "$sku"
-          }
-        }
-      ]
-    }
-  ) {
-    cart {
-      items {
-        quantity
-      }
-    }
-  }
-}
+} 
 QUERY;
     }
 }
