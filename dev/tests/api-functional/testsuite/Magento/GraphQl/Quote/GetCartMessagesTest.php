@@ -111,7 +111,9 @@ class GetCartMessagesTest extends GraphQlAbstract
         return <<<QUERY
 {
     cart(cart_id:"{$maskedQuoteId}"){
-    messages
+    messages{
+        text
+    }
   }
 } 
 QUERY;
