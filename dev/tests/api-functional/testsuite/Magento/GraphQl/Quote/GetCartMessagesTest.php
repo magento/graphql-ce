@@ -62,15 +62,14 @@ class GetCartMessagesTest extends GraphQlAbstract
 
     /**
      * @magentoApiDataFixture Magento/Checkout/_files/active_quote.php
-     * @expectedException \Exception
-     * @expectedExceptionMessage GraphQL response contains errors: Requested cart hasn't errors.
      */
     public function testCartWithoutErrors()
     {
         $maskedQuoteId = $this->getMaskedQuoteId();
 
         $query = $this->getCartMessagesQuery($maskedQuoteId);
-        $this->graphQlMutation($query);
+        $response = $this->graphQlMutation($query);
+        self::assertCount(0, count($response['cart']['messages']));
     }
 
     /**
@@ -88,7 +87,7 @@ class GetCartMessagesTest extends GraphQlAbstract
         $query = $this->getCartMessagesQuery($maskedQuoteId);
 
         $response = $this->graphQlMutation($query, [], '', $this->getHeaderMap());
-        self::assertEquals('Some of the products are out of stock.', $response['cart']['messages'][0]);
+        self::assertEquals('Some of the products are out of stock.', $response['cart']['messages'][0]['text']);
     }
 
     /**

@@ -198,7 +198,7 @@ type Cart {
     selected_payment_method: SelectedPaymentMethod @resolver(class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\SelectedPaymentMethod")
     prices: CartPrices @resolver(class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\CartPrices")
     total_quantity: Float! @resolver(class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\CartTotalQuantity")
-    messages: [String] @resolver(class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\CartMessages") @doc(description:"Return all shopping cart messages for a guest or logged in user")
+    messages: [Messages] @resolver(class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\CartMessages") @doc(description:"Return all shopping cart messages for a guest or logged in user")
 }
 
 interface CartAddressInterface @typeResolver(class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\CartAddressTypeResolver") {
@@ -348,4 +348,9 @@ type CartItemSelectedOptionValuePrice {
 
 type Order {
     order_id: String
+}
+
+type Messages {
+    identifier: String
+    text: String
 }

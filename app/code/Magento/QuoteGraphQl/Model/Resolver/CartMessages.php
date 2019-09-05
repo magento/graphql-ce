@@ -29,7 +29,7 @@ class CartMessages implements ResolverInterface
         }
         $cart = $value['model'];
         if (empty($cart->getData('has_error'))) {
-            throw new GraphQlNoSuchEntityException(__('Requested cart hasn\'t errors.'));
+            return [];
         }
         return $this->getCartErrors($cart);
     }
@@ -45,8 +45,11 @@ class CartMessages implements ResolverInterface
         $errorMessages = [];
 
         /** @var AbstractMessage $error */
-        foreach ($cart->getErrors() as $error) {
-            $errorMessages[] = $error->getText();
+        foreach ($cart->getMessages() as $idettifier => $error) {
+            $errorMessages[] = [
+                'identifier' => $idettifier,
+                'text' => $error->getText()
+            ];
         }
 
         return $errorMessages;
