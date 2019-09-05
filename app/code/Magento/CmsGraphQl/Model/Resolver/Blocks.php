@@ -15,6 +15,7 @@ use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
+use Magento\Store\Model\Store;
 
 /**
  * CMS blocks field resolver, used for GraphQL request processing
@@ -47,7 +48,8 @@ class Blocks implements ResolverInterface
     ) {
 
         $blockIdentifiers = $this->getBlockIdentifiers($args);
-        $blocksData = $this->getBlocksData($blockIdentifiers);
+        $currentStore = $context->getExtensionAttributes()->getStore();
+        $blocksData = $this->getBlocksData($blockIdentifiers, $currentStore);
 
         $resultData = [
             'items' => $blocksData,
@@ -75,14 +77,15 @@ class Blocks implements ResolverInterface
      * Get blocks data
      *
      * @param array $blockIdentifiers
+     * @param Store $currentStore
      * @return array
      */
-    private function getBlocksData(array $blockIdentifiers): array
+    private function getBlocksData(array $blockIdentifiers, Store $currentStore): array
     {
         $blocksData = [];
         foreach ($blockIdentifiers as $blockIdentifier) {
             try {
-                $blocksData[$blockIdentifier] = $this->blockDataProvider->getData($blockIdentifier);
+                $blocksData[$blockIdentifier] = $this->blockDataProvider->getData($blockIdentifier, $currentStore);
             } catch (LocalizedException $e) {
                 $blocksData[$blockIdentifier] = new GraphQlNoSuchEntityException(__($e->getMessage()), $e);
             }
