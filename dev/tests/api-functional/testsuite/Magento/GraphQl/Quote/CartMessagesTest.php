@@ -20,7 +20,7 @@ use Magento\Integration\Api\CustomerTokenServiceInterface;
  *
  * @package Magento\GraphQl\Quote
  */
-class GetCartMessagesTest extends GraphQlAbstract
+class CartMessagesTest extends GraphQlAbstract
 {
     /**
      * @var QuoteResource
@@ -69,7 +69,7 @@ class GetCartMessagesTest extends GraphQlAbstract
 
         $query = $this->getCartMessagesQuery($maskedQuoteId);
         $response = $this->graphQlMutation($query);
-        self::assertCount(0, count($response['cart']['messages']));
+        self::assertEquals([], $response['cart']['messages']);
     }
 
     /**
