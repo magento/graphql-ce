@@ -7,16 +7,12 @@ declare(strict_types=1);
 
 namespace Magento\CmsGraphQl\Model\Resolver\DataProvider;
 
-use Magento\Cms\Api\BlockRepositoryInterface;
 use Magento\Cms\Api\Data\BlockInterface;
 use Magento\Cms\Model\Block as BlockModel;
 use Magento\Cms\Model\ResourceModel\Block\Collection as BlockCollection;
 use Magento\Cms\Model\ResourceModel\Block\CollectionFactory as BlockCollectionFactory;
-use Magento\Framework\Api\SearchCriteriaBuilder;
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Model\Store;
-use Magento\Store\Model\StoreManagerInterface;
 use Magento\Widget\Model\Template\FilterEmulate;
 
 /**
@@ -66,12 +62,6 @@ class Block
         $collection = $this->blockCollectionFactory->create();
         $collection->addFieldToFilter($filterBy, ["eq" => $blockIdentifier]);
         $collection->addFieldToFilter("store_id", ["eq" => $storeId]);
-        $collection->load();
-        if ($collection->count() < 1) {
-            throw new NoSuchEntityException(
-                __('The CMS block with the "%1" ID doesn\'t exist.', $blockIdentifier)
-            );
-        }
 
         /** @var BlockModel $block */
         $block = $collection->getFirstItem();
