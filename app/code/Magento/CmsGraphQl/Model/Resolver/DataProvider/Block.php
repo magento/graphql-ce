@@ -12,7 +12,7 @@ use Magento\Cms\Model\Block as BlockModel;
 use Magento\Cms\Model\ResourceModel\Block\Collection as BlockCollection;
 use Magento\Cms\Model\ResourceModel\Block\CollectionFactory as BlockCollectionFactory;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Store\Model\Store;
+use Magento\Store\Api\Data\StoreInterface;
 use Magento\Widget\Model\Template\FilterEmulate;
 
 /**
@@ -46,11 +46,11 @@ class Block
      * Get block data
      *
      * @param string $blockIdentifier
-     * @param Store $currentStore
+     * @param StoreInterface $currentStore
      * @return array
      * @throws NoSuchEntityException
      */
-    public function getData(string $blockIdentifier, Store $currentStore): array
+    public function getData(string $blockIdentifier, StoreInterface $currentStore): array
     {
         $filterBy = BlockInterface::IDENTIFIER;
         $storeId = (int)$currentStore->getId();
