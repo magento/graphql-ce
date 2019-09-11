@@ -8,7 +8,6 @@ declare(strict_types=1);
 namespace Magento\CmsGraphQl\Model\Resolver;
 
 use Magento\CmsGraphQl\Model\Resolver\DataProvider\Block as BlockDataProvider;
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
