@@ -7,8 +7,7 @@
     "magento/framework": "*",
     "magento/module-store": "*",
     "magento/module-catalog": "*",
-    "magento/module-catalog-inventory": "*",
-    "magento/module-downloadable": "*"
+    "magento/module-catalog-inventory": "*"
   },
   "license": [
     "OSL-3.0",
