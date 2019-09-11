@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\CatalogInventoryGraphQl\Model\Resolver;
 
 use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\CatalogInventory\Api\Data\StockStatusInterface;
 use Magento\CatalogInventory\Api\StockStatusRepositoryInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
@@ -44,6 +45,12 @@ class StockStatusProvider implements ResolverInterface
         /* @var $product ProductInterface */
         $product = $value['model'];
 
-        return $product->isInStock() && $product->isSaleable() ? 'IN_STOCK' : 'OUT_OF_STOCK';
+        $stockStatus = $this->stockStatusRepository->get($product->getId());
+        $productStockStatus = (int)$stockStatus->getStockStatus();
+
+        return
+            $productStockStatus === StockStatusInterface::STATUS_IN_STOCK &&
+            $product->isInStock() &&
+            $product->isSaleable() ? 'IN_STOCK' : 'OUT_OF_STOCK';
     }
 }
