@@ -13,9 +13,9 @@ use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Wishlist\Model\Item;
 use Magento\Wishlist\Model\ResourceModel\Item\Collection as WishlistItemCollection;
 use Magento\Wishlist\Model\ResourceModel\Item\CollectionFactory as WishlistItemCollectionFactory;
-use Magento\Wishlist\Model\Item;
 use Magento\Wishlist\Model\Wishlist;
 
 /**
@@ -91,12 +91,12 @@ class WishlistItemsResolver implements ResolverInterface
             ->addWishlistFilter($wishlist)
             ->addStoreFilter(
                 array_map(
-                function (
+                    function (
                     StoreInterface $store
-                )
-                {
-                    return $store->getId();
-                    }, $this->storeManager->getStores()
+                ) {
+                        return $store->getId();
+                    },
+                    $this->storeManager->getStores()
                 )
             )
             ->setVisibilityFilter();
