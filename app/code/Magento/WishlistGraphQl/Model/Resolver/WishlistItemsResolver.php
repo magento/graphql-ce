@@ -89,9 +89,16 @@ class WishlistItemsResolver implements ResolverInterface
         $wishlistItemCollection = $this->wishlistItemCollectionFactory->create();
         $wishlistItemCollection
             ->addWishlistFilter($wishlist)
-            ->addStoreFilter(array_map(function (StoreInterface $store) {
-                return $store->getId();
-            }, $this->storeManager->getStores()))
+            ->addStoreFilter(
+                array_map(
+                function (
+                    StoreInterface $store
+                )
+                {
+                    return $store->getId();
+                    }, $this->storeManager->getStores()
+                )
+            )
             ->setVisibilityFilter();
         return $wishlistItemCollection->getItems();
     }
