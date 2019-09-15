@@ -92,8 +92,8 @@ class WishlistItemsResolver implements ResolverInterface
             ->addStoreFilter(
                 array_map(
                     function (
-                    StoreInterface $store
-                ) {
+                        StoreInterface $store
+                    ) {
                         return $store->getId();
                     },
                     $this->storeManager->getStores()
