@@ -15,7 +15,8 @@ type WishlistOutput {
 
 type WishlistItem {
     id: Int @doc(description: "The wish list item ID")
-    qty: Float @doc(description: "The quantity of this wish list item"),
+    qty: Float @deprecated(reason: "The `qty` is deprecated. Use `quantity` instead.") @doc(description: "The quantity of this wish list item"),
+    quantity: Float @doc(description: "Indicates the quantity of this specific bundle item."),
     description: String @doc(description: "The customer's comment about this item"),
     added_at: String @doc(description: "The time when the customer added the item to the wish list"),
     product: ProductInterface @resolver(class: "\\Magento\\WishlistGraphQl\\Model\\Resolver\\ProductResolver")

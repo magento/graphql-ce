@@ -68,6 +68,7 @@ class WishlistItemsResolver implements ResolverInterface
             $data[] = [
                 'id' => $wishlistItem->getId(),
                 'qty' => $wishlistItem->getData('qty'),
+                'quantity' => $wishlistItem->getData('qty'),
                 'description' => $wishlistItem->getDescription(),
                 'added_at' => $wishlistItem->getAddedAt(),
                 'model' => $wishlistItem,

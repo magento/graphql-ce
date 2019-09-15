@@ -54,7 +54,9 @@ class TierPrices implements ResolverInterface
             $tierPrices = [];
             /** @var TierPrice $tierPrice */
             foreach ($product->getTierPrices() as $tierPrice) {
-                $tierPrices[] = $tierPrice->getData();
+                $data = $tierPrice->getData();
+                $data['quantity'] = array_key_exists('qty', $data) ? $data['qty'] : null;
+                $tierPrices[] = $data;
             }
         }
 

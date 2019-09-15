@@ -60,7 +60,8 @@ interface ProductLinksInterface @typeResolver(class: "Magento\\CatalogGraphQl\\M
 
 type ProductTierPrices @doc(description: "The ProductTierPrices object defines a tier price, which is a quantity discount offered to a specific customer group.") {
     customer_group_id: String @doc(description: "The ID of the customer group.")
-    qty: Float @doc(description: "The number of items that must be purchased to qualify for tier pricing.")
+    qty: Float @deprecated(reason: "The `qty` is deprecated. Use `quantity` instead.") @doc(description: "The number of items that must be purchased to qualify for tier pricing.")
+    quantity: Float @doc(description: "Indicates the quantity of this specific bundle item.")
     value: Float @doc(description: "The price of the fixed price item.")
     percentage_value: Float @doc(description: "The percentage discount of the item.")
     website_id: Float @doc(description: "The ID assigned to the website.")
