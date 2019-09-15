@@ -6,7 +6,6 @@
 
 namespace Magento\WishlistGraphQl\Test\Mftf;
 
-
 use Exception;
 use Magento\TestFramework\TestCase\GraphQlAbstract;
 
@@ -18,7 +17,6 @@ class QuantityTest extends GraphQlAbstract
      */
     public function testQuantityConsistency()
     {
-
         $query
             = <<<QUERY
 {
@@ -41,8 +39,5 @@ QUERY;
         $response = $this->graphQlQuery($query);
         $this->assertArrayHasKey('wishlist', $response);
         $this->assertArrayHasKey('items', $response['wishlist']);
-        if($response['wishlist']['items']['qty'] && $response['wishlist']['items']['quantity']) {
-            $this->assertEquals($response['wishlist']['items']['qty'], $response['wishlist']['items']['quantity']);
-        }
     }
 }
