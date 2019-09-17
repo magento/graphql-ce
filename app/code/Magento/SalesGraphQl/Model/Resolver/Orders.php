@@ -55,11 +55,11 @@ class Orders implements ResolverInterface
         $fields = $fieldsSelection['items'];
 
         if (isset($args['id']) && $args['id']) {
-            $orders->addFieldToFilter($orders->getIdFieldName(),  $args['id']);
+            $orders->addFieldToFilter($orders->getIdFieldName(), $args['id']);
         }
 
         if (isset($args['status']) && $args['status']) {
-            $orders->addFieldToFilter('status',  $args['status']);
+            $orders->addFieldToFilter('status', $args['status']);
         }
 
         /** @var \Magento\Sales\Model\Order $order */
