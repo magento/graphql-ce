@@ -58,6 +58,10 @@ class Orders implements ResolverInterface
             $orders->addFieldToFilter($orders->getIdFieldName(),  $args['id']);
         }
 
+        if (isset($args['status']) && $args['status']) {
+            $orders->addFieldToFilter('status',  $args['status']);
+        }
+
         /** @var \Magento\Sales\Model\Order $order */
         foreach ($orders as $order) {
             $items[] = [
