@@ -2,17 +2,67 @@
 # See COPYING.txt for license details.
 
 type Query {
-    customerOrders: CustomerOrders @resolver(class: "Magento\\SalesGraphQl\\Model\\Resolver\\Orders") @doc(description: "List of customer orders") @cache(cacheable: false)
+    customerOrders(
+        id: Int @doc(description: "Filter by id"),
+        status: String @doc(description: "Filter by status"),
+    ): CustomerOrders @resolver(class: "Magento\\SalesGraphQl\\Model\\Resolver\\Orders") @doc(description: "List of customer orders") @cache(cacheable: false)
 }
 
 type CustomerOrder @doc(description: "Order mapping fields") {
     id: Int
-    increment_id: String
+    increment_id: String @doc(description: "The order number which used as reference for the customer")
     created_at: String
     grand_total: Float
+    sub_total: Float
+    shipping_amount: Float @doc(description: "Shipping Cost that apply to this order")
+    discount_amount: Float
+    tax_amount: Float
     status: String
+    items: [OrderedItems]  @doc(description: "Array of order items")
+    shipping_address: SalesAddress
+    billing_address: SalesAddress
+    payment_method_title: String @doc(description: "The name of the payment method that is used for the order")
+    shipping_description: String @doc(description: "The name of the shipping method that is used for the order")
 }
 
 type CustomerOrders {
     items: [CustomerOrder] @doc(description: "Array of orders")
+}
+
+type OrderedItems @doc(description: "Ordered items mapping fields") {
+    sku: String @doc(description: "Product unique identifier")
+    name: String @doc(description: "Name of the purchased product")
+    qty_ordered: String @doc(description: "Number of pieces purchased")
+    price_incl_tax: String @doc(description: "Single piece price including tax")
+    row_total_incl_tax: String @doc(description: "Row total including tax")
+    product_options: ProductOptions @doc(description: "Chosen product options")
+}
+
+type ProductOptions {
+    attributes_info: [AttributeInfo]
+}
+
+type AttributeInfo {
+    label: String
+    value: String
+}
+
+type SalesAddress @doc(description: "SalesAddress contains detailed information about a order's billing and shipping addresses"){
+    id: Int @doc(description: "The ID assigned to the address object")
+    region: CustomerAddressRegion @doc(description: "An object containing the region name, region code, and region ID")
+    region_id: Int @doc(description: "A number that uniquely identifies the state, province, or other area")
+    country_id: String @doc(description: "The customer's country")
+    street: [String] @doc(description: "A string that define the street number and name")
+    company: String @doc(description: "The customer's company")
+    telephone: String @doc(description: "The telephone number")
+    fax: String @doc(description: "The fax number")
+    postcode: String @doc(description: "The customer's ZIP or postal code")
+    city: String @doc(description: "The city or town")
+    firstname: String @doc(description: "The first name of the person associated with the shipping/billing address")
+    lastname: String @doc(description: "The family name of the person associated with the shipping/billing address")
+    middlename: String @doc(description: "The middle name of the person associated with the shipping/billing address")
+    prefix: String @doc(description: "An honorific, such as Dr., Mr., or Mrs.")
+    suffix: String @doc(description: "A value such as Sr., Jr., or III")
+    vat_id: String @doc(description: "The customer's Tax/VAT number (for corporate customers)")
+    extension_attributes: [CustomerAddressAttribute] @doc(description: "Address extension attributes")
 }

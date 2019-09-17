@@ -51,6 +51,13 @@ class Orders implements ResolverInterface
         $items = [];
         $orders = $this->collectionFactory->create($context->getUserId());
 
+        $fieldsSelection = $info->getFieldSelection(2);
+        $fields = $fieldsSelection['items'];
+
+        if (isset($args['id']) && $args['id']) {
+            $orders->addFieldToFilter($orders->getIdFieldName(),  $args['id']);
+        }
+
         /** @var \Magento\Sales\Model\Order $order */
         foreach ($orders as $order) {
             $items[] = [
@@ -59,8 +66,43 @@ class Orders implements ResolverInterface
                 'created_at' => $order->getCreatedAt(),
                 'grand_total' => $order->getGrandTotal(),
                 'status' => $order->getStatus(),
+                'shipping_description' => $order->getShippingDescription(),
+                'shipping_amount' => $order->getShippingAmount(),
+                'discount_amount' => $order->getDiscountAmount(),
+                'tax_amount' => $order->getTaxAmount(),
+                'sub_total' => $order->getSubtotal()
             ];
+
+            if (isset($fields['items'])) {
+                $item['items'] = $order->getAllVisibleItems();
+            }
+
+            if (isset($fields['shipping_address'])) {
+                $shippingAddress = ($order->getShippingAddress()) ? $order->getShippingAddress() : $order->getBillingAddress();
+                $item['shipping_address'] = $this->formatAddressData($shippingAddress);
+            }
+
+            if (isset($fields['billing_address'])) {
+                $item['billing_address'] = $this->formatAddressData($order->getBillingAddress());
+            }
+
+            if (isset($fields['payment_method_title'])) {
+                $item['payment_method_title'] = $order->getPayment()->getMethodInstance()->getTitle();
+            }
+
+            $items[] = $item;
         }
         return ['items' => $items];
+    }
+
+    /**
+     * @param $address
+     * @return mixed
+     */
+    public function formatAddressData($address)
+    {
+        $addressData = $address->getData();
+        $addressData['street'] = $address->getStreet();
+        return $addressData;
     }
 }
