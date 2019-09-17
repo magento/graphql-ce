@@ -63,6 +63,9 @@ class EntityUrl implements ResolverInterface
             $url = ltrim($url, '/');
         }
         $customUrl = $this->customUrlLocator->locateUrl($url);
+        if (is_array($customUrl)) {
+            return $customUrl;
+        }
         $url = $customUrl ?: $url;
         $urlRewrite = $this->findCanonicalUrl($url, (int)$context->getExtensionAttributes()->getStore()->getId());
         if ($urlRewrite) {
