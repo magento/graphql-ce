@@ -76,7 +76,7 @@ class Orders implements ResolverInterface
      * Collect the data for a single order based on requested fields
      *
      * @param  \Magento\Sales\Model\Order $order
-     * @param  $fields
+     * @param  array $fields
      * @return array
      */
     public function parseOrderData(\Magento\Sales\Model\Order $order, $fields)
@@ -122,7 +122,7 @@ class Orders implements ResolverInterface
     /**
      * Format the address. Converts street from string to Array
      *
-     * @param  $address
+     * @param  \Magento\Sales\Model\Order\Address $address
      * @return mixed
      */
     public function formatAddressData($address)
