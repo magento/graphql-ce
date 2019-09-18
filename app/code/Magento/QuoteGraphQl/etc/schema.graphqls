@@ -3,6 +3,7 @@
 
 type Query {
     cart(cart_id: String!): Cart @resolver (class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\Cart") @doc(description:"Returns information about shopping cart") @cache(cacheable: false)
+    customerCarts: CustomerCarts @resolver(class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\CustomerCarts") @doc(description: "Returns a list of customer carts")
 }
 
 type Mutation {
@@ -350,4 +351,8 @@ type CartItemSelectedOptionValuePrice {
 
 type Order {
     order_id: String
+}
+
+type CustomerCarts {
+    items: [Cart]
 }
