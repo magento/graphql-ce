@@ -43,9 +43,13 @@ class Orders implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
-        /** @var ContextInterface $context */
+        /**
+         * @var ContextInterface $context
+         */
         if (false === $context->getExtensionAttributes()->getIsCustomer()) {
-            throw new GraphQlAuthorizationException(__('The current customer isn\'t authorized.'));
+            throw new GraphQlAuthorizationException(
+                __('The current customer isn\'t authorized.')
+            );
         }
 
         $items = [];
@@ -62,45 +66,61 @@ class Orders implements ResolverInterface
             $orders->addFieldToFilter('status', $args['status']);
         }
 
-        /** @var \Magento\Sales\Model\Order $order */
         foreach ($orders as $order) {
-            $items[] = [
-                'id' => $order->getId(),
-                'increment_id' => $order->getIncrementId(),
-                'created_at' => $order->getCreatedAt(),
-                'grand_total' => $order->getGrandTotal(),
-                'status' => $order->getStatus(),
-                'shipping_description' => $order->getShippingDescription(),
-                'shipping_amount' => $order->getShippingAmount(),
-                'discount_amount' => $order->getDiscountAmount(),
-                'tax_amount' => $order->getTaxAmount(),
-                'sub_total' => $order->getSubtotal()
-            ];
-
-            if (isset($fields['items'])) {
-                $item['items'] = $order->getAllVisibleItems();
-            }
-
-            if (isset($fields['shipping_address'])) {
-                $shippingAddress = ($order->getShippingAddress()) ? $order->getShippingAddress() : $order->getBillingAddress();
-                $item['shipping_address'] = $this->formatAddressData($shippingAddress);
-            }
-
-            if (isset($fields['billing_address'])) {
-                $item['billing_address'] = $this->formatAddressData($order->getBillingAddress());
-            }
-
-            if (isset($fields['payment_method_title'])) {
-                $item['payment_method_title'] = $order->getPayment()->getMethodInstance()->getTitle();
-            }
-
-            $items[] = $item;
+            $items[] = $this->parseOrderData($order, $fields);
         }
         return ['items' => $items];
     }
 
     /**
-     * @param $address
+     * Collect the data for a single order based on requested fields
+     * @param  $order \Magento\Sales\Model\Order
+     * @param  $fields
+     * @return array
+     */
+    public function parseOrderData(\Magento\Sales\Model\Order $order, $fields)
+    {
+
+        $item = [
+            'id' => $order->getId(),
+            'increment_id' => $order->getIncrementId(),
+            'created_at' => $order->getCreatedAt(),
+            'grand_total' => $order->getGrandTotal(),
+            'status' => $order->getStatus(),
+            'shipping_description' => $order->getShippingDescription(),
+            'shipping_amount' => $order->getShippingAmount(),
+            'discount_amount' => $order->getDiscountAmount(),
+            'tax_amount' => $order->getTaxAmount(),
+            'sub_total' => $order->getSubtotal()
+        ];
+
+        if (isset($fields['items'])) {
+            $item['items'] = $order->getAllVisibleItems();
+        }
+
+        if (isset($fields['shipping_address'])) {
+            $shippingAddress = ($order->getShippingAddress())
+                ? $order->getShippingAddress() : $order->getBillingAddress();
+            $item['shipping_address'] = $this->formatAddressData($shippingAddress);
+        }
+
+        if (isset($fields['billing_address'])) {
+            $item['billing_address'] = $this->formatAddressData(
+                $order->getBillingAddress()
+            );
+        }
+
+        if (isset($fields['payment_method_title'])) {
+            $title = $order->getPayment()->getMethodInstance()->getTitle();
+            $item['payment_method_title'] = $title;
+        }
+
+        return $item;
+    }
+
+    /**
+     * Format the address. Converts street from string to Array
+     * @param  $address
      * @return mixed
      */
     public function formatAddressData($address)
