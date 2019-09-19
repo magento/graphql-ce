@@ -80,6 +80,41 @@ class UpdateCartItemsTest extends GraphQlAbstract
     }
 
     /**
+     * Check if the cart returns correct item quantity once the item quantity has been changed (#927)
+     *
+     * @magentoApiDataFixture Magento/Checkout/_files/quote_with_address_saved.php
+     */
+    public function testUpdatedItemQuantitySaved()
+    {
+        $quote = $this->quoteFactory->create();
+        $this->quoteResource->load($quote, 'test_order_1', 'reserved_order_id');
+        $maskedQuoteId = $this->quoteIdToMaskedId->execute((int)$quote->getId());
+        $itemId = (int)$quote->getItemByProduct($this->productRepository->get('simple'))->getId();
+        $quantity = 3;
+
+        /* Change item quantity */
+        $query = $this->getQuery($maskedQuoteId, $itemId, $quantity);
+        $response = $this->graphQlMutation($query, [], '', $this->getHeaderMap());
+        self::assertArrayHasKey('cart', $response['updateCartItems']);
+
+        /* Perform another request to retrieve the cart item quantity */
+        $getCartQuery = <<<QUERY
+{
+  cart(cart_id:"$maskedQuoteId") {
+    items {
+      id
+      quantity
+    }
+  }
+}
+QUERY;
+        $getCartResponse = $this->graphQlMutation($getCartQuery, [], '', $this->getHeaderMap());
+        self::assertArrayHasKey('cart', $getCartResponse);
+        self::assertCount(1, $getCartResponse['cart']['items']);
+        self::assertEquals($quantity, $getCartResponse['cart']['items'][0]['quantity']);
+    }
+
+    /**
      * @magentoApiDataFixture Magento/Checkout/_files/quote_with_address_saved.php
      */
     public function testRemoveCartItemIfQuantityIsZero()
