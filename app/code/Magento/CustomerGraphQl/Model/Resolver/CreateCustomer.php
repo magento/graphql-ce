@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\CustomerGraphQl\Model\Resolver;
 
+use Magento\CustomerGraphQl\Api\DataMapperInterface;
 use Magento\CustomerGraphQl\Model\Customer\CreateCustomerAccount;
 use Magento\CustomerGraphQl\Model\Customer\ExtractCustomerData;
 use Magento\Framework\GraphQl\Config\Element\Field;
@@ -37,20 +38,29 @@ class CreateCustomer implements ResolverInterface
     private $newsLetterConfig;
 
     /**
+     * Data mapper
+     * @var DataMapperInterface
+     */
+    private $dataMapper;
+
+    /**
      * CreateCustomer constructor.
      *
      * @param ExtractCustomerData $extractCustomerData
      * @param CreateCustomerAccount $createCustomerAccount
      * @param Config $newsLetterConfig
+     * @param DataMapperInterface $dataMapper
      */
     public function __construct(
         ExtractCustomerData $extractCustomerData,
         CreateCustomerAccount $createCustomerAccount,
-        Config $newsLetterConfig
+        Config $newsLetterConfig,
+        DataMapperInterface $dataMapper
     ) {
         $this->newsLetterConfig = $newsLetterConfig;
         $this->extractCustomerData = $extractCustomerData;
         $this->createCustomerAccount = $createCustomerAccount;
+        $this->dataMapper = $dataMapper;
     }
 
     /**
@@ -72,7 +82,7 @@ class CreateCustomer implements ResolverInterface
         }
       
         $customer = $this->createCustomerAccount->execute(
-            $args['input'],
+            $this->dataMapper->execute($args['input']),
             $context->getExtensionAttributes()->getStore()
         );
 

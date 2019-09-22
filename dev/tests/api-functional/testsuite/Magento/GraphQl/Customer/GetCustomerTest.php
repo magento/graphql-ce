@@ -46,6 +46,7 @@ class GetCustomerTest extends GraphQlAbstract
     {
         $currentEmail = 'customer@example.com';
         $currentPassword = 'password';
+        $customerGender = 'MALE';
 
         $query = <<<QUERY
 query {
@@ -53,6 +54,7 @@ query {
         firstname
         lastname
         email
+        genderV2
     }
 }
 QUERY;
@@ -61,6 +63,7 @@ QUERY;
         $this->assertEquals('John', $response['customer']['firstname']);
         $this->assertEquals('Smith', $response['customer']['lastname']);
         $this->assertEquals($currentEmail, $response['customer']['email']);
+        $this->assertEquals($customerGender, $response['customer']['genderV2']);
     }
 
     /**

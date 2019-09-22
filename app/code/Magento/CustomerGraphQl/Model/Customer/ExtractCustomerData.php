@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Magento\CustomerGraphQl\Model\Customer;
 
 use Magento\Customer\Api\CustomerRepositoryInterface;
+use Magento\CustomerGraphQl\Api\DataMapperInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\Webapi\ServiceOutputProcessor;
@@ -29,15 +30,24 @@ class ExtractCustomerData
     private $serializer;
 
     /**
+     * Data mapper instance
+     * @var DataMapperInterface
+     */
+    private $dataMapper;
+
+    /**
      * @param ServiceOutputProcessor $serviceOutputProcessor
      * @param SerializerInterface $serializer
+     * @param DataMapperInterface $dataMapper
      */
     public function __construct(
         ServiceOutputProcessor $serviceOutputProcessor,
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
+        DataMapperInterface $dataMapper
     ) {
         $this->serviceOutputProcessor = $serviceOutputProcessor;
         $this->serializer = $serializer;
+        $this->dataMapper = $dataMapper;
     }
 
     /**
@@ -103,6 +113,6 @@ class ExtractCustomerData
         $customerData = array_merge($customerData, $customAttributes);
 
         $customerData['model'] = $customer;
-        return $customerData;
+        return $this->dataMapper->execute($customerData);
     }
 }

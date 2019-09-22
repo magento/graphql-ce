@@ -44,6 +44,7 @@ class CreateCustomerTest extends GraphQlAbstract
         $newLastname = 'Rowe';
         $currentPassword = 'test123#';
         $newEmail = 'new_customer@example.com';
+        $customerGender = 'MALE';
 
         $query = <<<QUERY
 mutation {
@@ -54,6 +55,7 @@ mutation {
             email: "{$newEmail}"
             password: "{$currentPassword}"
             is_subscribed: true
+            genderV2: {$customerGender}
         }
     ) {
         customer {
@@ -62,6 +64,7 @@ mutation {
             lastname
             email
             is_subscribed
+            genderV2
         }
     }
 }
@@ -72,6 +75,7 @@ QUERY;
         $this->assertEquals($newLastname, $response['createCustomer']['customer']['lastname']);
         $this->assertEquals($newEmail, $response['createCustomer']['customer']['email']);
         $this->assertEquals(true, $response['createCustomer']['customer']['is_subscribed']);
+        $this->assertEquals($customerGender, $response['createCustomer']['customer']['genderV2']);
     }
 
     /**

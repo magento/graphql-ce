@@ -20,4 +20,60 @@
             </argument>
         </arguments>
     </type>
+    <preference for="Magento\CustomerGraphQl\Api\DataMapperInterface" type="Magento\CustomerGraphQl\Model\Customer\DataMapper\DataMapperPool"/>
+    <virtualType name="CustomerGraphQlResolverCustomerFieldsMapper" type="Magento\CustomerGraphQl\Model\Customer\DataMapper\FieldsDataMapper">
+        <arguments>
+            <argument name="fieldsMap" xsi:type="array">
+                <item name="gender" xsi:type="array">
+                    <item name="fieldName" xsi:type="string">genderV2</item>
+                    <item name="map" xsi:type="array">
+                        <item name="1" xsi:type="string">MALE</item>
+                        <item name="2" xsi:type="string">FEMALE</item>
+                    </item>
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="CustomerGraphQlResolverCustomerDataMapperPool" type="Magento\CustomerGraphQl\Model\Customer\DataMapper\DataMapperPool">
+        <arguments>
+            <argument name="dataMappers" xsi:type="array">
+                <item name="fieldsMapper" xsi:type="object">CustomerGraphQlResolverCustomerFieldsMapper</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="CustomerGraphQlResolverCustomerMutationDataMapperPool" type="Magento\CustomerGraphQl\Model\Customer\DataMapper\DataMapperPool">
+        <arguments>
+            <argument name="dataMappers" xsi:type="array">
+                <item name="fieldsMapper" xsi:type="object">CustomerGraphQlResolverCustomerMutationFieldsMapper</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="CustomerGraphQlResolverCustomerMutationFieldsMapper" type="Magento\CustomerGraphQl\Model\Customer\DataMapper\FieldsDataMapper">
+        <arguments>
+            <argument name="fieldsMap" xsi:type="array">
+                <item name="genderV2" xsi:type="array">
+                    <item name="fieldName" xsi:type="string">gender</item>
+                    <item name="map" xsi:type="array">
+                        <item name="MALE" xsi:type="number">1</item>
+                        <item name="FEMALE" xsi:type="number">2</item>
+                    </item>
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="Magento\CustomerGraphQl\Model\Customer\ExtractCustomerData">
+        <arguments>
+            <argument name="dataMapper" xsi:type="object">CustomerGraphQlResolverCustomerDataMapperPool</argument>
+        </arguments>
+    </type>
+    <type name="Magento\CustomerGraphQl\Model\Resolver\CreateCustomer">
+        <arguments>
+            <argument name="dataMapper" xsi:type="object">CustomerGraphQlResolverCustomerMutationDataMapperPool</argument>
+        </arguments>
+    </type>
+    <type name="Magento\CustomerGraphQl\Model\Resolver\UpdateCustomer">
+        <arguments>
+            <argument name="dataMapper" xsi:type="object">CustomerGraphQlResolverCustomerMutationDataMapperPool</argument>
+        </arguments>
+    </type>
 </config>

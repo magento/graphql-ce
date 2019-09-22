@@ -57,7 +57,7 @@ class UpdateCustomerTest extends GraphQlAbstract
         $newSuffix = 'III';
         $newDob = '3/11/1972';
         $newTaxVat = 'GQL1234567';
-        $newGender = 2;
+        $newGender = 'FEMALE';
         $newEmail = 'customer_updated@example.com';
 
         $query = <<<QUERY
@@ -73,7 +73,7 @@ mutation {
             taxvat: "{$newTaxVat}"
             email: "{$newEmail}"
             password: "{$currentPassword}"
-            gender: {$newGender}
+            genderV2: {$newGender}
         }
     ) {
         customer {
@@ -85,7 +85,7 @@ mutation {
             dob
             taxvat
             email
-            gender
+            genderV2
         }
     }
 }
@@ -105,7 +105,7 @@ QUERY;
         $this->assertEquals($newDob, $response['updateCustomer']['customer']['dob']);
         $this->assertEquals($newTaxVat, $response['updateCustomer']['customer']['taxvat']);
         $this->assertEquals($newEmail, $response['updateCustomer']['customer']['email']);
-        $this->assertEquals($newGender, $response['updateCustomer']['customer']['gender']);
+        $this->assertEquals($newGender, $response['updateCustomer']['customer']['genderV2']);
     }
 
     /**

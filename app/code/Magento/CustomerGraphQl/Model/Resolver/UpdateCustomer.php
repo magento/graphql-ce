@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\CustomerGraphQl\Model\Resolver;
 
+use Magento\CustomerGraphQl\Api\DataMapperInterface;
 use Magento\CustomerGraphQl\Model\Customer\GetCustomer;
 use Magento\CustomerGraphQl\Model\Customer\UpdateCustomerAccount;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
@@ -38,18 +39,27 @@ class UpdateCustomer implements ResolverInterface
     private $extractCustomerData;
 
     /**
+     * Data mapper
+     * @var DataMapperInterface
+     */
+    private $dataMapper;
+
+    /**
      * @param GetCustomer $getCustomer
      * @param UpdateCustomerAccount $updateCustomerAccount
      * @param ExtractCustomerData $extractCustomerData
+     * @param DataMapperInterface $dataMapper
      */
     public function __construct(
         GetCustomer $getCustomer,
         UpdateCustomerAccount $updateCustomerAccount,
-        ExtractCustomerData $extractCustomerData
+        ExtractCustomerData $extractCustomerData,
+        DataMapperInterface $dataMapper
     ) {
         $this->getCustomer = $getCustomer;
         $this->updateCustomerAccount = $updateCustomerAccount;
         $this->extractCustomerData = $extractCustomerData;
+        $this->dataMapper = $dataMapper;
     }
 
     /**
@@ -74,7 +84,7 @@ class UpdateCustomer implements ResolverInterface
         $customer = $this->getCustomer->execute($context);
         $this->updateCustomerAccount->execute(
             $customer,
-            $args['input'],
+            $this->dataMapper->execute($args['input']),
             $context->getExtensionAttributes()->getStore()
         );
 
