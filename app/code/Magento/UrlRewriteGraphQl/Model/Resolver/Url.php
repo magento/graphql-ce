@@ -15,11 +15,12 @@ use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\UrlRewrite\Model\UrlFinderInterface;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
 use Magento\UrlRewriteGraphQl\Model\Resolver\UrlRewrite\CustomUrlLocatorInterface;
+use Magento\UrlRewriteGraphQl\Model\Resolver\UrlRewrite\CustomRouteLocatorInterface;
 
 /**
  * UrlRewrite field resolver, used for GraphQL request processing.
  */
-class EntityUrl implements ResolverInterface
+class Url implements ResolverInterface
 {
     /**
      * @var UrlFinderInterface
@@ -32,15 +33,23 @@ class EntityUrl implements ResolverInterface
     private $customUrlLocator;
 
     /**
+     * @var CustomUrlLocatorInterface
+     */
+    private $customRouteLocator;
+
+    /**
      * @param UrlFinderInterface $urlFinder
      * @param CustomUrlLocatorInterface $customUrlLocator
+     * @param CustomRouteLocatorInterface $customRouteLocator
      */
     public function __construct(
         UrlFinderInterface $urlFinder,
-        CustomUrlLocatorInterface $customUrlLocator
+        CustomUrlLocatorInterface $customUrlLocator,
+        CustomRouteLocatorInterface $customRouteLocator
     ) {
         $this->urlFinder = $urlFinder;
         $this->customUrlLocator = $customUrlLocator;
+        $this->customRouteLocator = $customRouteLocator;
     }
 
     /**
@@ -57,13 +66,16 @@ class EntityUrl implements ResolverInterface
             throw new GraphQlInputException(__('"url" argument should be specified and not empty'));
         }
 
-        $result = null;
         $url = $args['url'];
         if (substr($url, 0, 1) === '/' && $url !== '/') {
             $url = ltrim($url, '/');
         }
         $customUrl = $this->customUrlLocator->locateUrl($url);
         $url = $customUrl ?: $url;
+        if ($result = $this->customRouteLocator->resolveRoute($url)) {
+            return $result;
+        }
+        $result = null;
         $urlRewrite = $this->findCanonicalUrl($url, (int)$context->getExtensionAttributes()->getStore()->getId());
         if ($urlRewrite) {
             if (!$urlRewrite->getEntityId()) {

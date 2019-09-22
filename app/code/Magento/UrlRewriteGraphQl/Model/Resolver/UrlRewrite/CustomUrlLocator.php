@@ -20,8 +20,9 @@ class CustomUrlLocator implements CustomUrlLocatorInterface
     /**
      * @param CustomUrlLocatorInterface[] $urlLocators
      */
-    public function __construct(array $urlLocators = [])
-    {
+    public function __construct(
+        array $urlLocators = []
+    ) {
         $this->urlLocators = $urlLocators;
     }
 
