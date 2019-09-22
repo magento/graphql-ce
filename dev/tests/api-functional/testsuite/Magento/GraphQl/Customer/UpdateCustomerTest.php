@@ -47,7 +47,7 @@ class UpdateCustomerTest extends GraphQlAbstract
      */
     public function testUpdateCustomer()
     {
-        $currentEmail = 'customer@example.com';
+        $currentEmail = 'customer_male@example.com';
         $currentPassword = 'password';
 
         $newPrefix = 'Dr';

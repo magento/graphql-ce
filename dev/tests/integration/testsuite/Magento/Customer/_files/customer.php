@@ -27,8 +27,32 @@ $customer->setWebsiteId(1)
     ->setDefaultBilling(1)
     ->setDefaultShipping(1)
     ->setTaxvat('12')
+    ->setGender(0);
+
+$customer->isObjectNew(true);
+$customer->save();
+$customerRegistry->remove($customer->getId());
+
+$customer = $objectManager->create(\Magento\Customer\Model\Customer::class);
+/** @var Magento\Customer\Model\Customer $customer */
+$customer->setWebsiteId(1)
+    ->setId(2)
+    ->setEmail('customer_male@example.com')
+    ->setPassword('password')
+    ->setGroupId(1)
+    ->setStoreId(1)
+    ->setIsActive(1)
+    ->setPrefix('Mr.')
+    ->setFirstname('Veronica')
+    ->setMiddlename('A')
+    ->setLastname('Costello')
+    ->setSuffix('Esq.')
+    ->setDefaultBilling(1)
+    ->setDefaultShipping(1)
+    ->setTaxvat('12')
     ->setGender(1);
 
 $customer->isObjectNew(true);
 $customer->save();
 $customerRegistry->remove($customer->getId());
+

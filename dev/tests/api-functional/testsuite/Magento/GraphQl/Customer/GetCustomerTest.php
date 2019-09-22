@@ -44,7 +44,7 @@ class GetCustomerTest extends GraphQlAbstract
      */
     public function testGetCustomer()
     {
-        $currentEmail = 'customer@example.com';
+        $currentEmail = 'customer_male@example.com';
         $currentPassword = 'password';
         $customerGender = 'MALE';
 
