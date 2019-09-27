@@ -22,10 +22,10 @@ type Query {
 
 type CmsPage @doc(description: "CMS page defines all CMS page information") {
     identifier: String @doc(description: "Identifier of the CMS page")
-    url_key: String @doc(description: "URL key of CMS page")
+    url_key: String @deprecated(reason: "It doesn't need on the storefront more") @doc(description: "URL key of CMS page")
     title: String @doc(description: "CMS page title")
     content: String @doc(description: "CMS page content")
-    content_heading: String @doc(description: "CMS page content heading")
+    content_heading: String @deprecated(reason: "It doesn't need on the storefront more") @doc(description: "CMS page content heading")
     page_layout: String @doc(description: "CMS page content heading")
     meta_title: String @doc(description: "CMS page meta title")
     meta_description: String @doc(description: "CMS page meta description")
