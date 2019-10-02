@@ -5,6 +5,22 @@ type Query {
     wishlist: WishlistOutput @resolver(class: "\\Magento\\WishlistGraphQl\\Model\\Resolver\\WishlistResolver") @doc(description: "The wishlist query returns the contents of a customer's wish list") @cache(cacheable: false)
 }
 
+type Mutation {
+    addProductsToWishlist(input: AddProductsToWishlistInput): WishlistOutput  @resolver(class: "\\Magento\\WishlistGraphQl\\Model\\Resolver\\AddProductsToWishlist")
+}
+
+input AddProductsToWishlistInput {
+    wishlist_items: [WishlistItemInput!]!
+}
+
+input WishlistItemInput {
+    sku: String!
+    quantity: Float
+    parent_sku: String,
+    selected_options: [String!]
+    entered_options: [EnteredOptionInput!]
+}
+
 type WishlistOutput {
     items: [WishlistItem] @resolver(class: "\\Magento\\WishlistGraphQl\\Model\\Resolver\\WishlistItemsResolver") @doc(description: "An array of items in the customer's wish list"),
     items_count: Int @doc(description: "The number of items in the wish list"),

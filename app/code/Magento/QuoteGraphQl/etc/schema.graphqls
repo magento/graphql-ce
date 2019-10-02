@@ -22,6 +22,11 @@ type Mutation {
     placeOrder(input: PlaceOrderInput): PlaceOrderOutput @resolver(class: "\\Magento\\QuoteGraphQl\\Model\\Resolver\\PlaceOrder")
 }
 
+input EnteredOptionInput {
+    id: String!
+    value: String!
+}
+
 input createEmptyCartInput {
     cart_id: String
 }
