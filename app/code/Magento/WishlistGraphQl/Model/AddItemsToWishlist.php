@@ -8,12 +8,8 @@ declare(strict_types=1);
 namespace Magento\WishlistGraphQl\Model;
 
 use Magento\Catalog\Api\Data\ProductInterface;
-use Magento\Catalog\Model\Product\Attribute\Source\Status;
-use Magento\Catalog\Model\Product\Visibility;
-use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory as ProductCollectionFactory;
 use Magento\CatalogGraphQl\Model\GetProductOptionFromRequest;
 use Magento\Framework\DataObject;
-use Magento\Framework\DataObjectFactory;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Wishlist\Model\Wishlist;
@@ -26,6 +22,11 @@ use Magento\QuoteGraphQl\Model\Cart\BuyRequest\BuyRequestBuilder;
 class AddItemsToWishlist
 {
     /**
+     * @var GetAvailableProductsBySkuList
+     */
+    private $getAvailableProductsBySkuList;
+
+    /**
      * @var BuyRequestBuilder
      */
     private $buyRequestBuilder;
@@ -36,38 +37,25 @@ class AddItemsToWishlist
     private $getProductOptionFromRequest;
 
     /**
-     * @var ProductCollectionFactory
-     */
-    private $productCollectionFactory;
-
-    /**
-     * @var DataObjectFactory
-     */
-    private $dataObjectFactory;
-
-    /**
      * @var GetWishlistForCustomer
      */
     private $getWishlistForCustomer;
 
     /**
      * @param GetWishlistForCustomer $getWishlistForCustomer
-     * @param ProductCollectionFactory $productCollectionFactory
-     * @param DataObjectFactory $dataObjectFactory
      * @param GetProductOptionFromRequest $getProductOptionFromRequest
+     * @param GetAvailableProductsBySkuList $getAvailableProductsBySkuList
      * @param BuyRequestBuilder $buyRequestBuilder
      */
     public function __construct(
         GetWishlistForCustomer $getWishlistForCustomer,
-        ProductCollectionFactory $productCollectionFactory,
-        DataObjectFactory $dataObjectFactory,
         GetProductOptionFromRequest $getProductOptionFromRequest,
+        GetAvailableProductsBySkuList $getAvailableProductsBySkuList,
         BuyRequestBuilder $buyRequestBuilder
     ) {
         $this->getWishlistForCustomer = $getWishlistForCustomer;
-        $this->productCollectionFactory = $productCollectionFactory;
-        $this->dataObjectFactory = $dataObjectFactory;
         $this->getProductOptionFromRequest = $getProductOptionFromRequest;
+        $this->getAvailableProductsBySkuList = $getAvailableProductsBySkuList;
         $this->buyRequestBuilder = $buyRequestBuilder;
     }
 
@@ -86,10 +74,14 @@ class AddItemsToWishlist
 
         $productsList = [];
         foreach ($items as $item) {
-            $productsList[$item['sku']] = $item;
+            if (isset($item['parent_sku'])) {
+                $productsList[$item['parent_sku']] = $item;
+            } else {
+                $productsList[$item['sku']] = $item;
+            }
         }
 
-        $products = $this->getAvailableProductsBySku(array_keys($productsList), $storeId);
+        $products = $this->getAvailableProductsBySkuList->execute(array_keys($productsList), $storeId);
         if (count($products) === 0) {
             throw new GraphQlInputException(__('Cannot add the specified items to wishlist'));
         }
@@ -119,25 +111,6 @@ class AddItemsToWishlist
     }
 
     /**
-     * Returns available products for current store according to the SKU list
-     *
-     * @param array $skuList
-     * @param int $storeId
-     * @return array
-     */
-    private function getAvailableProductsBySku(array $skuList, int $storeId): array // TODO: may be decoupled
-    {
-        return $this->productCollectionFactory->create()
-            ->addAttributeToFilter('sku', ['in' => $skuList])
-            ->setStoreId($storeId)
-            ->setVisibility(
-                [Visibility::VISIBILITY_BOTH, Visibility::VISIBILITY_IN_CATALOG, Visibility::VISIBILITY_IN_SEARCH]
-            )
-            ->addAttributeToFilter('status', Status::STATUS_ENABLED)
-            ->getItems();
-    }
-
-    /**
      * Creates buy request
      *
      * @param array $item
@@ -152,7 +125,7 @@ class AddItemsToWishlist
         ];
 
         if (isset($item['parent_sku'])) {
-            $cartItemData['data']['parent_sku'] = $item['parent_sku'];
+            $cartItemData['parent_sku'] = $item['parent_sku'];
         }
 
         $cartItemData = array_merge_recursive(
@@ -164,6 +137,13 @@ class AddItemsToWishlist
         return $this->buyRequestBuilder->build($cartItemData);
     }
 
+    /**
+     * Extracts entered options for item
+     *
+     * @param array $item
+     * @return array
+     * @throws GraphQlInputException
+     */
     private function processEnteredOptions(array $item): array
     {
         $enteredOptions = [];
@@ -173,7 +153,10 @@ class AddItemsToWishlist
         }
 
         foreach ($item['entered_options'] as $enteredOption) {
-            $option = $this->getProductOptionFromRequest->execute($enteredOption, ProductOptionInterface::SOURCE_ENTERED);
+            $option = $this->getProductOptionFromRequest->execute(
+                $enteredOption,
+                ProductOptionInterface::SOURCE_ENTERED
+            );
 
             if ($option->getType() === ProductOptionInterface::TYPE_CUSTOM) {
                 $enteredOptions['customizable_options'][] = [
@@ -188,6 +171,13 @@ class AddItemsToWishlist
         return $enteredOptions;
     }
 
+    /**
+     * Extracts selected options for item
+     *
+     * @param array $item
+     * @return array
+     * @throws GraphQlInputException
+     */
     private function processSelectedOptions(array $item): array
     {
         $selectedOptions = [];
@@ -197,7 +187,10 @@ class AddItemsToWishlist
         }
 
         foreach ($item['selected_options'] as $selectedOption) {
-            $option = $this->getProductOptionFromRequest->execute(['value' => $selectedOption], ProductOptionInterface::SOURCE_SELECTED);
+            $option = $this->getProductOptionFromRequest->execute(
+                ['value' => $selectedOption],
+                ProductOptionInterface::SOURCE_SELECTED
+            );
             if ($option->getType() === ProductOptionInterface::TYPE_CUSTOM) {
                 $selectedOptions['customizable_options'][] = [
                     'id' => $option->getId(),

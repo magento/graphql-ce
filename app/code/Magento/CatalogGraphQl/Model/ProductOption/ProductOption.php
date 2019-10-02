@@ -7,7 +7,9 @@ declare(strict_types=1);
 
 namespace Magento\CatalogGraphQl\Model\ProductOption;
 
-
+/**
+ * @inheritDoc
+ */
 class ProductOption implements ProductOptionInterface
 {
     /**
