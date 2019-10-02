@@ -52,7 +52,9 @@ class CmsBlockTest extends GraphQlAbstract
     items {
       identifier
       title
-      content
+      block_content {
+        html
+      }
     }
   }
 }
@@ -64,7 +66,9 @@ QUERY;
 
         self::assertEquals($cmsBlockData['identifier'], $response['cmsBlocks']['items'][0]['identifier']);
         self::assertEquals($cmsBlockData['title'], $response['cmsBlocks']['items'][0]['title']);
-        self::assertEquals($renderedContent, $response['cmsBlocks']['items'][0]['content']);
+        self::assertArrayHasKey('block_content', $response['cmsBlocks']['items'][0]);
+        self::assertArrayHasKey('html', $response['cmsBlocks']['items'][0]['block_content']);
+        self::assertEquals($renderedContent, $response['cmsBlocks']['items'][0]['block_content']['html']);
     }
 
     /**
@@ -86,7 +90,9 @@ QUERY;
     items {
       identifier
       title
-      content
+      block_content {
+        html
+      }
     }
   }
 }
@@ -97,7 +103,9 @@ QUERY;
         self::assertArrayHasKey('items', $response['cmsBlocks']);
         self::assertEquals($cmsBlockData['identifier'], $response['cmsBlocks']['items'][0]['identifier']);
         self::assertEquals($cmsBlockData['title'], $response['cmsBlocks']['items'][0]['title']);
-        self::assertEquals($renderedContent, $response['cmsBlocks']['items'][0]['content']);
+        self::assertArrayHasKey('block_content', $response['cmsBlocks']['items'][0]);
+        self::assertArrayHasKey('html', $response['cmsBlocks']['items'][0]['block_content']);
+        self::assertEquals($renderedContent, $response['cmsBlocks']['items'][0]['block_content']['html']);
     }
 
     /**
@@ -117,7 +125,9 @@ QUERY;
     items {
       identifier
       title
-      content
+      block_content {
+        html
+      }
     }
   }
 }
@@ -140,7 +150,9 @@ QUERY;
     items {
       identifier
       title
-      content
+      block_content {
+        html
+      }
     }
   }
 }
@@ -163,7 +175,9 @@ QUERY;
     items {
       identifier
       title
-      content
+      block_content {
+        html
+      }
     }
   }
 }

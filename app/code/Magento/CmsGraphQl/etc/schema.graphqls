@@ -39,5 +39,6 @@ type CmsBlocks @doc(description: "CMS blocks information") {
 type CmsBlock @doc(description: "CMS block defines all CMS block information") {
     identifier: String @doc(description: "CMS block identifier")
     title: String @doc(description: "CMS block title")
-    content: String @doc(description: "CMS block content")
+    content: String @deprecated(reason: "CmsBlock content should be a ComplexTextValue to allow add CMS content in different, no HTML representation. Use the `block_content` instead.")
+    block_content: ComplexTextValue @doc(description: "CMS block content") @resolver(class: "\\Magento\\CmsGraphQl\\Model\\Resolver\\Content")
 }
