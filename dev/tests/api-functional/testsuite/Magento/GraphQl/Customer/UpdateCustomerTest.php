@@ -45,6 +45,51 @@ class UpdateCustomerTest extends GraphQlAbstract
     /**
      * @magentoApiDataFixture Magento/Customer/_files/customer.php
      */
+    public function testSetNewPasswordNewEmail()
+    {
+        $currentEmail = 'customer@example.com';
+        $newEmail = 'customer_updated@example.com';
+
+        $currentPassword = 'password';
+        $newPassword = 'newPassword123';
+
+        $newFirstname = 'Richard';
+        $newLastname = 'Rowe';
+
+        $query = <<<QUERY
+mutation {
+    updateCustomer(
+        input: {
+            firstname: "{$newFirstname}"
+            lastname: "{$newLastname}"
+            email: "{$newEmail}"
+            currentPassword: "{$currentPassword}"
+            password: "{$newPassword}"
+        }
+    ) {
+        customer {
+            firstname
+            lastname
+            email
+        }
+    }
+}
+QUERY;
+        $response = $this->graphQlMutation(
+            $query,
+            [],
+            '',
+            $this->getCustomerAuthHeaders($currentEmail, $currentPassword)
+        );
+
+        $this->assertEquals($newFirstname, $response['updateCustomer']['customer']['firstname']);
+        $this->assertEquals($newLastname, $response['updateCustomer']['customer']['lastname']);
+        $this->assertEquals($newEmail, $response['updateCustomer']['customer']['email']);
+    }
+
+    /**
+     * @magentoApiDataFixture Magento/Customer/_files/customer.php
+     */
     public function testUpdateCustomer()
     {
         $currentEmail = 'customer@example.com';
