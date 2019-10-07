@@ -89,6 +89,39 @@ QUERY;
 
     /**
      * @magentoApiDataFixture Magento/Customer/_files/customer.php
+     * @expectedException \Exception
+     * @expectedExceptionMessage Invalid login or password.
+     */
+    public function testSetNewPasswordNewEmailIfPasswordIsInvalid()
+    {
+        $currentEmail = 'customer@example.com';
+        $newEmail = 'customer_updated@example.com';
+
+        $currentPassword = 'password';
+        $newPassword = 'newPassword123';
+
+        $invalidPassword = 'invalid_password';
+
+        $query = <<<QUERY
+mutation {
+    updateCustomer(
+        input: {
+            email: "{$newEmail}"
+            password: "{$newPassword}"
+            currentPassword: "{$invalidPassword}"
+        }
+    ) {
+        customer {
+            firstname
+        }
+    }
+}
+QUERY;
+        $this->graphQlMutation($query, [], '', $this->getCustomerAuthHeaders($currentEmail, $currentPassword));
+    }
+
+    /**
+     * @magentoApiDataFixture Magento/Customer/_files/customer.php
      */
     public function testUpdateCustomer()
     {
