@@ -122,6 +122,34 @@ QUERY;
 
     /**
      * @magentoApiDataFixture Magento/Customer/_files/customer.php
+     * @expectedException \Exception
+     * @expectedExceptionMessage Provide the current "password" to change "password".
+     */
+    public function testSetNewPasswordIfPasswordIsMissed()
+    {
+        $currentEmail = 'customer@example.com';
+        $currentPassword = 'password';
+
+        $newPassword = 'newPassword123';
+
+        $query = <<<QUERY
+mutation {
+    updateCustomer(
+        input: {
+            password: "{$newPassword}"
+        }
+    ) {
+        customer {
+            firstname
+        }
+    }
+}
+QUERY;
+        $this->graphQlMutation($query, [], '', $this->getCustomerAuthHeaders($currentEmail, $currentPassword));
+    }
+
+    /**
+     * @magentoApiDataFixture Magento/Customer/_files/customer.php
      */
     public function testUpdateCustomer()
     {
