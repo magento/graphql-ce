@@ -102,7 +102,7 @@ class UpdateCustomerAccount
     public function execute(CustomerInterface $customer, array $data, StoreInterface $store): void
     {
         if (isset($data['email']) && $customer->getEmail() !== $data['email']) {
-            if (!isset($data['currentPassword']) || '' == trim($data['currentPassword'])) {
+            if (!isset($data['currentPassword']) || empty($data['currentPassword'])) {
                 throw new GraphQlInputException(__('Provide the current "password" to change "email".'));
             }
 
@@ -110,7 +110,7 @@ class UpdateCustomerAccount
         }
 
         if (isset($data['password'])) {
-            if (!isset($data['currentPassword']) || '' == trim($data['currentPassword'])) {
+            if (!isset($data['currentPassword']) || empty($data['currentPassword'])) {
                 throw new GraphQlInputException(__('Provide the current "password" to change "password".'));
             }
 

@@ -92,10 +92,9 @@ QUERY;
      * @expectedException \Exception
      * @expectedExceptionMessage Invalid login or password.
      */
-    public function testSetNewPasswordNewEmailIfPasswordIsInvalid()
+    public function testSetNewPasswordIfPasswordIsInvalid()
     {
         $currentEmail = 'customer@example.com';
-        $newEmail = 'customer_updated@example.com';
 
         $currentPassword = 'password';
         $newPassword = 'newPassword123';
@@ -106,8 +105,38 @@ QUERY;
 mutation {
     updateCustomer(
         input: {
-            email: "{$newEmail}"
             password: "{$newPassword}"
+            currentPassword: "{$invalidPassword}"
+        }
+    ) {
+        customer {
+            firstname
+        }
+    }
+}
+QUERY;
+        $this->graphQlMutation($query, [], '', $this->getCustomerAuthHeaders($currentEmail, $currentPassword));
+    }
+
+    /**
+     * @magentoApiDataFixture Magento/Customer/_files/customer.php
+     * @expectedException \Exception
+     * @expectedExceptionMessage Invalid login or password.
+     */
+    public function testSetNewEmailIfPasswordIsInvalid()
+    {
+        $currentEmail = 'customer@example.com';
+        $newEmail = 'customer_updated@example.com';
+
+        $currentPassword = 'password';
+
+        $invalidPassword = 'invalid_password';
+
+        $query = <<<QUERY
+mutation {
+    updateCustomer(
+        input: {
+            email: "{$newEmail}"
             currentPassword: "{$invalidPassword}"
         }
     ) {
@@ -178,7 +207,7 @@ mutation {
             dob: "{$newDob}"
             taxvat: "{$newTaxVat}"
             email: "{$newEmail}"
-            password: "{$currentPassword}"
+            currentPassword: "{$currentPassword}"
             gender: {$newGender}
         }
     ) {
@@ -321,35 +350,6 @@ QUERY;
     }
 
     /**
-     * @magentoApiDataFixture Magento/Customer/_files/customer.php
-     * @expectedException \Exception
-     * @expectedExceptionMessage Invalid login or password.
-     */
-    public function testUpdateEmailIfPasswordIsInvalid()
-    {
-        $currentEmail = 'customer@example.com';
-        $currentPassword = 'password';
-        $invalidPassword = 'invalid_password';
-        $newEmail = 'customer_updated@example.com';
-
-        $query = <<<QUERY
-mutation {
-    updateCustomer(
-        input: {
-            email: "{$newEmail}"
-            password: "{$invalidPassword}"
-        }
-    ) {
-        customer {
-            firstname
-        }
-    }
-}
-QUERY;
-        $this->graphQlMutation($query, [], '', $this->getCustomerAuthHeaders($currentEmail, $currentPassword));
-    }
-
-    /**
      * @magentoApiDataFixture Magento/Customer/_files/two_customers.php
      * @expectedException \Exception
      * @expectedExceptionMessage A customer with the same email address already exists in an associated website.
@@ -367,7 +367,7 @@ mutation {
     updateCustomer(
         input: {
             email: "{$existedEmail}"
-            password: "{$currentPassword}"
+            currentPassword: "{$currentPassword}"
             firstname: "{$firstname}"
             lastname: "{$lastname}"
         }
@@ -396,7 +396,7 @@ mutation {
     updateCustomer(
         input: {
             email: "{$currentEmail}"
-            password: "{$currentPassword}"
+            currentPassword: "{$currentPassword}"
             firstname: ""
         }
     ) {

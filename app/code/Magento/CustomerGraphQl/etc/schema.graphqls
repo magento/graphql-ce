@@ -64,8 +64,7 @@ input CustomerInput {
     dob: String @doc(description: "The customer's date of birth")
     taxvat: String @doc(description: "The customer's Tax/VAT number (for corporate customers)")
     gender: Int @doc(description: "The customer's gender(Male - 1, Female - 2)")
-    password: String @doc(description: "The new customer's password")
-    currentPassword: String @doc(description: "The current customer's password")
+    password: String @doc(description: "The customer's password")
     is_subscribed: Boolean @doc(description: "Indicates whether the customer is subscribed to the company's newsletter")
 }
 
