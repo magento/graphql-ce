@@ -66,8 +66,8 @@ class UpdateCustomerAccount
      * @param DataObjectHelper $dataObjectHelper
      * @param ChangeSubscriptionStatus $changeSubscriptionStatus
      * @param ValidateCustomerData $validateCustomerData
-     * @param array $restrictedKeys
      * @param AccountManagementInterface $accountManagement
+     * @param array $restrictedKeys
      */
     public function __construct(
         SaveCustomer $saveCustomer,
@@ -75,8 +75,8 @@ class UpdateCustomerAccount
         DataObjectHelper $dataObjectHelper,
         ChangeSubscriptionStatus $changeSubscriptionStatus,
         ValidateCustomerData $validateCustomerData,
-        array $restrictedKeys = [],
-        AccountManagementInterface $accountManagement
+        AccountManagementInterface $accountManagement,
+        array $restrictedKeys = []
     ) {
         $this->saveCustomer = $saveCustomer;
         $this->checkCustomerPassword = $checkCustomerPassword;
@@ -102,25 +102,11 @@ class UpdateCustomerAccount
     public function execute(CustomerInterface $customer, array $data, StoreInterface $store): void
     {
         if (isset($data['email']) && $customer->getEmail() !== $data['email']) {
-            if (!isset($data['currentPassword']) || empty($data['currentPassword'])) {
-                throw new GraphQlInputException(__('Provide the current "password" to change "email".'));
-            }
-
-            $this->checkCustomerPassword->execute($data['currentPassword'], (int)$customer->getId());
+            $this->emailChecking($customer, $data);
         }
 
         if (isset($data['password'])) {
-            if (!isset($data['currentPassword']) || empty($data['currentPassword'])) {
-                throw new GraphQlInputException(__('Provide the current "password" to change "password".'));
-            }
-
-            $this->checkCustomerPassword->execute($data['currentPassword'], (int)$customer->getId());
-
-            try {
-                $this->accountManagement->changePasswordById((int)$customer->getId(), $data['currentPassword'], $data['password']);
-            } catch (LocalizedException $e) {
-                throw new GraphQlInputException(__($e->getMessage()), $e);
-            }
+            $this->passwordChecking($customer, $data);
         }
 
         $this->validateCustomerData->execute($data);
@@ -137,6 +123,48 @@ class UpdateCustomerAccount
 
         if (isset($data['is_subscribed'])) {
             $this->changeSubscriptionStatus->execute((int)$customer->getId(), (bool)$data['is_subscribed']);
+        }
+    }
+
+    /**
+     * Check email
+     *
+     * @param CustomerInterface $customer
+     * @param array $data
+     * @throws GraphQlAuthenticationException
+     * @throws GraphQlInputException
+     * @throws GraphQlNoSuchEntityException
+     */
+    protected function emailChecking(CustomerInterface $customer, array $data): void
+    {
+        if (!isset($data['currentPassword']) || empty($data['currentPassword'])) {
+            throw new GraphQlInputException(__('Provide the current "password" to change "email".'));
+        }
+
+        $this->checkCustomerPassword->execute($data['currentPassword'], (int)$customer->getId());
+    }
+
+    /**
+     * Check password and change
+     *
+     * @param CustomerInterface $customer
+     * @param array $data
+     * @throws GraphQlAuthenticationException
+     * @throws GraphQlInputException
+     * @throws GraphQlNoSuchEntityException
+     */
+    protected function passwordChecking(CustomerInterface $customer, array $data): void
+    {
+        if (!isset($data['currentPassword']) || empty($data['currentPassword'])) {
+            throw new GraphQlInputException(__('Provide the current "password" to change "password".'));
+        }
+
+        $this->checkCustomerPassword->execute($data['currentPassword'], (int)$customer->getId());
+
+        try {
+            $this->accountManagement->changePasswordById((int)$customer->getId(), $data['currentPassword'], $data['password']);
+        } catch (LocalizedException $e) {
+            throw new GraphQlInputException(__($e->getMessage()), $e);
         }
     }
 }
