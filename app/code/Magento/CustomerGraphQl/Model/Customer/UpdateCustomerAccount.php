@@ -153,7 +153,7 @@ class UpdateCustomerAccount
      * @throws GraphQlInputException
      * @throws GraphQlNoSuchEntityException
      */
-    protected function passwordChecking(CustomerInterface $customer, array $data): void
+    protected function passwordCpasswordCheckinghecking(CustomerInterface $customer, array $data): void
     {
         if (!isset($data['currentPassword']) || empty($data['currentPassword'])) {
             throw new GraphQlInputException(__('Provide the current "password" to change "password".'));
@@ -162,7 +162,11 @@ class UpdateCustomerAccount
         $this->checkCustomerPassword->execute($data['currentPassword'], (int)$customer->getId());
 
         try {
-            $this->accountManagement->changePasswordById((int)$customer->getId(), $data['currentPassword'], $data['password']);
+            $this->accountManagement->changePasswordById(
+                (int)$customer->getId(),
+                $data['currentPassword'],
+                $data['password']
+            );
         } catch (LocalizedException $e) {
             throw new GraphQlInputException(__($e->getMessage()), $e);
         }
