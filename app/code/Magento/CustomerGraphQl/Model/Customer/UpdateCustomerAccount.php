@@ -153,7 +153,7 @@ class UpdateCustomerAccount
      * @throws GraphQlInputException
      * @throws GraphQlNoSuchEntityException
      */
-    protected function passwordCpasswordCheckinghecking(CustomerInterface $customer, array $data): void
+    protected function passwordChecking(CustomerInterface $customer, array $data): void
     {
         if (!isset($data['currentPassword']) || empty($data['currentPassword'])) {
             throw new GraphQlInputException(__('Provide the current "password" to change "password".'));
