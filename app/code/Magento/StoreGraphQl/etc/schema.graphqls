@@ -1,7 +1,7 @@
 # Copyright © Magento, Inc. All rights reserved.
 # See COPYING.txt for license details.
 type Query {
-    storeConfig : StoreConfig @resolver(class: "Magento\\StoreGraphQl\\Model\\Resolver\\StoreConfigResolver") @doc(description: "The store config query") @cache(cacheable: false)
+    storeConfig : StoreConfig @resolver(class: "Magento\\StoreGraphQl\\Model\\Resolver\\StoreConfigResolver") @doc(description: "The store config query") @cache(cacheIdentity: "Magento\\StoreGraphQl\\Model\\Resolver\\Store\\Identity")
 }
 
 type Website @doc(description: "The type contains information about a website") {
