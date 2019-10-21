@@ -22,6 +22,10 @@ use Magento\Wishlist\Model\Wishlist;
 use Magento\Wishlist\Model\WishlistFactory;
 use Magento\Wishlist\Model\Item;
 
+/**
+ * Class RemoveWishlist
+ * @package Magento\WishlistGraphQl\Model\Resolver
+ */
 class RemoveWishlist implements ResolverInterface
 {
     /**
@@ -45,8 +49,11 @@ class RemoveWishlist implements ResolverInterface
     private $storeManager;
 
     /**
+     * RemoveWishlist constructor.
      * @param WishlistResourceModel $wishlistResource
      * @param WishlistFactory $wishlistFactory
+     * @param WishlistItemCollectionFactory $wishlistItemCollectionFactory
+     * @param StoreManagerInterface $storeManager
      */
     public function __construct(
         WishlistResourceModel $wishlistResource,
