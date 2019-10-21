@@ -58,8 +58,29 @@ class CustomizableOptions implements ResolverInterface
                 $cartItem,
                 (int)$customizableOptionId
             );
+
+            if ('date_time' === $customizableOption['type']) {
+                $this->setOriginalDateTime($cartItem, $customizableOption, $customizableOptionId);
+            }
+
             $customizableOptionsData[] = $customizableOption;
         }
         return $customizableOptionsData;
+    }
+
+    public function setOriginalDateTime(QuoteItem $cartItem, &$customizableOption, $customizableOptionId)
+    {
+        $originalOption = $cartItem->getOptionsByCode();
+
+        if (is_array($originalOption)
+            && is_string($customizableOptionId)
+            && array_key_exists('option_' . $customizableOptionId, $originalOption)
+        ) {
+            $originalValue = $originalOption['option_' . $customizableOptionId]->getOrigData()['value'];
+
+            if ('' !== $originalValue) {
+                $customizableOption['values'][0]['value'] = $originalValue;
+            }
+        }
     }
 }
