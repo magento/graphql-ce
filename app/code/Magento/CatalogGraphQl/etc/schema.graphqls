@@ -100,6 +100,13 @@ interface ProductInterface @typeResolver(class: "Magento\\CatalogGraphQl\\Model\
     categories: [CategoryInterface] @doc(description: "The categories assigned to a product.") @resolver(class: "Magento\\CatalogGraphQl\\Model\\Resolver\\Categories") @cache(cacheIdentity: "Magento\\CatalogGraphQl\\Model\\Resolver\\Category\\CategoriesIdentity")
     canonical_url: String @doc(description: "Canonical URL.") @resolver(class: "Magento\\CatalogGraphQl\\Model\\Resolver\\Product\\CanonicalUrl")
     media_gallery: [MediaGalleryInterface] @doc(description: "An array of Media Gallery objects.") @resolver(class: "Magento\\CatalogGraphQl\\Model\\Resolver\\Product\\MediaGallery")
+    product_specifications: [ProductSpecifications] @doc(description: "Product specification for product detail page. Usage only recommended on single product view") @resolver(class: "Magento\\CatalogGraphQl\\Model\\Resolver\\Product\\ProductSpecifications")
+}
+
+type ProductSpecifications {
+    label: String!
+    value: String!
+    code: String!
 }
 
 interface PhysicalProductInterface @typeResolver(class: "Magento\\CatalogGraphQl\\Model\\ProductInterfaceTypeResolverComposite") @doc(description: "PhysicalProductInterface contains attributes specific to tangible products.") {
