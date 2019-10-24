@@ -67,15 +67,8 @@ class RemoveWishlist implements ResolverInterface
     }
 
     /**
-     * Fetches the data from persistence models and format it according to the GraphQL schema.
-     *
-     * @param \Magento\Framework\GraphQl\Config\Element\Field $field
-     * @param ContextInterface $context
-     * @param ResolveInfo $info
-     * @param array|null $value
-     * @param array|null $args
-     * @return mixed|Value
-     * @throws \Exception
+     * @inheritdoc
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function resolve(
         Field $field,
