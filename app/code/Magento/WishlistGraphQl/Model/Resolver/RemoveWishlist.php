@@ -24,8 +24,6 @@ use Magento\Wishlist\Model\WishlistFactory;
 
 /**
  * Class RemoveWishlist
- * @package Magento\WishlistGraphQl\Model\Resolver
- *
  */
 class RemoveWishlist implements ResolverInterface
 {
