@@ -15,16 +15,17 @@ use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\GraphQl\Model\Query\ContextInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Wishlist\Model\Item;
 use Magento\Wishlist\Model\ResourceModel\Item\Collection as WishlistItemCollection;
 use Magento\Wishlist\Model\ResourceModel\Item\CollectionFactory as WishlistItemCollectionFactory;
 use Magento\Wishlist\Model\ResourceModel\Wishlist as WishlistResourceModel;
 use Magento\Wishlist\Model\Wishlist;
 use Magento\Wishlist\Model\WishlistFactory;
-use Magento\Wishlist\Model\Item;
 
 /**
  * Class RemoveWishlist
  * @package Magento\WishlistGraphQl\Model\Resolver
+ *
  */
 class RemoveWishlist implements ResolverInterface
 {
@@ -98,13 +99,13 @@ class RemoveWishlist implements ResolverInterface
         if (null === $wishlist->getId()) {
             return false;
         }
-        // Loop trough all items
-        foreach($this->getWishListItems($wishlist) as $item){
+
+        foreach ($this->getWishListItems($wishlist) as $item) {
             $item->delete();
         }
-        // Save
         return $wishlist->save();
     }
+
     /**
      * Get wishlist items
      *
@@ -115,11 +116,15 @@ class RemoveWishlist implements ResolverInterface
     {
         /** @var WishlistItemCollection $wishlistItemCollection */
         $wishlistItemCollection = $this->wishlistItemCollectionFactory->create();
-        $wishlistItemCollection
-            ->addWishlistFilter($wishlist)
-            ->addStoreFilter(array_map(function (StoreInterface $store) {
-                return $store->getId();
-            }, $this->storeManager->getStores()))
+        $wishlistItemCollection->addWishlistFilter($wishlist)
+            ->addStoreFilter(
+                array_map(
+                    function (StoreInterface $store) {
+                        return $store->getId();
+                    },
+                    $this->storeManager->getStores()
+                )
+            )
             ->setVisibilityFilter();
         return $wishlistItemCollection->getItems();
     }
