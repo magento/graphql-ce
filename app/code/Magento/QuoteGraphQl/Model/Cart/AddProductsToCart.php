@@ -45,6 +45,8 @@ class AddProductsToCart implements AddToCartHandlerInterface
      * @param CartInterface $cart
      * @param array $cartItems
      * @throws GraphQlInputException
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException
      */
     public function execute(CartInterface $cart, array $cartItems): void
     {
