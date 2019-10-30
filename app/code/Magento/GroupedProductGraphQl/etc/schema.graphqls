@@ -10,3 +10,26 @@ type GroupedProductItem @doc(description: "GroupedProductItem contains informati
     position: Int @doc(description: "The relative position of this item compared to the other group items")
     product: ProductInterface @doc(description: "The ProductInterface object, which contains details about this product option") @resolver(class: "Magento\\CatalogGraphQl\\Model\\Resolver\\Product")
 }
+
+type Mutation {
+    addGroupedProductsToCart(input: AddGroupedProductsToCartInput): AddGroupedProductsToCartOutput
+}
+
+input AddGroupedProductsToCartInput {
+    cart_id: String!
+    cartItems: [GroupedProductCartItemInput!]!
+}
+
+input GroupedProductCartItemInput {
+    sku: String!
+    grouped_products:[GroupedProductsInput!]
+}
+
+input GroupedProductsInput {
+    sku: String!
+    qty: Float!
+}
+
+type AddGroupedProductsToCartOutput {
+    cart: Cart!
+}
