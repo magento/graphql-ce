@@ -82,7 +82,7 @@ class WishlistRemoveItem implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
-        $wishlist = $this->getWishlistByContext($context->getUserId());
+        $wishlist = $this->getWishlistByUserId($context->getUserId());
 
         if ($wishlist->getId() === null) {
             return [];
@@ -106,7 +106,7 @@ class WishlistRemoveItem implements ResolverInterface
      * @throws GraphQlAuthorizationException
      * @return Wishlist
      */
-    private function getWishlistByContext($customerId): Wishlist
+    private function getWishlistByUserId($customerId): Wishlist
     {
         /* Guest checking */
         if (!$customerId && 0 === $customerId) {
