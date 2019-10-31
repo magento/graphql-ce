@@ -100,11 +100,11 @@ class WishlistRemoveItem implements ResolverInterface
     }
 
     /**
-     * Loads Wishlist by the context
+     * Loads Wishlist by the user id
      *
-     * @param ContextInterface $context
-     * @throws GraphQlAuthorizationException
+     * @param int $customerId
      * @return Wishlist
+     * @throws GraphQlAuthorizationException
      */
     private function getWishlistByUserId($customerId): Wishlist
     {
