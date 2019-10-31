@@ -61,7 +61,12 @@ class QuoteAddressFactory
     public function createBasedOnInputData(array $addressInput): QuoteAddress
     {
         $addressInput['country_id'] = '';
-        if ($addressInput['country_code']) {
+        if (!isset($addressInput['country_code'])) {
+            throw new GraphQlInputException(
+                __('"Required parameter "country_code" is missing')
+            );
+        }
+        else {
             $addressInput['country_code'] = strtoupper($addressInput['country_code']);
             $addressInput['country_id'] = $addressInput['country_code'];
         }
