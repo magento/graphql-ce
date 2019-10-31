@@ -6,7 +6,7 @@ type Query {
 }
 
 type Mutation {
-    wishlist_remove_item(ids: [Int]!): WishlistOutput @resolver(class: "\\Magento\\WishlistGraphQl\\Model\\Resolver\\WishlistRemoveItem") @doc(description: "Delete a list of wishlist items")
+    removeProductsFromWishlist(input: [Int]!): WishlistOutput @resolver(class: "\\Magento\\WishlistGraphQl\\Model\\Resolver\\WishlistRemoveItem") @doc(description: "Delete a list of wishlist items")
 }
 
 type WishlistOutput {

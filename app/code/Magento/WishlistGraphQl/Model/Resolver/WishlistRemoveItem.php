@@ -88,7 +88,7 @@ class WishlistRemoveItem implements ResolverInterface
             return [];
         }
 
-        $this->deleteWishlistItems($wishlist, $args['ids']);
+        $this->deleteWishlistItems($wishlist, $args['input']);
 
         return [
             'sharing_code' => $wishlist->getSharingCode(),
