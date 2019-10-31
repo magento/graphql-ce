@@ -12,22 +12,17 @@ type GroupedProductItem @doc(description: "GroupedProductItem contains informati
 }
 
 type Mutation {
-    addGroupedProductsToCart(input: AddGroupedProductsToCartInput): AddGroupedProductsToCartOutput
+    addGroupedProductsToCart(input: AddGroupedProductsToCartInput): AddGroupedProductsToCartOutput @resolver(class: "Magento\\GroupedProductGraphQl\\Model\\Resolver\\AddGroupedProductsToCart")
 }
 
 input AddGroupedProductsToCartInput {
     cart_id: String!
-    cartItems: [GroupedProductCartItemInput!]!
+    cart_items: [GroupedProductCartItemInput!]!
 }
 
 input GroupedProductCartItemInput {
-    sku: String!
-    grouped_products:[GroupedProductsInput!]
-}
-
-input GroupedProductsInput {
-    sku: String!
-    qty: Float!
+    data: CartItemInput!
+    parent_sku: String @doc(description: "Grouped product SKU.")
 }
 
 type AddGroupedProductsToCartOutput {
