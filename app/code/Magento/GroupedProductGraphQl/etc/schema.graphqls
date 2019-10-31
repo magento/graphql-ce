@@ -21,7 +21,7 @@ input AddGroupedProductsToCartInput {
 }
 
 input GroupedProductCartItemInput {
-    data: CartItemInput!
+    data: [CartItemInput!]!
     parent_sku: String @doc(description: "Grouped product SKU.")
 }
 
