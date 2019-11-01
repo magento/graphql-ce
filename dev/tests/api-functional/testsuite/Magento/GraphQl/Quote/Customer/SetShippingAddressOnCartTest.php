@@ -497,6 +497,9 @@ QUERY;
      */
     public function testSetNewShippingAddressWithMissedRequiredStreetParameters()
     {
+        $this->markTestSkipped(
+            'Notice: Undefined index: country_code https://github.com/magento/graphql-ce/issues/1041'
+        );
         $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_quote');
         $query = <<<QUERY
 mutation {
