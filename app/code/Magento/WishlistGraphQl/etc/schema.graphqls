@@ -6,7 +6,7 @@ type Query {
 }
 
 type Mutation {
-    removeProductsFromWishlist(input: [Int]!): WishlistOutput @resolver(class: "\\Magento\\WishlistGraphQl\\Model\\Resolver\\WishlistRemoveItem") @doc(description: "Delete a list of wishlist items")
+    removeProductsFromWishlist(input: RemoveProductsFromWishlistInput): RemoveProductsFromWishlistOutput @resolver(class: "\\Magento\\WishlistGraphQl\\Model\\Resolver\\WishlistRemoveItemResolver") @doc(description: "Delete a list of wishlist items")
 }
 
 type WishlistOutput {
@@ -15,6 +15,23 @@ type WishlistOutput {
     name: String @doc(description: "When multiple wish lists are enabled, the name the customer assigns to the wishlist"),
     sharing_code: String @doc(description: "An encrypted code that Magento uses to link to the wish list"),
     updated_at: String @doc(description: "The time of the last modification to the wish list")
+}
+
+type Wishlist {
+    id: ID
+    items: [WishlistItem] @resolver(class: "\\Magento\\WishlistGraphQl\\Model\\Resolver\\WishlistItemsResolver") @doc(description: "An array of items in the customer's wish list"),
+    items_count: Int
+    sharing_code: String
+    updated_at: String
+}
+
+input RemoveProductsFromWishlistInput {
+    wishlist_id: ID!
+    wishlist_items_ids: [ID!]!
+}
+
+type RemoveProductsFromWishlistOutput {
+    wishlist: Wishlist!
 }
 
 type WishlistItem {

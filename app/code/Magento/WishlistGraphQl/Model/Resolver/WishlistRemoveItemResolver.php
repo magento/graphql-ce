@@ -18,13 +18,11 @@ use Magento\Wishlist\Model\ResourceModel\Wishlist as WishlistResourceModel;
 use Magento\Wishlist\Model\ResourceModel\Item as WishlistItemResourceModel;
 use Magento\Wishlist\Model\Wishlist;
 use Magento\Wishlist\Model\WishlistFactory;
-use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
-use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 
 /**
- * Fetches the Wishlist data according to the GraphQL schema
+ * Remove wishlist items according to the GraphQL schema
  */
-class WishlistRemoveItem implements ResolverInterface
+class WishlistRemoveItemResolver implements ResolverInterface
 {
     /**
      * @var WishlistResourceModel
@@ -82,40 +80,34 @@ class WishlistRemoveItem implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
-        $wishlist = $this->getWishlistByUserId($context->getUserId());
+        $wishlist = $this->getWishlistById($args['input']['wishlist_id']);
+        $wishlistId = $wishlist->getId();
 
-        if ($wishlist->getId() === null) {
-            return [];
-        }
-
-        $this->deleteWishlistItems($wishlist, $args['input']);
+        $this->deleteWishlistItems($wishlist, $args['input']['wishlist_items_ids']);
 
         return [
-            'sharing_code' => $wishlist->getSharingCode(),
-            'updated_at' => $wishlist->getUpdatedAt(),
-            'items_count' => $wishlist->getItemsCount(),
-            'name' => $wishlist->getName(),
-            'model' => $wishlist,
+            'wishlist' => [
+                'id' => $wishlistId,
+                'sharing_code' => $wishlist->getSharingCode(),
+                'updated_at' => $wishlist->getUpdatedAt(),
+                'items_count' => $wishlist->getItemsCount(),
+                'name' => $wishlist->getName(),
+                'model' => $wishlist,
+            ]
         ];
     }
 
     /**
-     * Loads Wishlist by the user id
+     * Loads Wishlist by the wishlist id
      *
-     * @param int $customerId
+     * @param int $wishlistId
      * @return Wishlist
-     * @throws GraphQlAuthorizationException
      */
-    private function getWishlistByUserId($customerId): Wishlist
+    private function getWishlistById($wishlistId): Wishlist
     {
-        /* Guest checking */
-        if (!$customerId && 0 === $customerId) {
-            throw new GraphQlAuthorizationException(__('The current user cannot perform operations on wishlist'));
-        }
-
         /** @var Wishlist $wishlist */
         $wishlist = $this->wishlistFactory->create();
-        $this->wishlistResource->load($wishlist, $customerId, 'customer_id');
+        $this->wishlistResource->load($wishlist, $wishlistId);
         return $wishlist;
     }
 
