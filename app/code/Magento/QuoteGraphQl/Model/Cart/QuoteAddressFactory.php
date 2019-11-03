@@ -63,7 +63,7 @@ class QuoteAddressFactory
         $addressInput['country_id'] = '';
         if (!isset($addressInput['country_code'])) {
             throw new GraphQlInputException(
-                __('"Required parameter "country_code" is missing')
+                __('Required parameter "country_code" is missing')
             );
         }
         else {
