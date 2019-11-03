@@ -18,6 +18,7 @@ use Magento\Wishlist\Model\ResourceModel\Wishlist as WishlistResourceModel;
 use Magento\Wishlist\Model\ResourceModel\Item as WishlistItemResourceModel;
 use Magento\Wishlist\Model\Wishlist;
 use Magento\Wishlist\Model\WishlistFactory;
+use Magento\Framework\Exception\LocalizedException;
 
 /**
  * Remove wishlist items according to the GraphQL schema
@@ -114,17 +115,17 @@ class WishlistRemoveItemResolver implements ResolverInterface
     /**
      * @param Wishlist $wishlist
      * @param array $ids
-     * @throws \Exception
+     * @throws LocalizedException
      */
     private function deleteWishlistItems(Wishlist $wishlist, Array $ids)
     {
         $wishlistItems = $this->getWishListItems($wishlist, $ids);
 
-        foreach($wishlistItems as $whislistItem) {
+        foreach ($wishlistItems as $whislistItem) {
             try {
                 $this->wishlistItemResource->delete($whislistItem);
             } catch (\Exception $e) {
-                throw new \Exception(__('Failed to delete the wishlist item'));
+                throw new LocalizedException(__('Failed to delete the wishlist item'));
             }
         }
     }
