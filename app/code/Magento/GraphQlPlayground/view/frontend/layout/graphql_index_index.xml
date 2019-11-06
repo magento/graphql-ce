@@ -10,6 +10,7 @@
     <head>
         <title>Graphql Playground</title>
         <script src="Magento_GraphQlPlayground/js/playground.min.js"/>
+        <link src="Magento_GraphQlPlayground/js/playground.min.js.map"/>
         <css src="Magento_GraphQlPlayground/css/playground.css"/>
         <!--Remove require-js assets-->
         <remove src="css/styles-m.css"/>
