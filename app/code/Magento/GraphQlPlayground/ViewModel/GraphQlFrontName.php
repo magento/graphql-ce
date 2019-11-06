@@ -12,6 +12,7 @@ use Magento\Framework\View\Element\Block\ArgumentInterface;
 
 /**
  * Class GraphQlFrontName
+ *
  * @package Magento\GraphQlPlayground\ViewModel
  */
 class GraphQlFrontName implements ArgumentInterface
@@ -36,7 +37,7 @@ class GraphQlFrontName implements ArgumentInterface
     }
 
     /**
-     * get Graphql Area Front Name
+     * Get Graphql Area Front Name
      *
      * @return string
      */
