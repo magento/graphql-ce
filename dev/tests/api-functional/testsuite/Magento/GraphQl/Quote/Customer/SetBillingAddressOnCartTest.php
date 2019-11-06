@@ -646,6 +646,56 @@ QUERY;
     }
 
     /**
+     * Covers case with empty country_code
+     *
+     * @todo Unskip case with missing "country_code" parameter https://github.com/magento/graphql-ce/issues/1041
+     *
+     * @magentoApiDataFixture Magento/Customer/_files/customer.php
+     * @magentoApiDataFixture Magento/GraphQl/Catalog/_files/simple_product.php
+     * @magentoApiDataFixture Magento/GraphQl/Quote/_files/customer/create_empty_cart.php
+     *
+     * @expectedException \Magento\Framework\GraphQl\Exception\GraphQlInputException
+     * @expectedExceptionMessage Required parameter "country_code" is missing
+     */
+    public function testSetNewBillingAddressWithMissedRequiredCountryCode()
+    {
+        $this->markTestSkipped(
+            'Notice: Undefined index: country_code https://github.com/magento/graphql-ce/issues/1041'
+        );
+        $maskedQuoteId = $this->getMaskedQuoteIdByReservedOrderId->execute('test_quote');
+        $query = <<<QUERY
+mutation {
+  setBillingAddressOnCart(
+    input: {
+      cart_id: "$maskedQuoteId"
+      billing_address: {
+        address: {
+          firstname: "A"
+          lastname: "B"
+          city: "C"
+          postcode: "00000"
+          street: ["D", "E"]
+        }
+      }
+    }
+  ) {
+    cart {
+      billing_address {
+        firstname
+        lastname
+        city
+        postcode
+        street
+      }
+    }
+  }
+}
+QUERY;
+        $this->graphQlMutation($query, [], '', $this->getHeaderMap());
+    }
+
+
+    /**
      * @magentoApiDataFixture Magento/Customer/_files/customer.php
      * @magentoApiDataFixture Magento/GraphQl/Catalog/_files/simple_product.php
      * @magentoApiDataFixture Magento/GraphQl/Quote/_files/customer/create_empty_cart.php

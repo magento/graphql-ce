@@ -495,7 +495,7 @@ QUERY;
      * @expectedException \Magento\Framework\GraphQl\Exception\GraphQlInputException
      * @expectedExceptionMessage Required parameter "country_code" is missing
      */
-    public function testSetNewShippingAddressWithMissedRequiredStreetParameters()
+    public function testSetNewShippingAddressWithMissedRequiredCountryCode()
     {
         $this->markTestSkipped(
             'Notice: Undefined index: country_code https://github.com/magento/graphql-ce/issues/1041'
