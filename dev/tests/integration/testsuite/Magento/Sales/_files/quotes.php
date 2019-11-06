@@ -5,12 +5,14 @@
  */
 declare(strict_types=1);
 
+use Magento\Store\Model\StoreRepository;
 use Magento\Quote\Model\QuoteFactory;
+use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\QuoteRepository;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\ObjectManager;
 
-require dirname(dirname(__DIR__)) . '/Store/_files/second_store.php';
+require __DIR__ . '/../../Store/_files/second_store.php';
 
 /** @var $objectManager ObjectManager */
 $objectManager = Bootstrap::getObjectManager();
@@ -18,17 +20,23 @@ $objectManager = Bootstrap::getObjectManager();
 $quoteFactory = $objectManager->get(QuoteFactory::class);
 /** @var QuoteRepository $quoteRepository */
 $quoteRepository = $objectManager->get(QuoteRepository::class);
+/** @var  StoreRepository $storeRepository */
+$storeRepository = $objectManager->get(StoreRepository::class);
+
+$defaultStore = $storeRepository->getActiveStoreByCode('default');
+$secondStore = $storeRepository->getActiveStoreByCode('fixture_second_store');
 
 $quotes = [
     'quote for first store' => [
-        'store' => 1,
+        'store' => $defaultStore->getId(),
     ],
     'quote for second store' => [
-        'store' => 2,
+        'store' => $secondStore->getId(),
     ],
 ];
 
 foreach ($quotes as $quoteData) {
+    /** @var Quote $quote */
     $quote = $quoteFactory->create();
     $quote->setStoreId($quoteData['store']);
     $quoteRepository->save($quote);
