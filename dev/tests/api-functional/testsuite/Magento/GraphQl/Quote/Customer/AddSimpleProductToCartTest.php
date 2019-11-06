@@ -29,6 +29,9 @@ class AddSimpleProductToCartTest extends GraphQlAbstract
      */
     private $getMaskedQuoteIdByReservedOrderId;
 
+    /**
+     * @inheritDoc
+     */
     protected function setUp()
     {
         $objectManager = Bootstrap::getObjectManager();
