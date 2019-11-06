@@ -8,7 +8,7 @@ use Magento\GraphQlPlayground\ViewModel\GraphQlFrontName;
 // @codingStandardsIgnoreFile
 
 /** @var string $graphQlFrontName */
-$graphQlFrontName = $this->getFrontNameViewModel()->getGraphqlFrontName();
+$graphQlFrontName = $block->getFrontNameViewModel()->getGraphqlFrontName();
 /** @var string $graphqlEndpoint Magento default Graphql Endpoint */
 $graphqlEndpoint =  $block->getBaseUrl() . $graphQlFrontName;
 ?>
