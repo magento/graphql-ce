@@ -53,7 +53,7 @@ class Playground extends Template
     {
         if (!$this->graphqlEndpoint || strlen($this->graphqlEndpoint) == 0) {
             $this->graphqlEndpoint =
-                $this->_scopeConfig->getValue(Store::XML_PATH_UNSECURE_BASE_URL) .
+                $this->_scopeConfig->getValue(Store::XML_PATH_SECURE_BASE_URL) .
                 $this->areaList->getFrontName(Area::AREA_GRAPHQL);
         }
         return $this->graphqlEndpoint;
