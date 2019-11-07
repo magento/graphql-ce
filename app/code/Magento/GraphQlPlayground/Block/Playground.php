@@ -53,9 +53,23 @@ class Playground extends Template
     {
         if (!$this->graphqlEndpoint || strlen($this->graphqlEndpoint) == 0) {
             $this->graphqlEndpoint =
-                $this->_scopeConfig->getValue(Store::XML_PATH_SECURE_BASE_URL) .
+                $this->getBaseUrlFromConfig() .
                 $this->areaList->getFrontName(Area::AREA_GRAPHQL);
         }
         return $this->graphqlEndpoint;
+    }
+
+    /**
+     * Get Base Url from scope config to avoid store code added at the end
+     *
+     * @return string
+     */
+    private function getBaseUrlFromConfig(): string
+    {
+        $url = $this->_scopeConfig->getValue(Store::XML_PATH_UNSECURE_BASE_URL);
+        if ($this->getRequest()->isSecure()) {
+            $url = $this->_scopeConfig->getValue(Store::XML_PATH_SECURE_BASE_URL);
+        }
+        return $url ?: '';
     }
 }
