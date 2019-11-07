@@ -4,20 +4,16 @@
  * See COPYING.txt for license details.
  */
 
-use Magento\GraphQlPlayground\ViewModel\GraphQlFrontName;
 // @codingStandardsIgnoreFile
-
-/** @var string $graphQlFrontName */
-$graphQlFrontName = $this->getFrontNameViewModel()->getGraphqlFrontName();
-/** @var string $graphqlEndpoint Magento default Graphql Endpoint */
-$graphqlEndpoint =  $block->getBaseUrl() . $graphQlFrontName;
+/** @var \Magento\GraphQlPlayground\Block\Playground $block */
+$graphqlEndpoint = $block->getGraphqlEndpoint();
 ?>
 <div id="root" class="playgroundIn">
 </div>
 <script>
-     var root = document.getElementById('root');
-     GraphQLPlayground.init(root, {
-         "endpoint": "<?= $graphqlEndpoint ?>",
-         "canSaveConfig": true
-     })
+    var root = document.getElementById('root');
+    GraphQLPlayground.init(root, {
+        "endpoint": "<?= $graphqlEndpoint ?>",
+        "canSaveConfig": true
+    })
 </script>

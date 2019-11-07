@@ -28,13 +28,8 @@
         <referenceBlock name="requirejs-config" remove="true"/>
         <referenceContainer name="root">
             <block name="graphql"
-            class="Magento\Framework\View\Element\Template"
+            class="Magento\GraphQlPlayground\Block\Playground"
             template="Magento_GraphQlPlayground::playground.phtml" before="-">
-                <arguments>
-                    <argument name="front_name_view_model" xsi:type="object">
-                        Magento\GraphQlPlayground\ViewModel\GraphQlFrontName
-                    </argument>
-                </arguments>
             </block>
         </referenceContainer>
     </body>
