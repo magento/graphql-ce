@@ -13,7 +13,7 @@ $graphqlEndpoint = $block->getGraphqlEndpoint();
 <script>
     var root = document.getElementById('root');
     GraphQLPlayground.init(root, {
-        "endpoint": "<?= $graphqlEndpoint ?>",
+        "endpoint": "<?= $block->escapeUrl($graphqlEndpoint) ?>",
         "canSaveConfig": true
     })
 </script>

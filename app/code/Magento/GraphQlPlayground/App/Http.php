@@ -14,10 +14,16 @@ use Magento\Framework\Exception\LocalizedException;
 
 /**
  * Class Http
+ *
  * @package Magento\GraphQlPlayground\App
  */
 class Http extends \Magento\Framework\App\Http
 {
+    /**
+     * Should render playground
+     *
+     * @return bool
+     */
     private function shouldRenderPlayground(): bool
     {
         $shouldRenderPlayground = false;

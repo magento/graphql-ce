@@ -8,7 +8,6 @@ namespace Magento\GraphQlPlayground\Block;
 
 use Magento\Framework\App\Area;
 use Magento\Framework\App\AreaList;
-use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Element\Template;
 use Magento\Store\Model\Store;
 
@@ -29,6 +28,13 @@ class Playground extends Template
      */
     private $graphqlEndpoint;
 
+    /**
+     * Playground constructor.
+     *
+     * @param \Magento\Framework\App\AreaList $areaList
+     * @param \Magento\Framework\View\Element\Template\Context $context
+     * @param array $data
+     */
     public function __construct(
         AreaList $areaList,
         Template\Context $context,
@@ -38,11 +44,16 @@ class Playground extends Template
         parent::__construct($context, $data);
     }
 
+    /**
+     * Get Graphql Endpoint
+     *
+     * @return string
+     */
     public function getGraphqlEndpoint(): string
     {
         if (!$this->graphqlEndpoint || strlen($this->graphqlEndpoint) == 0) {
             $this->graphqlEndpoint =
-                $this->_scopeConfig->getValue(Store::XML_PATH_SECURE_BASE_URL) .
+                $this->_scopeConfig->getValue(Store::XML_PATH_UNSECURE_BASE_URL) .
                 $this->areaList->getFrontName(Area::AREA_GRAPHQL);
         }
         return $this->graphqlEndpoint;
