@@ -204,7 +204,7 @@ mutation {
             middlename: "{$newMiddlename}"
             lastname: "{$newLastname}"
             suffix: "{$newSuffix}"
-            dob: "{$newDob}"
+            date_of_birth: "{$newDob}"
             taxvat: "{$newTaxVat}"
             email: "{$newEmail}"
             currentPassword: "{$currentPassword}"
@@ -217,7 +217,7 @@ mutation {
             middlename
             lastname
             suffix
-            dob
+            date_of_birth
             taxvat
             email
             gender
@@ -237,7 +237,7 @@ QUERY;
         $this->assertEquals($newMiddlename, $response['updateCustomer']['customer']['middlename']);
         $this->assertEquals($newLastname, $response['updateCustomer']['customer']['lastname']);
         $this->assertEquals($newSuffix, $response['updateCustomer']['customer']['suffix']);
-        $this->assertEquals($newDob, $response['updateCustomer']['customer']['dob']);
+        $this->assertEquals($newDob, $response['updateCustomer']['customer']['date_of_birth']);
         $this->assertEquals($newTaxVat, $response['updateCustomer']['customer']['taxvat']);
         $this->assertEquals($newEmail, $response['updateCustomer']['customer']['email']);
         $this->assertEquals($newGender, $response['updateCustomer']['customer']['gender']);
