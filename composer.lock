@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "21394914b3f105a33f583ba59aeba748",
+    "content-hash": "1f23765be96d46f48474dbbd67108142",
     "packages": [
         {
             "name": "braintree/braintree_php",
@@ -73,6 +73,7 @@
                     "File.php"
                 ]
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
@@ -83,10 +84,6 @@
             ],
             "description": "The stock Zend_Cache_Backend_File backend has extremely poor performance for cleaning by tags making it become unusable as the number of cached items increases. This backend makes many changes resulting in a huge performance boost, especially for tag cleaning.",
             "homepage": "https://github.com/colinmollenhour/Cm_Cache_Backend_File",
-            "support": {
-                "source": "https://github.com/colinmollenhour/Cm_Cache_Backend_File/tree/v1.4.5",
-                "issues": "https://github.com/colinmollenhour/Cm_Cache_Backend_File/issues"
-            },
             "time": "2019-04-18T21:54:31+00:00"
         },
         {
@@ -112,6 +109,7 @@
                     "Cm/Cache/Backend/Redis.php"
                 ]
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
@@ -122,10 +120,6 @@
             ],
             "description": "Zend_Cache backend using Redis with full support for tags.",
             "homepage": "https://github.com/colinmollenhour/Cm_Cache_Backend_Redis",
-            "support": {
-                "source": "https://github.com/colinmollenhour/Cm_Cache_Backend_Redis/tree/1.10.6",
-                "issues": "https://github.com/colinmollenhour/Cm_Cache_Backend_Redis/issues"
-            },
             "time": "2018-09-24T16:02:07+00:00"
         },
         {
@@ -1003,12 +997,6 @@
                 "reference": "8b6c32f53b4944a5d6656e86344cd0f9784709a1",
                 "shasum": ""
             },
-            "archive": {
-                "exclude": [
-                    "vendor",
-                    "/tests/FullStackTest/"
-                ]
-            },
             "require": {
                 "composer-plugin-api": "^1.0"
             },
@@ -1036,10 +1024,15 @@
                     "MagentoHackathon\\Composer\\Magento": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "OSL-3.0"
             ],
             "authors": [
+                {
+                    "name": "Vinai Kopp",
+                    "email": "vinai@netzarbeiter.com"
+                },
                 {
                     "name": "Daniel Fahlke aka Flyingmana",
                     "email": "flyingmana@googlemail.com"
@@ -1059,10 +1052,6 @@
                 {
                     "name": "David Fuhr",
                     "email": "fuhr@flagbit.de"
-                },
-                {
-                    "name": "Vinai Kopp",
-                    "email": "vinai@netzarbeiter.com"
                 }
             ],
             "description": "Composer installer for Magento modules",
@@ -1071,9 +1060,6 @@
                 "composer-installer",
                 "magento"
             ],
-            "support": {
-                "source": "https://github.com/magento/magento-composer-installer/tree/0.1.13"
-            },
             "time": "2017-12-29T16:45:24+00:00"
         },
         {
@@ -7924,20 +7910,20 @@
             "authors": [
                 {
                     "name": "Manuel Pichler",
+                    "role": "Project Founder",
                     "email": "github@manuel-pichler.de",
-                    "homepage": "https://github.com/manuelpichler",
-                    "role": "Project Founder"
+                    "homepage": "https://github.com/manuelpichler"
                 },
                 {
                     "name": "Marc Würth",
+                    "role": "Project Maintainer",
                     "email": "ravage@bluewin.ch",
-                    "homepage": "https://github.com/ravage84",
-                    "role": "Project Maintainer"
+                    "homepage": "https://github.com/ravage84"
                 },
                 {
                     "name": "Other contributors",
-                    "homepage": "https://github.com/phpmd/phpmd/graphs/contributors",
-                    "role": "Contributors"
+                    "role": "Contributors",
+                    "homepage": "https://github.com/phpmd/phpmd/graphs/contributors"
                 }
             ],
             "description": "PHPMD is a spin-off project of PHP Depend and aims to be a PHP equivalent of the well known Java tool PMD.",
