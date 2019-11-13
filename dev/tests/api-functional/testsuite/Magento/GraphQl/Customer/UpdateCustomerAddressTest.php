@@ -441,6 +441,58 @@ MUTATION;
     }
 
     /**
+     * Address entity ID is set as a string
+     *
+     * @magentoApiDataFixture Magento/Customer/_files/customer.php
+     * @magentoApiDataFixture Magento/Customer/_files/customer_address.php
+     * @expectedException Exception
+     * @expectedExceptionMessage Field "updateCustomerAddress" argument "id" requires type Int!, found "1".
+     */
+    public function testUpdateCustomerAddressWithWrongAddressEntityIdType()
+    {
+        $userName = 'customer@example.com';
+        $password = 'password';
+        $addressId = 1;
+
+        $mutation
+            = <<<MUTATION
+mutation {
+  updateCustomerAddress(id: "{$addressId}", input: {
+    city: "Beverly Hills"
+  }) {
+    id
+  }
+}
+MUTATION;
+        $this->graphQlMutation($mutation, [], '', $this->getCustomerAuthHeaders($userName, $password));
+    }
+
+    /**
+     * Address entity ID is set as a string
+     *
+     * @group my_test_group
+     * @magentoApiDataFixture Magento/Customer/_files/customer.php
+     * @magentoApiDataFixture Magento/Customer/_files/customer_address.php
+     * @expectedException Exception
+     * @expectedExceptionMessage Syntax Error: Expected Name, found )
+     */
+    public function testUpdateCustomerAddressWithOmittedAddressEntityIdAndInput()
+    {
+        $userName = 'customer@example.com';
+        $password = 'password';
+
+        $mutation
+            = <<<MUTATION
+mutation {
+  updateCustomerAddress() {
+    id
+  }
+}
+MUTATION;
+        $this->graphQlMutation($mutation, [], '', $this->getCustomerAuthHeaders($userName, $password));
+    }
+
+    /**
      * @magentoApiDataFixture Magento/Customer/_files/customer.php
      * @magentoApiDataFixture Magento/Customer/_files/customer_address.php
      * @expectedException Exception
