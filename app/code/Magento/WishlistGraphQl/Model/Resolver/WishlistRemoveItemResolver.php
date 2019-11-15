@@ -73,6 +73,7 @@ class WishlistRemoveItemResolver implements ResolverInterface
 
     /**
      * @inheritdoc
+     *
      * @throws GraphQlAuthorizationException
      */
     public function resolve(
@@ -161,7 +162,7 @@ class WishlistRemoveItemResolver implements ResolverInterface
             ->addWishlistFilter($wishlist)
             ->addStoreFilter($storeId)
             ->setVisibilityFilter()
-            ->addFieldToFilter('wishlist_item_id', array('in' => $ids));
+            ->addFieldToFilter('wishlist_item_id', ['in' => $ids]);
 
         return $wishlistItemCollection->getItems();
     }
