@@ -120,20 +120,6 @@ class WishlistRemoveItemResolver implements ResolverInterface
     }
 
     /**
-     * Loads Wishlist by the wishlist id
-     *
-     * @param int $wishlistId
-     * @return Wishlist
-     */
-    private function getWishlistById($wishlistId): Wishlist
-    {
-        /** @var Wishlist $wishlist */
-        $wishlist = $this->wishlistFactory->create();
-        $this->wishlistResource->load($wishlist, $wishlistId);
-        return $wishlist;
-    }
-
-    /**
      * Delete wishlist items by an array of wishlist items ids
      *
      * @param Wishlist $wishlist
