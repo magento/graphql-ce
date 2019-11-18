@@ -94,14 +94,14 @@ class WishlistRemoveItemResolver implements ResolverInterface
     ) {
         $customerId = $context->getUserId();
 
-        if (!$customerId && $customerId === 0) {
-            throw new GraphQlAuthorizationException(__('The current user cannot perform operations on wishlist'));
+        if (false === $context->getExtensionAttributes()->getIsCustomer()) {
+            throw new GraphQlAuthorizationException(__('The current customer isn\'t authorized.'));
         }
 
         $wishlist = $this->getWishlistByAttribute->execute('wishlist_id', $args['input']['wishlist_id']);
 
         if ((int) $wishlist->getCustomerId() !== $customerId) {
-            throw new GraphQlAuthorizationException(__('The current user doesn\'t have a wishlist with the provided id'));
+            throw new GraphQlAuthorizationException(__('The current customer isn\'t authorized.'));
         }
 
         $storeId = (int) $context->getExtensionAttributes()->getStore()->getId();
