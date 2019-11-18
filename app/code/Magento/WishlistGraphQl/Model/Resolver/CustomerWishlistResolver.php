@@ -10,25 +10,26 @@ namespace Magento\WishlistGraphQl\Model\Resolver;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
-use Magento\Wishlist\Model\WishlistFactory;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
+use Magento\WishlistGraphQl\Model\GetWishlistByAttribute;
 
 /**
  * Fetches customer wishlist data
  */
 class CustomerWishlistResolver implements ResolverInterface
 {
-    /**
-     * @var WishlistFactory
-     */
-    private $wishlistFactory;
 
     /**
-     * @param WishlistFactory $wishlistFactory
+     * @var GetWishlistByAttribute
      */
-    public function __construct(WishlistFactory $wishlistFactory)
+    private $getWishlistByAttribute;
+
+    /**
+     * @param GetWishlistByAttribute $getWishlistByAttribute
+     */
+    public function __construct(GetWishlistByAttribute $getWishlistByAttribute)
     {
-        $this->wishlistFactory = $wishlistFactory;
+        $this->getWishlistByAttribute = $getWishlistByAttribute;
     }
 
     /**
@@ -44,7 +45,9 @@ class CustomerWishlistResolver implements ResolverInterface
         if (false === $context->getExtensionAttributes()->getIsCustomer()) {
             throw new GraphQlAuthorizationException(__('The current customer isn\'t authorized.'));
         }
-        $wishlist = $this->wishlistFactory->create()->loadByCustomerId($context->getUserId(), true);
+
+        $wishlist = $this->getWishlistByAttribute->execute('customer_id', $context->getUserId(), true);
+
         return [
             'id' => (string) $wishlist->getId(),
             'sharing_code' => $wishlist->getSharingCode(),

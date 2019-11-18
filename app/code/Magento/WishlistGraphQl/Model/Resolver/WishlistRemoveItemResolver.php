@@ -19,6 +19,7 @@ use Magento\Wishlist\Model\ResourceModel\Wishlist as WishlistResourceModel;
 use Magento\Wishlist\Model\ResourceModel\Item as WishlistItemResourceModel;
 use Magento\Wishlist\Model\Wishlist;
 use Magento\Wishlist\Model\WishlistFactory;
+use Magento\WishlistGraphQl\Model\GetWishlistByAttribute;
 
 /**
  * Remove wishlist items according to the GraphQL schema
@@ -51,24 +52,32 @@ class WishlistRemoveItemResolver implements ResolverInterface
     private $storeManager;
 
     /**
+     * @var GetWishlistByAttribute
+     */
+    private $getWishlistByAttribute;
+
+    /**
      * @param WishlistResourceModel $wishlistResource
      * @param WishlistItemResourceModel $wishlistItemResource
      * @param WishlistFactory $wishlistFactory
      * @param WishlistItemCollectionFactory $wishlistItemCollectionFactory
      * @param StoreManagerInterface $storeManager
+     * @param GetWishlistByAttribute $getWishlistByAttribute
      */
     public function __construct(
         WishlistResourceModel $wishlistResource,
         WishlistItemResourceModel $wishlistItemResource,
         WishlistFactory $wishlistFactory,
         WishlistItemCollectionFactory $wishlistItemCollectionFactory,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface $storeManager,
+        GetWishlistByAttribute $getWishlistByAttribute
     ) {
         $this->wishlistResource = $wishlistResource;
         $this->wishlistItemResource = $wishlistItemResource;
         $this->wishlistFactory = $wishlistFactory;
         $this->wishlistItemCollectionFactory = $wishlistItemCollectionFactory;
         $this->storeManager = $storeManager;
+        $this->getWishlistByAttribute = $getWishlistByAttribute;
     }
 
     /**
@@ -89,7 +98,7 @@ class WishlistRemoveItemResolver implements ResolverInterface
             throw new GraphQlAuthorizationException(__('The current user cannot perform operations on wishlist'));
         }
 
-        $wishlist = $this->getWishlistById($args['input']['wishlist_id']);
+        $wishlist = $this->getWishlistByAttribute->execute('wishlist_id', $args['input']['wishlist_id']);
 
         if ((int) $wishlist->getCustomerId() !== $customerId) {
             throw new GraphQlAuthorizationException(__('The current user doesn\'t have a wishlist with the provided id'));

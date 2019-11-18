@@ -10,34 +10,26 @@ namespace Magento\WishlistGraphQl\Model\Resolver;
 use Magento\Framework\GraphQl\Config\Element\Field;
 use Magento\Framework\GraphQl\Query\ResolverInterface;
 use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
-use Magento\Wishlist\Model\ResourceModel\Wishlist as WishlistResourceModel;
-use Magento\Wishlist\Model\Wishlist;
-use Magento\Wishlist\Model\WishlistFactory;
 use Magento\Framework\GraphQl\Exception\GraphQlAuthorizationException;
+use Magento\WishlistGraphQl\Model\GetWishlistByAttribute;
 
 /**
  * Fetches the Wishlist data according to the GraphQL schema
  */
 class WishlistResolver implements ResolverInterface
 {
-    /**
-     * @var WishlistResourceModel
-     */
-    private $wishlistResource;
 
     /**
-     * @var WishlistFactory
+     * @var GetWishlistByAttribute
      */
-    private $wishlistFactory;
+    private $getWishlistByAttribute;
 
     /**
-     * @param WishlistResourceModel $wishlistResource
-     * @param WishlistFactory $wishlistFactory
+     * @param GetWishlistByAttribute $getWishlistByAttribute
      */
-    public function __construct(WishlistResourceModel $wishlistResource, WishlistFactory $wishlistFactory)
+    public function __construct(GetWishlistByAttribute $getWishlistByAttribute)
     {
-        $this->wishlistResource = $wishlistResource;
-        $this->wishlistFactory = $wishlistFactory;
+        $this->getWishlistByAttribute = $getWishlistByAttribute;
     }
 
     /**
@@ -56,9 +48,8 @@ class WishlistResolver implements ResolverInterface
         if (!$customerId && 0 === $customerId) {
             throw new GraphQlAuthorizationException(__('The current user cannot perform operations on wishlist'));
         }
-        /** @var Wishlist $wishlist */
-        $wishlist = $this->wishlistFactory->create();
-        $this->wishlistResource->load($wishlist, $customerId, 'customer_id');
+
+        $wishlist = $this->getWishlistByAttribute->execute('customer_id', $customerId);
 
         if (null === $wishlist->getId()) {
             return [];
