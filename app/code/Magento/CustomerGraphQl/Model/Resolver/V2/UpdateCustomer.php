@@ -46,8 +46,7 @@ class UpdateCustomer implements ResolverInterface
         GetCustomer $getCustomer,
         UpdateCustomerData $updateCustomerData,
         ExtractCustomerData $extractCustomerData
-    )
-    {
+    ) {
         $this->getCustomer = $getCustomer;
         $this->updateCustomerData = $updateCustomerData;
         $this->extractCustomerData = $extractCustomerData;
