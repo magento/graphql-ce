@@ -112,7 +112,7 @@ class ChangeCustomerPasswordTest extends GraphQlAbstract
     /**
      * @magentoApiDataFixture Magento/Customer/_files/customer.php
      * @expectedException \Exception
-     * @expectedExceptionMessage Invalid login or password.
+     * @expectedExceptionMessage Invalid credentials
      */
     public function testChangePasswordIfPasswordIsInvalid()
     {

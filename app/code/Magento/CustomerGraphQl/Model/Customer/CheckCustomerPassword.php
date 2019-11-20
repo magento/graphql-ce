@@ -43,7 +43,7 @@ class CheckCustomerPassword
         try {
             $this->authentication->authenticate($customerId, $password);
         } catch (InvalidEmailOrPasswordException $e) {
-            throw new GraphQlAuthenticationException(__($e->getMessage()), $e);
+            throw new GraphQlAuthenticationException(__('Invalid credentials'), $e);
         } catch (UserLockedException $e) {
             throw new GraphQlAuthenticationException(__($e->getMessage()), $e);
         }

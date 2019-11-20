@@ -8,15 +8,14 @@ declare(strict_types=1);
 namespace Magento\GraphQl\Customer;
 
 use Magento\Customer\Model\CustomerAuthUpdate;
-use Magento\Customer\Model\CustomerRegistry;
 use Magento\Integration\Api\CustomerTokenServiceInterface;
 use Magento\TestFramework\Helper\Bootstrap;
 use Magento\TestFramework\TestCase\GraphQlAbstract;
 
 /**
- * Tests for update customer
+ * Tests for update customer v2
  */
-class UpdateCustomerTest extends GraphQlAbstract
+class UpdateCustomerV2Test extends GraphQlAbstract
 {
     /**
      * @var CustomerTokenServiceInterface
@@ -58,11 +57,10 @@ class UpdateCustomerTest extends GraphQlAbstract
         $newDob = '3/11/1972';
         $newTaxVat = 'GQL1234567';
         $newGender = 2;
-        $newEmail = 'customer_updated@example.com';
 
         $query = <<<QUERY
 mutation {
-    updateCustomer(
+    updateCustomerV2(
         input: {
             prefix: "{$newPrefix}"
             firstname: "{$newFirstname}"
@@ -71,8 +69,6 @@ mutation {
             suffix: "{$newSuffix}"
             date_of_birth: "{$newDob}"
             taxvat: "{$newTaxVat}"
-            email: "{$newEmail}"
-            password: "{$currentPassword}"
             gender: {$newGender}
         }
     ) {
@@ -97,15 +93,14 @@ QUERY;
             $this->getCustomerAuthHeaders($currentEmail, $currentPassword)
         );
 
-        $this->assertEquals($newPrefix, $response['updateCustomer']['customer']['prefix']);
-        $this->assertEquals($newFirstname, $response['updateCustomer']['customer']['firstname']);
-        $this->assertEquals($newMiddlename, $response['updateCustomer']['customer']['middlename']);
-        $this->assertEquals($newLastname, $response['updateCustomer']['customer']['lastname']);
-        $this->assertEquals($newSuffix, $response['updateCustomer']['customer']['suffix']);
-        $this->assertEquals($newDob, $response['updateCustomer']['customer']['date_of_birth']);
-        $this->assertEquals($newTaxVat, $response['updateCustomer']['customer']['taxvat']);
-        $this->assertEquals($newEmail, $response['updateCustomer']['customer']['email']);
-        $this->assertEquals($newGender, $response['updateCustomer']['customer']['gender']);
+        $this->assertEquals($newPrefix, $response['updateCustomerV2']['customer']['prefix']);
+        $this->assertEquals($newFirstname, $response['updateCustomerV2']['customer']['firstname']);
+        $this->assertEquals($newMiddlename, $response['updateCustomerV2']['customer']['middlename']);
+        $this->assertEquals($newLastname, $response['updateCustomerV2']['customer']['lastname']);
+        $this->assertEquals($newSuffix, $response['updateCustomerV2']['customer']['suffix']);
+        $this->assertEquals($newDob, $response['updateCustomerV2']['customer']['date_of_birth']);
+        $this->assertEquals($newTaxVat, $response['updateCustomerV2']['customer']['taxvat']);
+        $this->assertEquals($newGender, $response['updateCustomerV2']['customer']['gender']);
     }
 
     /**
@@ -120,7 +115,7 @@ QUERY;
 
         $query = <<<QUERY
 mutation {
-    updateCustomer(
+    updateCustomerV2(
         input: {
 
         }
@@ -144,7 +139,7 @@ QUERY;
 
         $query = <<<QUERY
 mutation {
-    updateCustomer(
+    updateCustomerV2(
         input: {
             firstname: "{$newFirstname}"
         }
@@ -173,96 +168,9 @@ QUERY;
 
         $query = <<<QUERY
 mutation {
-    updateCustomer(
+    updateCustomerV2(
         input: {
             firstname: "{$newFirstname}"
-        }
-    ) {
-        customer {
-            firstname
-        }
-    }
-}
-QUERY;
-        $this->graphQlMutation($query, [], '', $this->getCustomerAuthHeaders($currentEmail, $currentPassword));
-    }
-
-    /**
-     * @magentoApiDataFixture Magento/Customer/_files/customer.php
-     * @expectedException \Exception
-     * @expectedExceptionMessage Provide the current "password" to change "email".
-     */
-    public function testUpdateEmailIfPasswordIsMissed()
-    {
-        $currentEmail = 'customer@example.com';
-        $currentPassword = 'password';
-        $newEmail = 'customer_updated@example.com';
-
-        $query = <<<QUERY
-mutation {
-    updateCustomer(
-        input: {
-            email: "{$newEmail}"
-        }
-    ) {
-        customer {
-            firstname
-        }
-    }
-}
-QUERY;
-        $this->graphQlMutation($query, [], '', $this->getCustomerAuthHeaders($currentEmail, $currentPassword));
-    }
-
-    /**
-     * @magentoApiDataFixture Magento/Customer/_files/customer.php
-     * @expectedException \Exception
-     * @expectedExceptionMessage Invalid credentials
-     */
-    public function testUpdateEmailIfPasswordIsInvalid()
-    {
-        $currentEmail = 'customer@example.com';
-        $currentPassword = 'password';
-        $invalidPassword = 'invalid_password';
-        $newEmail = 'customer_updated@example.com';
-        $query = <<<QUERY
-mutation {
-    updateCustomer(
-        input: {
-            email: "{$newEmail}"
-            password: "{$invalidPassword}"
-        }
-    ) {
-        customer {
-            firstname
-        }
-    }
-}
-QUERY;
-        $this->graphQlMutation($query, [], '', $this->getCustomerAuthHeaders($currentEmail, $currentPassword));
-    }
-
-    /**
-     * @magentoApiDataFixture Magento/Customer/_files/two_customers.php
-     * @expectedException \Exception
-     * @expectedExceptionMessage A customer with the same email address already exists in an associated website.
-     */
-    public function testUpdateEmailIfEmailAlreadyExists()
-    {
-        $currentEmail = 'customer@example.com';
-        $currentPassword = 'password';
-        $existedEmail = 'customer_two@example.com';
-        $firstname = 'Richard';
-        $lastname = 'Rowe';
-
-        $query = <<<QUERY
-mutation {
-    updateCustomer(
-        input: {
-            email: "{$existedEmail}"
-            password: "{$currentPassword}"
-            firstname: "{$firstname}"
-            lastname: "{$lastname}"
         }
     ) {
         customer {
@@ -286,10 +194,8 @@ QUERY;
 
         $query = <<<QUERY
 mutation {
-    updateCustomer(
+    updateCustomerV2(
         input: {
-            email: "{$currentEmail}"
-            password: "{$currentPassword}"
             firstname: ""
         }
     ) {
