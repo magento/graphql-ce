@@ -77,7 +77,6 @@ QUERY;
      * @expectedException Exception
      * @expectedExceptionMessage The current customer isn't authorized"
      */
-
     private function getHeaderMap(string $username = 'customer@example.com', string $password = 'password'): array
     {
         $customerToken = $this->customerTokenService->createCustomerAccessToken($username, $password);
@@ -93,7 +92,6 @@ QUERY;
      * @expectedException Exception
      * @expectedExceptionMessage The current customer isn't authorized.
      */
-
     public function testRemoveProductsFromWishListWithoutAuthorizationHeaders(): void
     {
         $wishlist = $this->wishlistFactory->create();
@@ -136,14 +134,14 @@ QUERY;
 
     /**
      * Verify, testRemoveProductsFromWishListWithNonExistingWishlistId will return correct message.
+     * @return void
+     * @expectedException Exception
+     * @expectedExceptionMessage The current customer isn't authorized.
      * @todo Refactor this test after the problem mentioned in
      * https://github.com/magento/graphql-ce/pull/1043#issuecomment-558530493 is fixed
      *
      * @magentoApiDataFixture Magento/Wishlist/_files/wishlist.php
-     * @return void
-     * @expectedException Exception
-     * @expectedExceptionMessage The current customer isn't authorized.
-    */
+     */
     public function testRemoveProductsFromWishListWithNonExistingWishlistId(): void
     {
         $wishlist = $this->wishlistFactory->create();
