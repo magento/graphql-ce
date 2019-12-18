@@ -9,6 +9,7 @@ namespace Magento\Review\Model;
 use Magento\Framework\DataObject;
 use Magento\Catalog\Model\Product;
 use Magento\Framework\DataObject\IdentityInterface;
+use Magento\Review\Api\Data\ReviewInterface;
 use Magento\Review\Model\ResourceModel\Review\Product\Collection as ProductCollection;
 use Magento\Review\Model\ResourceModel\Review\Status\Collection as StatusCollection;
 
@@ -26,7 +27,7 @@ use Magento\Review\Model\ResourceModel\Review\Status\Collection as StatusCollect
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @since 100.0.2
  */
-class Review extends \Magento\Framework\Model\AbstractModel implements IdentityInterface
+class Review extends \Magento\Framework\Model\AbstractModel implements IdentityInterface, ReviewInterface
 {
     /**
      * Event prefix for observer

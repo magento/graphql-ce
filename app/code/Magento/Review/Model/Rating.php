@@ -6,6 +6,7 @@
 namespace Magento\Review\Model;
 
 use Magento\Framework\DataObject\IdentityInterface;
+use Magento\Review\Api\Data\RatingInterface;
 
 /**
  * Rating model
@@ -20,7 +21,7 @@ use Magento\Framework\DataObject\IdentityInterface;
  * @author      Magento Core Team <core@magentocommerce.com>
  * @since 100.0.2
  */
-class Rating extends \Magento\Framework\Model\AbstractModel implements IdentityInterface
+class Rating extends \Magento\Framework\Model\AbstractModel implements IdentityInterface, RatingInterface
 {
     /**
      * rating entity codes
