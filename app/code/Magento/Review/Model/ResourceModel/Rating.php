@@ -29,7 +29,7 @@ class Rating extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     protected $_storeManager;
 
     /**
-     * @var \Magento\Framework\Module\ModuleManagerInterface
+     * @var \Magento\Framework\Module\Manager
      */
     protected $moduleManager;
 
@@ -46,7 +46,7 @@ class Rating extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * @param \Magento\Framework\Model\ResourceModel\Db\Context $context
      * @param \Psr\Log\LoggerInterface $logger
-     * @param \Magento\Framework\Module\ModuleManagerInterface $moduleManager
+     * @param \Magento\Framework\Module\Manager $moduleManager
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param Review\Summary $reviewSummary
      * @param string $connectionName
@@ -55,7 +55,7 @@ class Rating extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     public function __construct(
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
         \Psr\Log\LoggerInterface $logger,
-        \Magento\Framework\Module\ModuleManagerInterface $moduleManager,
+        \Magento\Framework\Module\Manager $moduleManager,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Review\Model\ResourceModel\Review\Summary $reviewSummary,
         $connectionName = null,
@@ -524,5 +524,31 @@ class Rating extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         }
 
         return $this;
+    }
+
+    /**
+     * Get rating id by code
+     *
+     * @param string $ratingCode
+     * @param int $storeId
+     * @return string
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function getRatingIdByCode($ratingCode, $storeId)
+    {
+        $select = $this->getConnection()->select()->from(
+            ['rating' => $this->getMainTable()],
+            ['rating_id']
+        )->joinInner(
+            ['rating_store' => $this->getTable('rating_store')],
+            'rating_store.rating_id = rating.rating_id AND store_id = :store_id',
+            []
+        )->where(
+            'rating_code = :rating_code'
+        )->where(
+            'is_active = 1'
+        )->limit(1);
+
+        return (int)$this->getConnection()->fetchOne($select, [':rating_code' => $ratingCode, ':store_id' => $storeId]);
     }
 }
