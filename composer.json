@@ -214,6 +214,7 @@
         "magento/module-paypal-graph-ql": "*",
         "magento/module-persistent": "*",
         "magento/module-product-alert": "*",
+        "magento/module-product-compare-graph-ql": "*",
         "magento/module-product-video": "*",
         "magento/module-quote": "*",
         "magento/module-quote-analytics": "*",
